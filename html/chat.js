@@ -93,9 +93,6 @@ let tts = localStorage.getItem('tts'); // set userID if exists
 if(tts=="" || tts==null) {
     tts = 'disable';    
 }
-else {
-    tts = 'enable';
-}
 console.log('tts: ', tts);
 
 if(tts=='disable') {

@@ -671,7 +671,7 @@ def delete_document_if_exist(metadata_key):
 RuntimeError: The embeddings count, 1840 is more than the [bulk_size], 500. Increase the value of [bulk_size].
 ```
 
-bulk_size를 2000으로 변경하여 해결합니다.
+bulk_size를 10000으로 변경하여 해결합니다.
 
 ```python
 new_vectorstore = OpenSearchVectorSearch(
@@ -682,7 +682,7 @@ new_vectorstore = OpenSearchVectorSearch(
     opensearch_url = opensearch_url,
     http_auth=(opensearch_account, opensearch_passwd),
 )
-response = new_vectorstore.add_documents(docs, bulk_size = 2000)
+response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 ```
 
 

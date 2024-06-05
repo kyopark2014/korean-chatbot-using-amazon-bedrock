@@ -162,13 +162,13 @@ function loadAudio(requestId, text) {
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
             response = JSON.parse(xhr.responseText);
-            // console.log("response: ", response);
+            console.log("response: ", response);
 
             audioData[requestId+text] = response.body;
 
-            // console.log('successfully loaded. text= '+text);
-            // console.log(response.body);
-            // console.log(audioData[requestId+text]);
+            console.log('successfully loaded. text= '+text);
+            console.log(response.body);
+            console.log(audioData[requestId+text]);
         }
     };
     
@@ -353,6 +353,8 @@ function connect(endpoint, type) {
                                 'requestId': requestId,
                                 'text': response.msg
                             });
+                            console.log('new play list : '+response.msg+ '('+requestId+')')
+
                             lineText = "";      
                         
                             loadAudio(response.request_id, response.msg);
@@ -383,6 +385,8 @@ function connect(endpoint, type) {
                                 'requestId': requestId,
                                 'text': text
                             });
+                            console.log('new play list : '+text+ '('+requestId+')')
+
                             lineText = "";
                 
                             isPlayedTTS[response.request_id] = true;

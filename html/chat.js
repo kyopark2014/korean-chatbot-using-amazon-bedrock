@@ -88,22 +88,16 @@ function sendMessage(message) {
 }
 
 // TTS
-let ttsMode = true; // true: no voice 
 let tts = localStorage.getItem('tts'); // set userID if exists 
 if(tts=="" || tts==null) {
-    tts = 'disable';    
-}
-console.log('tts: ', tts);
-
-if(tts=='disable') {
-    ttsMode = true;
+    ttsMode = 'disable';    
 }
 else {
-    ttsMode = false;
+    ttsMode = tts;
 }
 console.log('ttsMode: ', ttsMode);
 
-if(ttsMode) {
+if(ttsMode=='enable') {
     var AudioContext;
     var audioContext;
 
@@ -348,7 +342,7 @@ function connect(endpoint, type) {
                     // console.log('received message: ', response.msg);
                     addReceivedMessage(response.request_id, response.msg);  
 
-                    if(ttsMode) {                    
+                    if(ttsMode=='enable') {                    
                         // console.log('Is already played? ', isPlayedTTS[response.request_id]);
                         if(isPlayedTTS[response.request_id] == undefined) {
                             requestId = response.request_id;
@@ -378,7 +372,7 @@ function connect(endpoint, type) {
                     sentance.put(response.request_id, sentance.get(response.request_id)+response.msg); 
                     addReceivedMessage(response.request_id, response.msg);  
 
-                    if(ttsMode) {
+                    if(ttsMode=='enable') {
                         lineText += response.msg;
                         lineText = lineText.replace('\n','');
                         if(lineText.length>3 && (response.msg == '.' || response.msg == '?' || response.msg == '!')) {     

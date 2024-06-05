@@ -21,17 +21,12 @@ else {
 
 let tts = localStorage.getItem('tts'); // set userID if exists 
 if(tts=="" || tts==null) {
-    tts = 'disable';    
-}
-console.log('tts: ', tts);
-
-if(tts=='disable') {
-    ttsMode = true;
+    ttsInput.value = 'disable';    
 }
 else {
-    ttsMode = false;
+    ttsInput.value = tts
 }
-console.log('ttsMode: ', ttsMode);
+console.log('tts: ', tts);
 
 console.log(userInput.value);
 console.log(convtypeInput.value);

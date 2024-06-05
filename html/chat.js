@@ -187,7 +187,7 @@ function loadAudio(requestId, text) {
 
 let retryCounter;
 function checkingDelayedPlayList() {
-    console.log('->checking delayed played list ('+retryCounter+')');  
+    // console.log('->checking delayed played list ('+retryCounter+')');  
     playAudioList();
 
     let isCompleted = true;
@@ -213,11 +213,11 @@ function checkingDelayedPlayList() {
 }
 
 function playAudioList() {
-    console.log('next = '+next+', playList: '+playList.length);
+    // console.log('next = '+next+', playList: '+playList.length);
     
     for(let i=0; i<playList.length;i++) {
-        console.log('audio data--> ', audioData[requestId+playList[i].text])
-        console.log('playList: ', playList);
+        // console.log('audio data--> ', audioData[requestId+playList[i].text])
+        // console.log('playList: ', playList);
 
         if(next == true && playList[i].played == false && requestId == playList[i].requestId && audioData[requestId+playList[i].text]) {
             // console.log('[play] '+i+': '+requestId+', text: '+playList[i].text);
@@ -239,7 +239,7 @@ async function playAudioLine(audio_body){
     var audio = document.querySelector('audio');
     audio.src = sound;
     
-    console.log('play audio');
+    // console.log('play audio');
 
     await playAudio(audio)
 }

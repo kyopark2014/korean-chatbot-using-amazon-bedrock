@@ -1,6 +1,7 @@
 const myForm = document.querySelector('#my-form');
 const userInput = document.querySelector('#userId');
 const convtypeInput = document.querySelector('#convtype');
+const ttsInput = document.querySelector('#tts');
 
 myForm.addEventListener('submit', onSubmit);
 
@@ -18,8 +19,26 @@ else {
     convtypeInput.value = "normal"  // general conversation
 }
 
+let tts = localStorage.getItem('tts'); // set userID if exists 
+if(tts=="" || tts==null) {
+    tts = 'disable';    
+}
+else {
+    tts = 'enable';
+}
+console.log('tts: ', tts);
+
+if(tts=='disable') {
+    ttsMode = true;
+}
+else {
+    ttsMode = false;
+}
+console.log('ttsMode: ', ttsMode);
+
 console.log(userInput.value);
 console.log(convtypeInput.value);
+console.log('tts: '+ttsInput.value);
 
 // provisioning
 getProvisioningInfo(userId);
@@ -34,6 +53,9 @@ function onSubmit(e) {
 
     localStorage.setItem('conv_type',convtypeInput.value);
     console.log('Save Profile> conv_type:', convtypeInput.value)
+
+    localStorage.setItem('tts',ttsInput.value);
+    console.log('Save Profile> tts:', ttsInput.value)
 
     window.location.href = "chat.html";
 }

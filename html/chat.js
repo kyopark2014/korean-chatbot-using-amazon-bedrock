@@ -247,7 +247,7 @@ async function playAudioLine(audio_body){
 // audio play
 var audio = document.querySelector('audio');
 audio.addEventListener("ended", function() {
-    console.log("playId: ", playId)
+    // console.log("playId: ", playId)
 
     if(playList[playId] != undefined) {
         console.log("played audio: ", playList[playId].text)
@@ -345,7 +345,7 @@ function connect(endpoint, type) {
                     addReceivedMessage(response.request_id, response.msg);  
 
                     if(ttsMode) {                    
-                        console.log('Is already played? ', isPlayedTTS[response.request_id]);
+                        // console.log('Is already played? ', isPlayedTTS[response.request_id]);
                         if(isPlayedTTS[response.request_id] == undefined) {
                             requestId = response.request_id;
                             playList.push({

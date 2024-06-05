@@ -162,13 +162,13 @@ function loadAudio(requestId, text) {
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
             response = JSON.parse(xhr.responseText);
-            console.log("response: ", response);
+            // console.log("response: ", response);
 
             audioData[requestId+text] = response.body;
 
-            console.log('successfully loaded. text= '+text);
-            console.log(response.body);
-            console.log(audioData[requestId+text]);
+            // console.log('successfully loaded. text= '+text);
+            // console.log(response.body);
+            // console.log(audioData[requestId+text]);
         }
     };
     

@@ -1093,6 +1093,74 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,  
       viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     });
+
+    // Poly Role
+    const roleLambdaPolly = new iam.Role(this, `role-lambda-polly-for-${projectName}`, {
+      roleName: `role-lambda-polly-for-${projectName}-${region}`,
+      assumedBy: new iam.CompositePrincipal(
+        new iam.ServicePrincipal("lambda.amazonaws.com"),
+      )
+    });
+    roleLambdaPolly.addManagedPolicy({
+      managedPolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
+    });
+    roleLambdaPolly.attachInlinePolicy( 
+      new iam.Policy(this, `polly-api-invoke-policy-for-${projectName}`, {
+        statements: [apiInvokePolicy],
+      }),
+    );  
+
+  /*  const PollyPolicy = new iam.PolicyStatement({  
+      actions: ['polly:*'],
+      resources: ['*'],
+    });
+    roleLambdaPolly.attachInlinePolicy(
+      new iam.Policy(this, 'polly-policy', {
+        statements: [PollyPolicy],
+      }),
+    ); */
+
+    // lambda - polly
+    const lambdaPolly = new lambda.Function(this, `lambda-polly-for-${projectName}`, {
+      description: 'lambda polly for speech translation',
+      functionName: `lambda-polly-${projectName}`,
+      handler: 'lambda_function.lambda_handler',
+      runtime: lambda.Runtime.PYTHON_3_11,
+      role: roleLambdaPolly,
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-polly')),
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        s3_bucket: s3Bucket.bucketName,
+      }
+    });
+    s3Bucket.grantReadWrite(lambdaPolly); // permission for s3
+
+    const polySpeech = api.root.addResource("speech");
+    polySpeech.addMethod('POST', new apiGateway.LambdaIntegration(lambdaPolly, {
+      passthroughBehavior: apiGateway.PassthroughBehavior.WHEN_NO_TEMPLATES,
+      credentialsRole: role,
+      integrationResponses: [{
+        statusCode: '200',
+      }], 
+      proxy:false, 
+    }), {
+      methodResponses: [  
+        {
+          statusCode: '200',
+          responseModels: {
+            'application/json': apiGateway.Model.EMPTY_MODEL,
+          }, 
+        }
+      ]
+    }); 
+
+    // cloudfront setting for api gateway    
+    distribution.addBehavior("/speech", new origins.RestApiOrigin(api), {
+      cachePolicy: cloudFront.CachePolicy.CACHING_DISABLED,
+      allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,  
+      viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    });
+
     
     // deploy components
     new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     

@@ -187,7 +187,7 @@ function loadAudio(requestId, text) {
 
 let retryCounter;
 function checkingDelayedPlayList() {
-    // console.log('->checking delayed played list ('+retryCounter+')');  
+    console.log('->checking delayed played list ('+retryCounter+')');  
     playAudioList();
 
     let isCompleted = true;

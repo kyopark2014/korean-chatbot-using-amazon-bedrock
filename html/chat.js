@@ -247,6 +247,10 @@ async function playAudioLine(audio_body){
     await playAudio(audio)
 }
 
+function delay(ms = 1000) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // audio play
 var audio = document.querySelector('audio');
 audio.addEventListener("ended", function() {

@@ -12,7 +12,7 @@ Kendra에서 검색할때에 사용하는 API에는 [Retrieve API](https://docs.
 
 ### LangChain 활용 방법
 
-- LangChain은 Retreive API로 검색하였을대에 결과가 없으면, Query로 한번 더 검색을 수행합니다.
+- LangChain은 Retrieve API로 검색하였을대에 결과가 없으면, Query로 한번 더 검색을 수행합니다.
 - Kendra에서 한국어 문서를 업로드하면 retriever의 Language 설정을 "ko"로 설정하여야 합니다.
     
 ### 정확도 개선 방안

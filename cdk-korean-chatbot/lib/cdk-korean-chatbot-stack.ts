@@ -45,6 +45,7 @@ const max_object_size = 102400000; // 100 MB max size of an object, 50MB(default
 const enableNoriPlugin = 'false';
 const enableParallelSummay = 'true';
 const enalbeParentDocumentRetrival = 'true';
+const speech_generation = true;
 
 const claude3_sonnet = [
   {
@@ -805,7 +806,8 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         enableNoriPlugin: enableNoriPlugin,
         projectName: projectName,
         separated_chat_history: separated_chat_history,
-        enalbeParentDocumentRetrival: enalbeParentDocumentRetrival        
+        enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
+        speech_generation: speech_generation
       }
     });     
     lambdaChatWebsocket.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  

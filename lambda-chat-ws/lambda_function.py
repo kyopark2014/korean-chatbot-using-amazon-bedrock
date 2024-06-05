@@ -74,7 +74,7 @@ capabilities = json.loads(os.environ.get('capabilities'))
 print('capabilities: ', capabilities)
 MSG_LENGTH = 100
 MSG_HISTORY_LENGTH = 20
-speech_generation = True
+speech_generation = os.environ.get('speech_generation')
 history_length = 0
 token_counter_history = 0
 allowDualSearch = os.environ.get('allowDualSearch')
@@ -3672,11 +3672,11 @@ def getResponse(connectionId, jsonBody):
                     print('translated_msg: ', translated_msg)
                     msg = msg+'\n[한국어]\n'+translated_msg
                     
-                    if speech_generation: # generate mp3 file
+                    if speech_generation == 'true': # generate mp3 file
                         speech_uri = get_text_speech(path=path, speech_prefix=speech_prefix, bucket=s3_bucket, msg=translated_msg)
                         print('speech_uri: ', speech_uri)                      
                 else:
-                    if speech_generation: # generate mp3 file
+                    if speech_generation == 'true': # generate mp3 file
                         speech_uri = get_text_speech(path=path, speech_prefix=speech_prefix, bucket=s3_bucket, msg=msg)
                         print('speech_uri: ', speech_uri)  
            

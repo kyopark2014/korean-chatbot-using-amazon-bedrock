@@ -1113,12 +1113,12 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
   /*  const PollyPolicy = new iam.PolicyStatement({  
       actions: ['polly:*'],
       resources: ['*'],
-    });
+    }); */
     roleLambdaPolly.attachInlinePolicy(
       new iam.Policy(this, 'polly-policy', {
         statements: [PollyPolicy],
       }),
-    ); */
+    ); 
 
     // lambda - polly
     const lambdaPolly = new lambda.Function(this, `lambda-polly-for-${projectName}`, {

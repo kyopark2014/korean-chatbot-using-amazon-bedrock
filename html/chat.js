@@ -339,9 +339,9 @@ function connect(endpoint, type) {
                 // console.log('response: ', response);
 
                 if(response.status == 'completed') {
-                    console.log('completed!');
+                    // console.log('completed!');
                     feedback.style.display = 'none';          
-                    console.log('received message: ', response.msg);
+                    // console.log('received message: ', response.msg);
                     addReceivedMessage(response.request_id, response.msg);  
 
                     if(ttsMode) {                    
@@ -353,7 +353,7 @@ function connect(endpoint, type) {
                                 'requestId': requestId,
                                 'text': response.msg
                             });
-                            console.log('new play list : '+response.msg+ '('+requestId+')')
+                            // console.log('new play list : '+response.msg+ '('+requestId+')')
 
                             lineText = "";      
                         
@@ -369,7 +369,7 @@ function connect(endpoint, type) {
                 }                
                 
                 else if(response.status == 'proceeding') {
-                    console.log('proceeding...');
+                    // console.log('proceeding...');
                     feedback.style.display = 'none';
                     sentance.put(response.request_id, sentance.get(response.request_id)+response.msg); 
                     addReceivedMessage(response.request_id, response.msg);  
@@ -378,14 +378,14 @@ function connect(endpoint, type) {
                         lineText += response.msg;
                         lineText = lineText.replace('\n','');
                         if(lineText.length>3 && (response.msg == '.' || response.msg == '?' || response.msg == '!')) {     
-                            console.log('lineText: ', lineText);
+                            // console.log('lineText: ', lineText);
                             text = lineText
                             playList.push({
                                 'played': false,
                                 'requestId': requestId,
                                 'text': text
                             });
-                            console.log('new play list : '+text+ '('+requestId+')')
+                            // console.log('new play list : '+text+ '('+requestId+')')
 
                             lineText = "";
                 

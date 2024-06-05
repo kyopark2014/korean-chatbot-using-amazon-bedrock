@@ -91,11 +91,11 @@ function sendMessage(message) {
 let ttsMode = true; // true: no voice 
 let tts = localStorage.getItem('tts'); // set userID if exists 
 if(tts=="" || tts==null) {
-    tts = 'Silent';    
+    tts = 'disable';    
 }
 console.log('tts: ', tts);
 
-if(tts=='Silent') {
+if(tts=='disable') {
     ttsMode = true;
 }
 else {

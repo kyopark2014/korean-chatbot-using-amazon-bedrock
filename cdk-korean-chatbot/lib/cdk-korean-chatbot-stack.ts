@@ -1115,7 +1115,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       resources: ['*'],
     }); */
     roleLambdaPolly.attachInlinePolicy(
-      new iam.Policy(this, 'polly-policy', {
+      new iam.Policy(this, `polly-policy-${projectName}`, {
         statements: [PollyPolicy],
       }),
     ); 

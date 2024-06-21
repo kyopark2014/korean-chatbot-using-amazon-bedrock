@@ -6,7 +6,7 @@
 
 문서 또는 이미지 파일에서 텍스트를 추출시 parent와 child로 chunking을 수행합니다. 상세한 코드는 [lambda-document](./lambda-document-manager/lambda_function.py)을 참조합니다.
 
-먼저 parent/child splitter를 지정합니다. parent의 경우에 전체 문서를 나눠야하므로 separator로 개행이나 마침표와 같은 단어를 기준으로 합니다. 여기서는, chunk_size는 2000으로 하였으나 목적에 맞게 조정할 수 있습니다. chunk_size가 크면 LLM이 충분한 정보를 가질수 있으나, 전체적으로 token 소모량이 증가하고, 문서의 수(top_k)를 많이 넣으면 LLM에 따라서는 context winodow를 초과할 수 있어 주의가 필요합니다. child splitter의 경우는 여기서는 400을 기준으로 50의 overlap을 설정하였습니다. child의 경우에 관련된 문서를 찾는 기준이 되나 실제 사용은 parent를 사용하므로 검색이 잘되도록 하는것이 중요합니다. child의 경우는 하나의 문장의 일부가 될 수 있어야 하고 제목이 하나의 chunk를 가져가면 안되므로, 아래와 같이 개행문자등을 separator로 등록하지 않았습니다. 
+먼저 parent/child splitter를 지정합니다. parent의 경우에 전체 문서를 나눠야하므로 separator로 개행이나 마침표와 같은 단어를 기준으로 합니다. 여기서는, chunk_size는 2000으로 하였으나 목적에 맞게 조정할 수 있습니다. chunk_size가 크면 LLM이 충분한 정보를 가질수 있으나, 전체적으로 token 소모량이 증가하고, 문서의 수(top_k)를 많이 넣으면 LLM에 따라서는 context window를 초과할 수 있어 주의가 필요합니다. child splitter의 경우는 여기서는 400을 기준으로 50의 overlap을 설정하였습니다. child의 경우에 관련된 문서를 찾는 기준이 되나 실제 사용은 parent를 사용하므로 검색이 잘되도록 하는것이 중요합니다. child의 경우는 하나의 문장의 일부가 될 수 있어야 하고 제목이 하나의 chunk를 가져가면 안되므로, 아래와 같이 개행문자등을 separator로 등록하지 않았습니다. 
 
 ```python
 parent_splitter = RecursiveCharacterTextSplitter(

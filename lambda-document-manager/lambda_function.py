@@ -19,13 +19,12 @@ from langchain_community.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from opensearchpy import OpenSearch
 from pptx import Presentation
-from langchain_community.llms.bedrock import Bedrock
 from multiprocessing import Process, Pipe
-from langchain_community.chat_models import BedrockChat
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_aws import ChatBedrock
+from pptx.enum.shapes import MSO_SHAPE_TYPE
 
 s3 = boto3.client('s3')
 s3_client = boto3.client('s3')  
@@ -62,6 +61,8 @@ supportedFormat = json.loads(os.environ.get('supportedFormat'))
 print('supportedFormat: ', supportedFormat)
 
 enableNoriPlugin = os.environ.get('enableNoriPlugin')
+
+enableImageExtraction = os.environ.get('enableImageExtraction')
 
 os_client = OpenSearch(
     hosts = [{
@@ -321,8 +322,18 @@ def delete_document_if_exist(metadata_key):
             ids = json.loads(meta)['ids']
             print('ids: ', ids)
             
+            # delete ids
             result = vectorstore.delete(ids)
-            print('result: ', result)        
+            print('result: ', result)   
+            
+            # delete files 
+            files = json.loads(meta)['files']
+            print('files: ', files)
+            
+            for file in files:
+                s3r.Object(s3_bucket, file).delete()
+                print('delete file: ', file)
+            
         else:
             print('no meta file: ', metadata_key)
             
@@ -336,11 +347,11 @@ if enableNoriPlugin == 'true':
 
 def store_document_for_opensearch(file_type, key):
     print('upload to opensearch: ', key) 
-    contents = load_document(file_type, key)
+    contents, files = load_document(file_type, key)
     
     if len(contents) == 0:
         print('no contents: ', key)
-        return []
+        return [], files
     
     # contents = str(contents).replace("\n"," ") 
     print('length: ', len(contents))
@@ -356,7 +367,9 @@ def store_document_for_opensearch(file_type, key):
     ))
     print('docs: ', docs)
     
-    return add_to_opensearch(docs, key)    
+    ids = add_to_opensearch(docs, key)    
+    
+    return ids, files
 
 def store_code_for_opensearch(file_type, key):
     codes = load_code(file_type, key)  # number of functions in the code
@@ -420,32 +433,50 @@ def store_image_for_opensearch(key):
     if isResized:
         img = img.resize((width, height))
                         
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-                                                            
-    # extract text from the image
-    chat = get_multimodal()    
-    text = extract_text(chat, img_base64)
-    extracted_text = text[text.find('<result>')+8:len(text)-9] # remove <result> tag
-    print('extracted_text: ', extracted_text)
+    try: 
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                                                                
+        # extract text from the image
+        chat = get_multimodal()
+        text = extract_text(chat, img_base64)
+        extracted_text = text[text.find('<result>')+8:len(text)-9] # remove <result> tag
+        #print('extracted_text: ', extracted_text)
+        
+        summary = summary_image(chat, img_base64)
+        image_summary = summary[summary.find('<result>')+8:len(summary)-9] # remove <result> tag
+        #print('image summary: ', image_summary)
+        
+        if len(extracted_text) > 30:
+            contents = f"[이미지 요약]\n{image_summary}\n\n[추출된 텍스트]\n{extracted_text}"
+        else:
+            contents = f"[이미지 요약]\n{image_summary}"
+        print('image contents: ', contents)
+        
+        docs = []
+        if len(contents) > 30:
+            docs.append(
+                Document(
+                    page_content=contents,
+                    metadata={
+                        'name': key,
+                        # 'page':i+1,
+                        'uri': path+parse.quote(key)
+                    }
+                )
+            )                                                                                                            
+        print('docs size: ', len(docs))
+        
+        return add_to_opensearch(docs, key)
     
-    docs = []
-    if len(extracted_text)>10:
-        docs.append(
-            Document(
-                page_content=extracted_text,
-                metadata={
-                    'name': key,
-                    # 'page':i+1,
-                    'uri': path+parse.quote(key)
-                }
-            )
-        )                                                                                                            
-    print('docs size: ', len(docs))
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                
+        #raise Exception ("Not able to summary")  
+        
+        return []
     
-    return add_to_opensearch(docs, key)
-
 def add_to_opensearch(docs, key):    
     if len(docs) == 0:
         return []    
@@ -599,7 +630,7 @@ def store_document_for_kendra(path, key, documentId):
         print('error message: ', err_msg)        
         # raise Exception ("Not able to put a document in Kendra")
 
-def create_metadata(bucket, key, meta_prefix, s3_prefix, uri, category, documentId, ids):
+def create_metadata(bucket, key, meta_prefix, s3_prefix, uri, category, documentId, ids, files):
     title = key
     timestamp = int(time.time())
 
@@ -612,7 +643,8 @@ def create_metadata(bucket, key, meta_prefix, s3_prefix, uri, category, document
         },
         "Title": title,
         "DocumentId": documentId,      
-        "ids": ids  
+        "ids": ids,
+        "files": files  
     }
     print('metadata: ', metadata)
     
@@ -632,11 +664,62 @@ def create_metadata(bucket, key, meta_prefix, s3_prefix, uri, category, document
         print('error message: ', err_msg)        
         raise Exception ("Not able to create meta file")
 
+def extract_images_from_ppt(prs, key):
+    picture_count = 1
+    
+    extracted_image_files = []
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            print('shape type: ', shape.shape_type)
+            if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+                image = shape.image
+                # image bytes to PIL Image object
+                image_bytes = image.blob
+                pixels = BytesIO(image_bytes)
+                pixels.seek(0, 0)
+                        
+                # get path from key
+                objectName = (key[key.find(s3_prefix)+len(s3_prefix)+1:len(key)])
+                folder = s3_prefix+'/files/'+objectName+'/'
+                print('folder: ', folder)
+                        
+                fname = 'img_'+key.split('/')[-1].split('.')[0]+f"_{picture_count}"  
+                print('fname: ', fname)
+                        
+                img_key = folder+fname+'.png'
+                        
+                response = s3_client.put_object(
+                    Bucket=s3_bucket,
+                    Key=img_key,
+                    ContentType='image/png',
+                    Body=pixels
+                )
+                print('response: ', response)
+                        
+                # metadata
+                img_meta = {
+                    'bucket': s3_bucket,
+                    'key': img_key,
+                    'url': path+img_key,
+                    'ext': 'png',
+                    'page': i+1,
+                    'original': key
+                }
+                print('img_meta: ', img_meta)
+                        
+                picture_count += 1
+                
+                extracted_image_files.append(img_key)
+    
+    print('extracted_image_files: ', extracted_image_files)    
+    return extracted_image_files
+
 # load documents from s3 for pdf and txt
 def load_document(file_type, key):
     s3r = boto3.resource("s3")
     doc = s3r.Object(s3_bucket, key)
     
+    files = []
     contents = ""
     if file_type == 'pdf':
         Byte_contents = doc.get()['Body'].read()
@@ -666,7 +749,13 @@ def load_document(file_type, key):
                     if shape.has_text_frame:
                         text = text + shape.text
                 texts.append(text)
-            contents = '\n'.join(texts)
+            contents = '\n'.join(texts)          
+            
+            if enableImageExtraction == 'true':
+                image_files = extract_images_from_ppt(prs, key)                
+                for img in image_files:
+                    files.append(img)
+                    
         except Exception:
                 err_msg = traceback.format_exc()
                 print('err_msg: ', err_msg)
@@ -697,7 +786,7 @@ def load_document(file_type, key):
                 print('err_msg: ', err_msg)
                 # raise Exception ("Not able to load docx")   
     
-    return contents
+    return contents, files
 
 # load a code file from s3
 def load_code(file_type, key):
@@ -896,6 +985,37 @@ def extract_text(chat, img_base64):
     
     return extracted_text
 
+def summary_image(chat, img_base64):    
+    query = "이미지가 의미하는 내용을 풀어서 자세히 알려주세요. <result> tag를 붙여주세요."
+    
+    messages = [
+        HumanMessage(
+            content=[
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{img_base64}", 
+                    },
+                },
+                {
+                    "type": "text", "text": query
+                },
+            ]
+        )
+    ]
+    
+    try: 
+        result = chat.invoke(messages)
+        
+        extracted_text = result.content
+        # print('summary from an image: ', extracted_text)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+    
+    return extracted_text
+
 def get_documentId(key, category):
     documentId = category + "-" + key
     documentId = documentId.replace(' ', '_') # remove spaces  
@@ -1010,7 +1130,7 @@ def lambda_handler(event, context):
                 documentId = get_documentId(key, category)
                 print('documentId: ', documentId)
                 
-                ids = []
+                ids = files = []
                 for type in capabilities:
                     if type=='kendra' and category=='upload':
                         print('upload to kendra: ', key)
@@ -1019,14 +1139,14 @@ def lambda_handler(event, context):
 
                     elif type=='opensearch':
                         if file_type == 'pdf' or file_type == 'txt' or file_type == 'md' or file_type == 'csv' or file_type == 'pptx' or file_type == 'docx':
-                            ids = store_document_for_opensearch(file_type, key)                                
+                            ids, files = store_document_for_opensearch(file_type, key)                         
                         elif file_type == 'py' or file_type == 'js':
                             ids = store_code_for_opensearch(file_type, key)     
                         elif file_type == 'png' or file_type == 'jpg' or file_type == 'jpeg':
                             ids = store_image_for_opensearch(key)
                         print('ids: ', ids)
                             
-                create_metadata(bucket=s3_bucket, key=key, meta_prefix=meta_prefix, s3_prefix=s3_prefix, uri=path+parse.quote(key), category=category, documentId=documentId, ids=ids)
+                create_metadata(bucket=s3_bucket, key=key, meta_prefix=meta_prefix, s3_prefix=s3_prefix, uri=path+parse.quote(key), category=category, documentId=documentId, ids=ids, files=files)
 
             else: # delete if the object is unsupported one for format or size
                 try:

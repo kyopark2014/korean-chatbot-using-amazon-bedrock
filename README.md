@@ -218,6 +218,11 @@ def translate_relevant_documents_using_parallel_processing(docs):
 
 RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Parent/Child Chunking을 이용할 수 있습니다. [Parent Document Retrieval](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/parent-document-retrieval.md)에서는 parent/child로 chunking 전략을 달리하는 방법에 대해 설명합니다. 
 
+### S3 Event
+
+S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 RAG 등록을 할 수 있습니다. 이때 필요한 event는 [RAG-s3-event.md](./RAG-s3-event.md)을 참조합니다.
+
+
 ### 한영 동시 검색
 
 한영 검색을 위해 먼저 한국어로 RAG를 조회하고, 영어로 번역한 후에 각각의 관련된 문서들(Relevant Documents)를 번역합니다. 관련된 문서들에 대해 질문에 따라 관련성을 비교하여 관련도가 높은 문서순서로 Context를 만들어서 활용합니다. 상세한 내용은 관련된 Blog인 [

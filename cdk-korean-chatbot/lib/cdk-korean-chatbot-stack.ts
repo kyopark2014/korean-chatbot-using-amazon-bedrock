@@ -46,7 +46,7 @@ const enableNoriPlugin = 'false';
 const enableParallelSummay = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
-const enableImageExtraction = 'true';
+const enableImageExtraction = 'false';
 
 const claude3_sonnet = [
   {

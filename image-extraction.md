@@ -51,12 +51,13 @@ def extract_images_from_ppt(prs, key):
 PDF에서 이미지 파일을 추출후 S3에 저장합니다.
 
 ```python
+from pypdf import PdfReader
+
 s3r = boto3.resource("s3")
 doc = s3r.Object(s3_bucket, key)
 
 Byte_contents = doc.get()['Body'].read()
 
-from pypdf import PdfReader
 reader = PdfReader(BytesIO(Byte_contents))
             
 if enableImageExtraction == 'true':

@@ -758,7 +758,6 @@ def extract_images_from_pptx(prs, key):
             print('shape type: ', shape.shape_type)
             if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
                 image = shape.image
-                # image bytes to PIL Image object
                 image_bytes = image.blob
                 
                 pixels = BytesIO(image_bytes)

@@ -1,4 +1,4 @@
-# S3 Event를 이용한 RAG 등록
+# S3 Event를 이용한 RAG 등록 및 이미지 추출
 
 ## S3 Event
 

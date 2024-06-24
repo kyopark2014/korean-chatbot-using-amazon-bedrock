@@ -1,13 +1,5 @@
 # 문서에서 이미지 추출 
 
-## 이미지 추출 설정
-
-이미지 추출하기 위해서는 [cdk-korean-chatbot-stack.ts](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/cdk-korean-chatbot/lib/cdk-korean-chatbot-stack.ts)를 참조하여 아래의 enableImageExtraction을 'true'로 변경합니다. [deployment.md](./deployment.md)를 참조하여, 재배포합니다. 
-
-```python
-const enableImageExtraction = 'false';
-```
-
 ## PPTX
 
 "python-pptx"를 설치후에 slide 단위로 Shape를 읽어오입니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.

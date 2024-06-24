@@ -17,7 +17,9 @@ const s3PutEventSource = new lambdaEventSources.S3EventSource(s3Bucket, {
 ```
 
 
-## 이미지 추출 (PPTX)
+## 이미지 추출 
+
+## PPTX
 
 "python-pptx"를 설치후에 slide 단위로 Shape를 읽어오입니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.
 
@@ -98,3 +100,81 @@ def summary_image(chat, img_base64):
     
     return extracted_text
 ```
+
+### PDF
+
+PDF에서 파일을 추출후 S3에 저장합니다.
+
+```python
+s3r = boto3.resource("s3")
+doc = s3r.Object(s3_bucket, key)
+
+Byte_contents = doc.get()['Body'].read()
+
+from pypdf import PdfReader
+reader = PdfReader(BytesIO(Byte_contents))
+            
+if enableImageExtraction == 'true':
+    image_files = extract_images_from_pdf(reader, key)                
+    for img in image_files:
+        files.append(img)        
+
+def extract_images_from_pdf(reader, key):
+    picture_count = 1
+        
+    extracted_image_files = []
+    for i, page in enumerate(reader.pages):
+        for image_file_object in page.images:
+            img_name = image_file_object.name
+            if img_name in extracted_image_files:
+                print('skip....')
+                continue
+                
+            extracted_image_files.append(img_name)
+            
+            ext = img_name.split('.')[-1]            
+            contentType = ""
+            if ext == 'png':
+                contentType = 'image/png'
+            elif ext == 'jpg' or ext == 'jpeg':
+                contentType = 'image/jpeg'
+            elif ext == 'gif':
+                contentType = 'image/gif'
+            elif ext == 'bmp':
+                contentType = 'image/bmp'
+            elif ext == 'tiff' or ext == 'tif':
+                contentType = 'image/tiff'
+            elif ext == 'svg':
+                contentType = 'image/svg+xml'
+            elif ext == 'webp':
+                contentType = 'image/webp'
+            elif ext == 'ico':
+                contentType = 'image/x-icon'
+            elif ext == 'eps':
+                contentType = 'image/eps'
+            print('contentType: ', contentType)
+                
+            if contentType:                
+                image_bytes = image_file_object.data
+    
+                pixels = BytesIO(image_bytes)
+                pixels.seek(0, 0)
+                                
+                objectName = (key[key.find(s3_prefix)+len(s3_prefix)+1:len(key)])
+                folder = s3_prefix+'/files/'+objectName+'/'
+                img_key = folder+img_name
+                    
+                response = s3_client.put_object(
+                    Bucket=s3_bucket,
+                    Key=img_key,
+                    ContentType=contentType,
+                    Body=pixels
+                )
+                                
+                picture_count += 1                        
+                extracted_image_files.append(img_key)
+        
+    print('extracted_image_files: ', extracted_image_files)    
+    return extracted_image_files
+```        
+    

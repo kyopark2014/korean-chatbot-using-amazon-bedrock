@@ -4,7 +4,7 @@
 
 ## PPTX
 
-"python-pptx"를 설치후에 slide 단위로 Shape를 읽어오입니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.
+"python-pptx"를 설치후에 slide 단위로 Shape를 읽어옵니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.
 
 ```python
 prs = Presentation(BytesIO(Byte_contents))

@@ -227,4 +227,21 @@ def summary_image(chat, img_base64):
     return extracted_text
 ```
 
+### 추출 결과 
+
+문서서 추출된 이미지는 아래와 같습니다.
+
+![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/54a6532b-dc65-47ca-8c2e-8273a5c1d541)
+
+이미지를 요약한 결과는 아래와 같습니다. 
+
+```text
+이 이미지는 Kinesis Data Streams에서 실시간 데이터를 처리하고 정적 참조 데이터와 결합하는 아키텍처를 보여줍니다.
+IoT 디바이스(Simulated)에서 생성된 실시간 데이터 스트림(my_health_metric_stream)이 Kinesis Data Streams로 전송됩니다.
+이 데이터 스트림은 20초 마이크로 배치 윈도우로 처리되며, 디바이스 이름을 기준으로 참조 데이터(reference_patient)와 조인됩니다.
+참조 데이터에는 환자 이름, 디바이스 이름, 나이, 비상 연락처 정보가 포함되어 있습니다.
+조인된 데이터는 최종적으로 At-Risk Patient Data라는 파티션된 데이터 스토어에 저장되며, 여기에는 연도, 월, 일, 시간, 분 정보가 포함됩니다.
+이 프로세스는 my-iot-data-processor라는 작업에 의해 처리됩니다.
+```
+
 

@@ -1,6 +1,6 @@
 # 문서에서 이미지 추출 
 
-상세한 코드는 [lambda-document](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/lambda-document-manager/lambda_function.py)를 참조합니다. 이미지를 추출하여 S3에 저장하면 S3 event를 이용하여 추가된 이미지를 인지하여, 이미지에서 텍스트 추출 및 요약을 수행합니다. 
+문서의 이미지를 추출하여 Amazon S3에 저장하여 Multimodal LLM을 이용해 분석하고자 합니다. 문서에서 추출된 이미지는 S3 저장되는데, 이때 발생한 event를 이용하여 event driven 방식으로 이미지에서 텍스트를 추출하고 요약을 수행합니다. 추출된 텍스트와 요약은 RAG에서 활용합니다. 상세한 코드는 [lambda-document](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/lambda-document-manager/lambda_function.py)를 참조합니다. 
 
 ## PPTX
 
@@ -191,9 +191,44 @@ def extract_images_from_docx(doc_contents, key):
     return extracted_image_files        
 ```
 
-## 이미지 요약
+## 이미지 분석
 
-S3의 저장 event를 이용해 text를 추출하고 summary를 만듧니다. 이미지 요약은 아래와 같이 수행합니다.
+텍스트의 추출은 아래와 같이 수행합니다. 
+
+```python
+def extract_text(chat, img_base64):    
+    query = "텍스트를 추출해서 utf8로 변환하세요. <result> tag를 붙여주세요."
+    
+    messages = [
+        HumanMessage(
+            content=[
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{img_base64}", 
+                    },
+                },
+                {
+                    "type": "text", "text": query
+                },
+            ]
+        )
+    ]
+    
+    try: 
+        result = chat.invoke(messages)
+        
+        extracted_text = result.content
+        # print('result of text extraction from an image: ', extracted_text)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+    
+    return extracted_text
+```
+
+이미지를 아래와 같이 요약합니다.
 
 ```python
 def summary_image(chat, img_base64):    

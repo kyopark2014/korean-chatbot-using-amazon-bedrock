@@ -160,10 +160,8 @@ s3r = boto3.resource("s3")
 doc = s3r.Object(s3_bucket, key)
 
 Byte_contents = doc.get()['Body'].read()
+doc_contents =docx.Document(BytesIO(Byte_contents))
 
-from pypdf import PdfReader
-reader = PdfReader(BytesIO(Byte_contents))
-            
 if enableImageExtraction == 'true':
     image_files = extract_images_from_docx(doc_contents, key)                  
     for img in image_files:

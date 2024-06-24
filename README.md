@@ -455,7 +455,7 @@ S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 
 
 [image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
 
-또한, 이미지 추출을 enable 하기 위해서는 [cdk-korean-chatbot-stack.ts](./cdk-korean-chatbot/cdk-korean-chatbot-stack.ts)를 참조하여 아래의 enableImageExtraction을 'true'로 변경합니다. 이후 [deployment.md](./deployment.md)를 참조하여, 재배포합니다. 
+또한, 이미지 추출을 enable 하기 위해서는 [cdk-korean-chatbot-stack.ts](./cdk-korean-chatbot/lib/cdk-korean-chatbot-stack.ts)를 참조하여 아래의 enableImageExtraction을 'true'로 변경합니다. 이후 [deployment.md](./deployment.md)를 참조하여, 재배포합니다. 
 
 ```python
 const enableImageExtraction = 'false';

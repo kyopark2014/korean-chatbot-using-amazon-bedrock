@@ -341,7 +341,7 @@ def delete_document_if_exist(metadata_key):
     except Exception:
         err_msg = traceback.format_exc()
         print('error message: ', err_msg)        
-        raise Exception ("Not able to create meta file")
+        #raise Exception ("Not able to create meta file")
 
 if enableNoriPlugin == 'true':
     create_nori_index()

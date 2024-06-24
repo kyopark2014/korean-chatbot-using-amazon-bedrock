@@ -1,5 +1,7 @@
 # 문서에서 이미지 추출 
 
+상세한 코드는 [lambda-document](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/lambda-document-manager/lambda_function.py)를 참조합니다. 이미지를 추출하여 S3에 저장하면 OBJECT_CREATED_PUT와 OBJECT_CREATED_COMPLETE_MULTIPART_UPLOAD로 이미지의 추가를 인지하여 문서의 텍스트 추출 및 요약을 수행합니다. 
+
 ## PPTX
 
 "python-pptx"를 설치후에 slide 단위로 Shape를 읽어오입니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.

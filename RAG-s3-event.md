@@ -1,5 +1,7 @@
 # S3 Event를 이용한 RAG 등록
 
+## S3 Event
+
 등록이 필요한 Event Type에서 CREATED_PUT, REMOVED_DELETE, CREATED_COMPLETE_MULTIPART_UPLOAD가 있습니다. 여기서 CREATED_COMPLETE_MULTIPART_UPLOAD은 대용량 파일 업로드시 발생하는 event 입니다.
 
 ```python

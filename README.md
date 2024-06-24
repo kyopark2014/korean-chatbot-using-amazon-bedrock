@@ -455,6 +455,12 @@ S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 
 
 [image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
 
+또한, 이미지 추출을 enable 하기 위해서는 [cdk-korean-chatbot-stack.ts](./cdk-korean-chatbot/cdk-korean-chatbot-stack.ts)를 참조하여 아래의 enableImageExtraction을 'true'로 변경합니다. 이후 [deployment.md](./deployment.md)를 참조하여, 재배포합니다. 
+
+```python
+const enableImageExtraction = 'false';
+```
+
 ### Agent 정의 및 활용
 
 [LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.

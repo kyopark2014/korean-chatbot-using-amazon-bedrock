@@ -690,6 +690,9 @@ new_vectorstore = OpenSearchVectorSearch(
 response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 ```
 
+### 문서에서 이미지 추출
+
+[image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
 
 ### AWS CDK로 인프라 구현하기
 

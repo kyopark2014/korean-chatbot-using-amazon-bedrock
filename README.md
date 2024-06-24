@@ -209,151 +209,9 @@ def translate_relevant_documents_using_parallel_processing(docs):
     return relevant_docs
 ```
 
-### Agent 정의 및 활용
-
-[LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.
-
-
-### Parent Document Retrieval
-
-RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Parent/Child Chunking을 이용할 수 있습니다. [Parent Document Retrieval](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/parent-document-retrieval.md)에서는 parent/child로 chunking 전략을 달리하는 방법에 대해 설명합니다. 
-
-### S3 Event
-
-S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 RAG 등록을 할 수 있습니다. 이때 필요한 event는 [RAG-s3-event.md](./RAG-s3-event.md)을 참조합니다.
-
-
-### 한영 동시 검색
-
-한영 검색을 위해 먼저 한국어로 RAG를 조회하고, 영어로 번역한 후에 각각의 관련된 문서들(Relevant Documents)를 번역합니다. 관련된 문서들에 대해 질문에 따라 관련성을 비교하여 관련도가 높은 문서순서로 Context를 만들어서 활용합니다. 상세한 내용은 관련된 Blog인 [
-한영 동시 검색 및 인터넷 검색을 활용하여 RAG를 편리하게 활용하기](https://aws.amazon.com/ko/blogs/tech/rag-enhanced-searching/)을 참조합니다. 
-
-```python
-translated_revised_question = traslation_to_english(llm=llm, msg=revised_question)
-
-relevant_docs_using_translated_question = retrieve_from_vectorstore(query=translated_revised_question, top_k=4, rag_type=rag_type)
-            
-docs_translation_required = []
-if len(relevant_docs_using_translated_question)>=1:
-    for i, doc in enumerate(relevant_docs_using_translated_question):
-        if isKorean(doc)==False:
-            docs_translation_required.append(doc)
-        else:
-            relevant_docs.append(doc)
-                                   
-    translated_docs = translate_relevant_documents_using_parallel_processing(docs_translation_required)
-    for i, doc in enumerate(translated_docs):
-        relevant_docs.append(doc)
-```
-
-### 인터넷 검색
-
-Multi-RAG를 이용하여 여러개의 지식 저장소에 관련된 문서를 조회하였음에도 문서가 없다면, 구글 인터넷 검색을 통해 얻어진 결과를 활용합니다. 여기서, assessed_score는 priority search시 FAISS의 Score로 업데이트 됩니다. 상세한 내용은 [Google Search API](./GoogleSearchAPI.md) 관련된 Blog인 [
-한영 동시 검색 및 인터넷 검색을 활용하여 RAG를 편리하게 활용하기](https://aws.amazon.com/ko/blogs/tech/rag-enhanced-searching/)을 참조합니다. 
-
-```python
-from googleapiclient.discovery import build
-
-google_api_key = os.environ.get('google_api_key')
-google_cse_id = os.environ.get('google_cse_id')
-
-api_key = google_api_key
-cse_id = google_cse_id
-
-relevant_docs = []
-try:
-    service = build("customsearch", "v1", developerKey = api_key)
-    result = service.cse().list(q = revised_question, cx = cse_id).execute()
-    print('google search result: ', result)
-
-    if "items" in result:
-        for item in result['items']:
-            api_type = "google api"
-            excerpt = item['snippet']
-            uri = item['link']
-            title = item['title']
-            confidence = ""
-            assessed_score = ""
-
-            doc_info = {
-                "rag_type": 'search',
-                "api_type": api_type,
-                "confidence": confidence,
-                "metadata": {
-                    "source": uri,
-                    "title": title,
-                    "excerpt": excerpt,                                
-                },
-                "assessed_score": assessed_score,
-            }
-        relevant_docs.append(doc_info)
-```
-
-### Priority Search (관련도 기준 문서 선택)
-
-Multi-RAG, 한영 동시 검색, 인터넷 검색등을 활용하여 다수의 관련된 문서가 나오면, 관련도가 높은 순서대로 일부 문서만을 RAG에서 활용합니다. 이를 위해 Faiss의 similarity search를 이용합니다. 이것은 정량된 값의 관련도를 얻을 수 있어서, 관련되지 않은 문서를 Context로 활용하지 않도록 해줍니다. 
-
-```python
-selected_relevant_docs = []
-if len(relevant_docs)>=1:
-    selected_relevant_docs = priority_search(revised_question, relevant_docs, bedrock_embeddings)
-
-def priority_search(query, relevant_docs, bedrock_embeddings):
-    excerpts = []
-    for i, doc in enumerate(relevant_docs):
-        if doc['metadata']['translated_excerpt']:
-            content = doc['metadata']['translated_excerpt']
-        else:
-            content = doc['metadata']['excerpt']
-        
-        excerpts.append(
-            Document(
-                page_content=content,
-                metadata={
-                    'name': doc['metadata']['title'],
-                    'order':i,
-                }
-            )
-        )  
-
-    embeddings = bedrock_embeddings
-    vectorstore_confidence = FAISS.from_documents(
-        excerpts,  # documents
-        embeddings  # embeddings
-    )            
-    rel_documents = vectorstore_confidence.similarity_search_with_score(
-        query=query,
-        k=top_k
-    )
-
-    docs = []
-    for i, document in enumerate(rel_documents):
-
-        order = document[0].metadata['order']
-        name = document[0].metadata['name']
-        assessed_score = document[1]
-
-        relevant_docs[order]['assessed_score'] = int(assessed_score)
-
-        if assessed_score < 200:
-            docs.append(relevant_docs[order])    
-
-    return docs
-```
-
-### Kendra의 성능 향상
-
-[Kendra 를 이용한 RAG의 구현](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra.md)에 따라 Kendra의 RAG 성능을 향상 시킬 수 있습니다. [Kendra의 FAQ](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra-faq.md)와 같이 정리된 문서를 활용하고, 관련도 기반으로 관련 문서를 선택하여 Context로 확인 합니다. Kendra에서 문서 등록에 필요한 내용은 [kendra-document.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra-document.md)을 참조합니다. 또한, 상세한 내용은 관련된 Blog인 [Amazon Bedrock의 Claude와 Amazon Kendra로 향상된 RAG 사용하기](https://aws.amazon.com/ko/blogs/tech/bedrock-claude-kendra-rag/)을 참고합니다. 
-
-
-### Code Generation
-
-RAG에 저장된 기존 코드를 이용하여 새로운 코드를 생성합니다. [rag-code-generation](https://github.com/kyopark2014/rag-code-generation)는 Code를 한국어로 요약하여 RAG에 저장하고 검색하는 방법을 설명했습니다. 여기에서는 일반 문서와 Code reference를 하나의 RAG에 저장하고 활용합니다. 
-
-
 ### Embedding
 
-[BedrockEmbeddings](https://python.langchain.com/docs/integrations/text_embedding/bedrock)을 이용하여 Embedding을 합니다. 'amazon.titan-embed-text-v1'은 Titan Embeddings Generation 1 (G1)을 의미하며 8k token을 지원합니다.
+[BedrockEmbeddings](https://python.langchain.com/docs/integrations/text_embedding/bedrock)을 이용하여 Embedding을 합니다. 'amazon.titan-embed-text-v1'은 Titan Embeddings Generation 1 (G1)을 의미하며 8k token을 지원합니다. Titan Embedding v2는 "amazon.titan-embed-text-v2:0"을 사용합니다.
 
 ```python
 bedrock_embeddings = BedrockEmbeddings(
@@ -363,11 +221,7 @@ bedrock_embeddings = BedrockEmbeddings(
 )
 ```
 
-### Knowledge Store 
-
-여기서는 Knowledge Store로 OpenSearch, Faiss, Kendra을 이용합니다.
-
-### 메모리에 대화 저장
+### 대화 저장 및 관리
 
 lambda-chat-ws는 인입된 메시지의 userId를 이용하여 map_chain에 저장된 대화 이력(memory_chain)가 있는지 확인합니다. 채팅 이력이 없다면 아래와 같이 [ConversationBufferWindowMemory](https://python.langchain.com/docs/modules/memory/types/buffer_window)로 memory_chain을 설정합니다. 여기서, 
 
@@ -466,8 +320,185 @@ def sendMessage(id, body):
         raise Exception ("Not able to send a message")
 ```
 
+### Priority Search (관련도 기준 문서 선택)
 
-### S3를 데이터 소스로 하기 위한 퍼미션
+Multi-RAG, 한영 동시 검색, 인터넷 검색등을 활용하여 다수의 관련된 문서가 나오면, 관련도가 높은 순서대로 일부 문서만을 RAG에서 활용합니다. 이를 위해 Faiss의 similarity search를 이용합니다. 이것은 정량된 값의 관련도를 얻을 수 있어서, 관련되지 않은 문서를 Context로 활용하지 않도록 해줍니다. 
+
+```python
+selected_relevant_docs = []
+if len(relevant_docs)>=1:
+    selected_relevant_docs = priority_search(revised_question, relevant_docs, bedrock_embeddings)
+
+def priority_search(query, relevant_docs, bedrock_embeddings):
+    excerpts = []
+    for i, doc in enumerate(relevant_docs):
+        if doc['metadata']['translated_excerpt']:
+            content = doc['metadata']['translated_excerpt']
+        else:
+            content = doc['metadata']['excerpt']
+        
+        excerpts.append(
+            Document(
+                page_content=content,
+                metadata={
+                    'name': doc['metadata']['title'],
+                    'order':i,
+                }
+            )
+        )  
+
+    embeddings = bedrock_embeddings
+    vectorstore_confidence = FAISS.from_documents(
+        excerpts,  # documents
+        embeddings  # embeddings
+    )            
+    rel_documents = vectorstore_confidence.similarity_search_with_score(
+        query=query,
+        k=top_k
+    )
+
+    docs = []
+    for i, document in enumerate(rel_documents):
+
+        order = document[0].metadata['order']
+        name = document[0].metadata['name']
+        assessed_score = document[1]
+
+        relevant_docs[order]['assessed_score'] = int(assessed_score)
+
+        if assessed_score < 200:
+            docs.append(relevant_docs[order])    
+
+    return docs
+```
+
+### 한영 동시 검색
+
+한영 검색을 위해 먼저 한국어로 RAG를 조회하고, 영어로 번역한 후에 각각의 관련된 문서들(Relevant Documents)를 번역합니다. 관련된 문서들에 대해 질문에 따라 관련성을 비교하여 관련도가 높은 문서순서로 Context를 만들어서 활용합니다. 상세한 내용은 관련된 Blog인 [
+한영 동시 검색 및 인터넷 검색을 활용하여 RAG를 편리하게 활용하기](https://aws.amazon.com/ko/blogs/tech/rag-enhanced-searching/)을 참조합니다. 
+
+```python
+translated_revised_question = traslation_to_english(llm=llm, msg=revised_question)
+
+relevant_docs_using_translated_question = retrieve_from_vectorstore(query=translated_revised_question, top_k=4, rag_type=rag_type)
+            
+docs_translation_required = []
+if len(relevant_docs_using_translated_question)>=1:
+    for i, doc in enumerate(relevant_docs_using_translated_question):
+        if isKorean(doc)==False:
+            docs_translation_required.append(doc)
+        else:
+            relevant_docs.append(doc)
+                                   
+    translated_docs = translate_relevant_documents_using_parallel_processing(docs_translation_required)
+    for i, doc in enumerate(translated_docs):
+        relevant_docs.append(doc)
+```
+
+### 인터넷 검색
+
+Multi-RAG를 이용하여 여러개의 지식 저장소에 관련된 문서를 조회하였음에도 문서가 없다면, 구글 인터넷 검색을 통해 얻어진 결과를 활용합니다. 여기서, assessed_score는 priority search시 FAISS의 Score로 업데이트 됩니다. 상세한 내용은 [Google Search API](./GoogleSearchAPI.md) 관련된 Blog인 [
+한영 동시 검색 및 인터넷 검색을 활용하여 RAG를 편리하게 활용하기](https://aws.amazon.com/ko/blogs/tech/rag-enhanced-searching/)을 참조합니다. 
+
+```python
+from googleapiclient.discovery import build
+
+google_api_key = os.environ.get('google_api_key')
+google_cse_id = os.environ.get('google_cse_id')
+
+api_key = google_api_key
+cse_id = google_cse_id
+
+relevant_docs = []
+try:
+    service = build("customsearch", "v1", developerKey = api_key)
+    result = service.cse().list(q = revised_question, cx = cse_id).execute()
+    print('google search result: ', result)
+
+    if "items" in result:
+        for item in result['items']:
+            api_type = "google api"
+            excerpt = item['snippet']
+            uri = item['link']
+            title = item['title']
+            confidence = ""
+            assessed_score = ""
+
+            doc_info = {
+                "rag_type": 'search',
+                "api_type": api_type,
+                "confidence": confidence,
+                "metadata": {
+                    "source": uri,
+                    "title": title,
+                    "excerpt": excerpt,                                
+                },
+                "assessed_score": assessed_score,
+            }
+        relevant_docs.append(doc_info)
+```
+
+
+### Code Generation
+
+RAG에 저장된 기존 코드를 이용하여 새로운 코드를 생성합니다. [rag-code-generation](https://github.com/kyopark2014/rag-code-generation)는 Code를 한국어로 요약하여 RAG에 저장하고 검색하는 방법을 설명했습니다. 여기에서는 일반 문서와 Code reference를 하나의 RAG에 저장하고 활용합니다. 
+
+### Parent Document Retrieval
+
+RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Parent/Child Chunking을 이용할 수 있습니다. [Parent Document Retrieval](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/parent-document-retrieval.md)에서는 parent/child로 chunking 전략을 달리하는 방법에 대해 설명합니다. 
+
+### S3 Event
+
+S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 RAG 등록을 할 수 있습니다. 이때 필요한 event에 대해 [RAG-s3-event.md](./RAG-s3-event.md)에서 설명합니다.
+
+### 문서에서 이미지 추출
+
+[image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
+
+### Agent 정의 및 활용
+
+[LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.
+
+
+### 결과 읽어주기
+
+Amazon Polly를 이용하여 결과를 한국어로 읽어줍니다. [start_speech_synthesis_task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/polly/client/start_speech_synthesis_task.html#)을 활용합니다.
+
+```python
+def get_text_speech(path, speech_prefix, bucket, msg):
+    ext = "mp3"
+    polly = boto3.client('polly')
+    try:
+        response = polly.start_speech_synthesis_task(
+            Engine='neural',
+            LanguageCode='ko-KR',
+            OutputFormat=ext,
+            OutputS3BucketName=bucket,
+            OutputS3KeyPrefix=speech_prefix,
+            Text=msg,
+            TextType='text',
+            VoiceId='Seoyeon'        
+        )
+        print('response: ', response)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)        
+        raise Exception ("Not able to create voice")
+    
+    object = '.'+response['SynthesisTask']['TaskId']+'.'+ext
+    print('object: ', object)
+
+    return path+speech_prefix+parse.quote(object)
+```
+
+## Kendra
+
+### Kendra의 성능 향상
+
+[Kendra 를 이용한 RAG의 구현](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra.md)에 따라 Kendra의 RAG 성능을 향상 시킬 수 있습니다. [Kendra의 FAQ](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra-faq.md)와 같이 정리된 문서를 활용하고, 관련도 기반으로 관련 문서를 선택하여 Context로 확인 합니다. Kendra에서 문서 등록에 필요한 내용은 [kendra-document.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/kendra-document.md)을 참조합니다. 또한, 상세한 내용은 관련된 Blog인 [Amazon Bedrock의 Claude와 Amazon Kendra로 향상된 RAG 사용하기](https://aws.amazon.com/ko/blogs/tech/bedrock-claude-kendra-rag/)을 참고합니다. 
+
+
+### S3를 데이터 소스로 하기 위한 퍼미션 (Kendra)
 
 Log에 대한 퍼미션이 필요합니다.
 
@@ -533,37 +564,6 @@ roleKendra.attachInlinePolicy( // add kendra policy
 
 [Quota Console - File size](https://ap-northeast-1.console.aws.amazon.com/servicequotas/home/services/kendra/quotas/L-C108EA1B)와 같이 Kendra에 올릴수 있는 파일크기는 50MB로 제한됩니다. 이는 Quota 조정 요청을 위해 적절한 값으로 조정할 수 있습니다. 다만 이 경우에도 파일 한개에서 얻어낼수 있는 Text의 크기는 5MB로 제한됩니다. msg를 한국어 Speech로 변환한 후에 CloudFront URL을 이용하여 S3에 저장된 Speech를 URI로 공유할 수 있습니다.
 
-### 결과 읽어주기
-
-Amazon Polly를 이용하여 결과를 한국어로 읽어줍니다. [start_speech_synthesis_task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/polly/client/start_speech_synthesis_task.html#)을 활용합니다.
-
-```python
-def get_text_speech(path, speech_prefix, bucket, msg):
-    ext = "mp3"
-    polly = boto3.client('polly')
-    try:
-        response = polly.start_speech_synthesis_task(
-            Engine='neural',
-            LanguageCode='ko-KR',
-            OutputFormat=ext,
-            OutputS3BucketName=bucket,
-            OutputS3KeyPrefix=speech_prefix,
-            Text=msg,
-            TextType='text',
-            VoiceId='Seoyeon'        
-        )
-        print('response: ', response)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)        
-        raise Exception ("Not able to create voice")
-    
-    object = '.'+response['SynthesisTask']['TaskId']+'.'+ext
-    print('object: ', object)
-
-    return path+speech_prefix+parse.quote(object)
-```
-
 ### 데이터 소스 추가
 
 S3를 데이터 소스르 추가할때 아래와 같이 수행하면 되나, languageCode가 미지원되어서 CLI로 대체합니다.
@@ -603,8 +603,9 @@ aws kendra create-data-source
 --region us-west-2
 ```
 
-### OpenSearch
+## OpenSearch
 
+### OpenSearch 준비
 
 [Python client](https://opensearch.org/docs/latest/clients/python-low-level/)에 따라 OpenSearch를 활용합니다.
 
@@ -690,9 +691,6 @@ new_vectorstore = OpenSearchVectorSearch(
 response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 ```
 
-### 문서에서 이미지 추출
-
-[image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
 
 ### AWS CDK로 인프라 구현하기
 

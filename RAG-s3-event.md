@@ -74,46 +74,9 @@ def extract_images_from_ppt(prs, key):
     return extracted_image_files
 ```
 
-S3의 저장 event를 이용해 text를 추출하고 summary를 만듧니다.
-
-이미지 요약은 아래와 같이 수행합니다.
-
-```python
-def summary_image(chat, img_base64):    
-    query = "이미지가 의미하는 내용을 풀어서 자세히 알려주세요. <result> tag를 붙여주세요."
-    
-    messages = [
-        HumanMessage(
-            content=[
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/png;base64,{img_base64}", 
-                    },
-                },
-                {
-                    "type": "text", "text": query
-                },
-            ]
-        )
-    ]
-    
-    try: 
-        result = chat.invoke(messages)
-        
-        extracted_text = result.content
-        # print('summary from an image: ', extracted_text)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return extracted_text
-```
-
 ### PDF
 
-PDF에서 파일을 추출후 S3에 저장합니다.
+PDF에서 이미지 파일을 추출후 S3에 저장합니다.
 
 ```python
 s3r = boto3.resource("s3")
@@ -187,4 +150,111 @@ def extract_images_from_pdf(reader, key):
     print('extracted_image_files: ', extracted_image_files)    
     return extracted_image_files
 ```        
+
+## DOCX
+
+DOCX에서 이미지 파일을 추출후 S3에 저장합니다.
+
+```python
+s3r = boto3.resource("s3")
+doc = s3r.Object(s3_bucket, key)
+
+Byte_contents = doc.get()['Body'].read()
+
+from pypdf import PdfReader
+reader = PdfReader(BytesIO(Byte_contents))
+            
+if enableImageExtraction == 'true':
+    image_files = extract_images_from_docx(doc_contents, key)                  
+    for img in image_files:
+        files.append(img)        
+
+def extract_images_from_docx(doc_contents, key):
+    picture_count = 1
+    extracted_image_files = []
+        
+    for inline_shape in doc_contents.inline_shapes:
+        if inline_shape.type == WD_INLINE_SHAPE_TYPE.PICTURE:
+            rId = inline_shape._inline.graphic.graphicData.pic.blipFill.blip.embed            
+            image_part = doc_contents.part.related_parts[rId]            
+            filename = image_part.filename            
+            bytes_of_image = image_part.image.blob
+            pixels = BytesIO(bytes_of_image)
+            pixels.seek(0, 0)
+                        
+            objectName = (key[key.find(s3_prefix)+len(s3_prefix)+1:len(key)])
+            folder = s3_prefix+'/files/'+objectName+'/'
+            fname = 'img_'+key.split('/')[-1].split('.')[0]+f"_{picture_count}"  
+                                
+            ext = filename.split('.')[-1]            
+            contentType = ""
+            if ext == 'png':
+                contentType = 'image/png'
+            elif ext == 'jpg' or ext == 'jpeg':
+                contentType = 'image/jpeg'
+            elif ext == 'gif':
+                contentType = 'image/gif'
+            elif ext == 'bmp':
+                contentType = 'image/bmp'
+            elif ext == 'tiff' or ext == 'tif':
+                contentType = 'image/tiff'
+            elif ext == 'svg':
+                contentType = 'image/svg+xml'
+            elif ext == 'webp':
+                contentType = 'image/webp'
+            elif ext == 'ico':
+                contentType = 'image/x-icon'
+            elif ext == 'eps':
+                contentType = 'image/eps'
+                        
+            img_key = folder+fname+'.'+ext                
+            response = s3_client.put_object(
+                Bucket=s3_bucket,
+                Key=img_key,
+                ContentType=contentType,
+                Body=pixels
+            )                                                                
+            picture_count += 1                        
+            extracted_image_files.append(img_key)
+    print('extracted_image_files: ', extracted_image_files)    
+    return extracted_image_files        
+```
+
+## 이미지 요약
+
+S3의 저장 event를 이용해 text를 추출하고 summary를 만듧니다. 이미지 요약은 아래와 같이 수행합니다.
+
+```python
+def summary_image(chat, img_base64):    
+    query = "이미지가 의미하는 내용을 풀어서 자세히 알려주세요. <result> tag를 붙여주세요."
     
+    messages = [
+        HumanMessage(
+            content=[
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{img_base64}", 
+                    },
+                },
+                {
+                    "type": "text", "text": query
+                },
+            ]
+        )
+    ]
+    
+    try: 
+        result = chat.invoke(messages)
+        
+        extracted_text = result.content
+        # print('summary from an image: ', extracted_text)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+    
+    return extracted_text
+```
+
+

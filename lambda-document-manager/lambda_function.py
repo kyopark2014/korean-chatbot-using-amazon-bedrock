@@ -423,6 +423,9 @@ def store_image_for_opensearch(key):
                         
     width, height = img.size 
     print(f"width: {width}, height: {height}, size: {width*height}")
+    
+    if width < 100 or height < 100:  # skip small size image
+        return []
                         
     isResized = False
     while(width*height > 5242880):

@@ -4,7 +4,7 @@
 
 ## PPTX
 
-"python-pptx"를 설치후에 slide 단위로 Shape를 읽어옵니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.
+python-pptx(pip install python-pptx)를 이용해 slide 단위로 Shape를 읽어옵니다. shape_type이 MSO_SHAPE_TYPE.PICTURE일 경우에 S3에 저장합니다.
 
 ```python
 prs = Presentation(BytesIO(Byte_contents))
@@ -48,7 +48,7 @@ def extract_images_from_ppt(prs, key):
 
 ## PDF
 
-PDF에서 이미지 파일을 추출후 S3에 저장합니다.
+pypdf(pip install pypdf)를 이용해, 이미지 파일을 추출후 S3에 저장합니다.
 
 ```python
 from pypdf import PdfReader
@@ -126,7 +126,7 @@ def extract_images_from_pdf(reader, key):
 
 ## DOCX
 
-DOCX에서 이미지 파일을 추출후 S3에 저장합니다.
+python-docx(pip install python-docx)에서 이미지 파일을 추출후 S3에 저장합니다.
 
 ```python
 s3r = boto3.resource("s3")

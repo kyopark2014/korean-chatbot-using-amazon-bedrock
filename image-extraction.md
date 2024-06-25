@@ -126,7 +126,7 @@ def extract_images_from_pdf(reader, key):
 
 ## DOCX
 
-"python-docx"(pip install python-docx)에서 이미지 파일을 추출후 S3에 저장합니다.
+"python-docx"(pip install python-docx)를 이용해 이미지 파일을 추출후 S3에 저장합니다.
 
 ```python
 s3r = boto3.resource("s3")

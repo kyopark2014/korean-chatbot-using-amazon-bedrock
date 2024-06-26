@@ -1512,7 +1512,7 @@ def load_chat_history(userId, allowTime):
         msg = item['msg']['S']
         type = item['type']['S']
 
-        if type == 'text':
+        if type == 'text' and text and msg:
             memory_chain.chat_memory.add_user_message(text)
             if len(msg) > MSG_LENGTH:
                 memory_chain.chat_memory.add_ai_message(msg[:MSG_LENGTH])                          
@@ -2102,7 +2102,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                     if len(relevant_documents)>=top_k:
                         break
                                 
-    # print('lexical query result: ', json.dumps(response))
+    # print('query result: ', json.dumps(response))
     print('relevant_documents: ', relevant_documents)
     
     return relevant_documents

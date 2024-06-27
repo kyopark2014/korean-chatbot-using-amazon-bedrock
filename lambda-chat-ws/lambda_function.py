@@ -1591,7 +1591,7 @@ def retrieve_from_kendra_using_kendra_retriever(query, top_k):
     for i, document in enumerate(relevant_documents):
         #print('document.page_content:', document.page_content)
         #print('document.metadata:', document.metadata)
-        print(f'## Document(retrieve_from_kendra_using_kendra_retriever) {i+1}: {document}')
+        # print(f'## Document(retrieve_from_kendra_using_kendra_retriever) {i+1}: {document}')
 
         result_id = document.metadata['result_id']
         document_id = document.metadata['document_id']
@@ -1788,8 +1788,8 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
         print('error message: ', err_msg)        
         raise Exception ("Not able to retrieve from Kendra")     
 
-    for i, rel_doc in enumerate(relevant_docs):
-        print(f'## Document(retrieve_from_kendra_using_kendra_retriever) {i+1}: {json.dumps(rel_doc)}')  
+    #for i, rel_doc in enumerate(relevant_docs):
+    #    print(f'## Document(retrieve_from_kendra_using_kendra_retriever) {i+1}: {json.dumps(rel_doc)}')  
 
     return relevant_docs
 
@@ -1827,7 +1827,7 @@ def priority_search(query, relevant_docs, minSimilarity):
 
     docs = []
     for i, document in enumerate(rel_documents):
-        print(f'## Document(priority_search) {i+1}: {document}')
+        # print(f'## Document(priority_search) {i+1}: {document}')
 
         order = document[0].metadata['order']
         name = document[0].metadata['name']
@@ -1958,7 +1958,7 @@ def get_reference(docs, rag_method, rag_type, path, doc_prefix):
         else:
             reference = "\n\nFrom\n"
             for i, doc in enumerate(docs):
-                print(f'## Document(get_reference) {i+1}: {doc}')
+                # print(f'## Document(get_reference) {i+1}: {doc}')
 
                 name = doc.metadata['name']
                 page = doc.metadata['page']
@@ -2007,7 +2007,7 @@ def get_reference(docs, rag_method, rag_type, path, doc_prefix):
                         elif uri:
                             reference = reference + f"{i+1}. <a href={uri} target=_blank>{name} ({confidence})</a>, {doc['rag_type']} ({doc['assessed_score']}), <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
             elif doc['rag_type'][:10] == 'opensearch':
-                print(f'## Document(get_reference) {i+1}: {doc}')
+                # print(f'## Document(get_reference) {i+1}: {doc}')
                 
                 page = ""
                 if "document_attributes" in doc['metadata']:
@@ -2024,7 +2024,7 @@ def get_reference(docs, rag_method, rag_type, path, doc_prefix):
                     reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, {doc['rag_type']} ({doc['assessed_score']}), <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
                     
             elif doc['rag_type'] == 'search': # google search
-                print(f'## Document(get_reference) {i+1}: {doc}')
+                # print(f'## Document(get_reference) {i+1}: {doc}')
                 
                 uri = doc['metadata']['source']
                 name = doc['metadata']['title']
@@ -2043,7 +2043,7 @@ def get_code_reference(docs):
         print('reference_doc: ', json.dumps(doc))
         
         if doc['rag_type'][:10] == 'opensearch':
-            print(f'## Document(get_reference) {i+1}: {doc}')
+            # print(f'## Document(get_reference) {i+1}: {doc}')
                 
             page = ""
             if "document_attributes" in doc['metadata']:
@@ -2128,7 +2128,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
         for i, document in enumerate(relevant_documents):
             #print('document.page_content:', document.page_content)
             #print('document.metadata:', document.metadata)
-            print(f'## Document(opensearch-vector) {i+1}: {document}')
+            # print(f'## Document(opensearch-vector) {i+1}: {document}')
 
             name = document[0].metadata['name']
             # print('metadata: ', document[0].metadata)
@@ -2236,7 +2236,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     break
                 
                 excerpt = document['_source']['text']
-                print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
+                # print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
 
                 name = document['_source']['metadata']['name']
                 print('name: ', name)
@@ -2318,7 +2318,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
         if  doc['metadata']['excerpt'] in docList:
             print('duplicated!')
             continue        
-        docList.append( doc['metadata']['excerpt'])
+        docList.append(doc['metadata']['excerpt'])
         relevant_docs.append(doc)
     
     for i, doc in enumerate(relevant_docs):
@@ -2345,7 +2345,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
         #print('(opensearch score) relevant_documents: ', relevant_documents)
 
         for i, document in enumerate(relevant_documents):
-            print(f'## Document(opensearch-vector) {i+1}: {document}')
+            # print(f'## Document(opensearch-vector) {i+1}: {document}')
 
             if "code" in document[0].metadata:
                 code = document[0].metadata['code']
@@ -2439,7 +2439,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
                     code = document['_source']['metadata']['code']
                               
                     excerpt = document['_source']['text']
-                    print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
+                    # print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
 
                     name = document['_source']['metadata']['name']
                     print('name: ', name)
@@ -2840,7 +2840,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                 content = document['metadata']['excerpt']
 
             relevant_context = relevant_context + content + "\n\n"
-        print('relevant_context: ', relevant_context)
+        # print('relevant_context: ', relevant_context)
 
         # query using RAG context
         msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
@@ -3230,7 +3230,7 @@ def search_by_opensearch(keyword: str) -> str:
         relevant_documents = get_documents_from_opensearch(vectorstore_opensearch, keyword, top_k)
 
         for i, document in enumerate(relevant_documents):
-            print(f'## Document(opensearch-vector) {i+1}: {document}')
+            # print(f'## Document(opensearch-vector) {i+1}: {document}')
             
             parent_doc_id = document[0].metadata['parent_doc_id']
             doc_level = document[0].metadata['doc_level']
@@ -3247,7 +3247,7 @@ def search_by_opensearch(keyword: str) -> str:
         )
 
         for i, document in enumerate(relevant_documents):
-            print(f'## Document(opensearch-vector) {i+1}: {document}')
+            # print(f'## Document(opensearch-vector) {i+1}: {document}')
             
             excerpt = document[0].page_content        
             uri = document[0].metadata['uri']

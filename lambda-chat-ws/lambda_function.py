@@ -2137,7 +2137,6 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
 def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_type):
     print(f"query: {query} ({rag_type})")
 
-    combined_docs = []    
     rel_docs_vector_search = []
     rel_docs_lexical_search = []        
     if rag_type == 'opensearch':                                                        
@@ -2847,20 +2846,39 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         print('processing time for revised question: ', time_for_revise)
 
         if rag_type == 'kendra':
-            relevant_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)
-            if len(relevant_docs) >= 1:
-                relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+            relevant_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)            
         else:
             relevant_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=revised_question, top_k=top_k, rag_type=rag_type)
         print('relevant_docs: ', json.dumps(relevant_docs))
+        
+        if len(relevant_docs) >= 1:
+            selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+
+        # update doc using parent
+        contentList = []
+        update_docs = []
+        for doc in selected_relevant_docs:        
+            doc = get_parent_document(doc) # use pareant document
+            
+            # print('excerpt: ', doc['metadata']['excerpt'])
+            if doc['metadata']['excerpt'] in contentList:
+                print('duplicated!')
+                continue
+            contentList.append(doc['metadata']['excerpt'])
+            update_docs.append(doc)
+            
+            if len(update_docs)>top_k:
+                break
+        
+        print('update_docs:', json.dumps(update_docs))
 
         end_time_for_rag = time.time()
         time_for_rag = end_time_for_rag - end_time_for_revise
         print('processing time for RAG: ', time_for_rag)
-        number_of_relevant_docs = len(relevant_docs)
+        number_of_relevant_docs = len(update_docs)
 
         relevant_context = ""
-        for document in relevant_docs:
+        for document in update_docs:
             if document['metadata']['translated_excerpt']:
                 content = document['metadata']['translated_excerpt']
             else:
@@ -2872,8 +2890,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         # query using RAG context
         msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
-        if len(relevant_docs)>=1 and enableReference=='true':
-            reference = get_reference(relevant_docs, rag_method, rag_type, path, doc_prefix)
+        if len(update_docs)>=1 and enableReference=='true':
+            reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)
             
         end_time_for_inference = time.time()
         time_for_inference = end_time_for_inference - end_time_for_rag

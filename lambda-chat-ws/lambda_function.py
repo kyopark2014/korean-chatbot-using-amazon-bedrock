@@ -1813,7 +1813,7 @@ def priority_search(query, relevant_docs, minSimilarity):
                 }
             )
         )  
-    print('excerpts: ', excerpts)
+    # print('excerpts: ', excerpts)
 
     embeddings = get_ps_embedding()
     vectorstore_confidence = FAISS.from_documents(
@@ -1822,7 +1822,8 @@ def priority_search(query, relevant_docs, minSimilarity):
     )            
     rel_documents = vectorstore_confidence.similarity_search_with_score(
         query=query,
-        k=top_k
+        #k=top_k
+        k=len(relevant_docs)
     )
 
     docs = []
@@ -2099,8 +2100,8 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                     relevant_documents.append(re)
                     docList.append(parent_doc_id)
                     
-                    if len(relevant_documents)>=top_k:
-                        break
+                    #if len(relevant_documents)>=top_k:
+                    #    break
                                 
     # print('query result: ', json.dumps(response))
     print('relevant_documents: ', relevant_documents)
@@ -2148,7 +2149,6 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
             if enalbeParentDocumentRetrival == 'true':
                 parent_doc_id = document[0].metadata['parent_doc_id']
                 doc_level = document[0].metadata['doc_level']
-                excerpt, name, uri, doc_level = get_parent_document(parent_doc_id) # use pareant document
                 
             if page:
                 print('page: ', page)
@@ -2260,9 +2260,6 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     if 'doc_level' in document['_source']['metadata']:
                         doc_level = document['_source']['metadata']['doc_level']
                     
-                    if 'parent_doc_id' in document['_source']['metadata']:  # update            
-                        excerpt, name, uri, doc_level = get_parent_document(parent_doc_id) # use pareant document
-
                 if page:
                     print('page: ', page)
                     doc_info = {
@@ -2308,21 +2305,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 rel_docs_lexical_search.append(doc_info)
             print(f'rel_docs (lexical): '+json.dumps(rel_docs_lexical_search))
     
-    combined_docs = rel_docs_vector_search + rel_docs_lexical_search
-                
-    # check duplication
-    docList = []
-    relevant_docs = []
-    for doc in combined_docs:        
-        print('excerpt: ', doc['metadata']['excerpt'])
-        if  doc['metadata']['excerpt'] in docList:
-            print('duplicated!')
-            continue        
-        docList.append(doc['metadata']['excerpt'])
-        relevant_docs.append(doc)
-    
-    for i, doc in enumerate(relevant_docs):
-        print(f"#### relevant_docs ({i}): {json.dumps(doc)}")
+    relevant_docs = rel_docs_vector_search + rel_docs_lexical_search
 
     return relevant_docs
 
@@ -2781,14 +2764,32 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                 selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
                 print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
             # print('selected_relevant_docs (google): ', selected_relevant_docs)
+            
+        # update doc using parent
+        contentList = []
+        update_docs = []
+        for doc in selected_relevant_docs:        
+            doc = get_parent_document(doc) # use pareant document
+            
+            # print('excerpt: ', doc['metadata']['excerpt'])
+            if doc['metadata']['excerpt'] in contentList:
+                print('duplicated!')
+                continue
+            contentList.append(doc['metadata']['excerpt'])
+            update_docs.append(doc)
+            
+            if len(update_docs)>=top_k:
+                break
+        
+        print('update_docs:', json.dumps(update_docs))
 
         end_time_for_priority_search = time.time() 
         time_for_priority_search = end_time_for_priority_search - end_time_for_rag
         print('processing time for priority search: ', time_for_priority_search)
-        number_of_relevant_docs = len(selected_relevant_docs)
+        number_of_relevant_docs = len(update_docs)
 
         relevant_context = ""
-        for document in selected_relevant_docs:
+        for document in update_docs:
             if document['metadata']['translated_excerpt']:
                 content = document['metadata']['translated_excerpt']
             else:
@@ -2933,9 +2934,27 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
     time_for_priority_search = end_time_for_priority_search - end_time_for_rag
     print('processing time for priority search: ', time_for_priority_search)
     number_of_relevant_codes = len(selected_relevant_codes)
+    
+    # update doc using parent
+    contentList = []
+    update_codes = []
+    for doc in selected_relevant_codes:        
+        doc = get_parent_document(doc) # use pareant document
+            
+        # print('excerpt: ', doc['metadata']['excerpt'])
+        if doc['metadata']['excerpt'] in contentList:
+            print('duplicated!')
+            continue
+        contentList.append(doc['metadata']['excerpt'])
+        update_codes.append(doc)
+            
+        if len(update_codes)>=top_k:
+            break
+        
+    print('update_docs:', json.dumps(update_codes))    
 
     relevant_code = ""
-    for document in selected_relevant_codes:
+    for document in update_codes:
         if document['metadata']['code']:
             code = document['metadata']['code']
             relevant_code = relevant_code + code + "\n\n"            

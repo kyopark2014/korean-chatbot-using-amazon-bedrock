@@ -2110,8 +2110,9 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
 def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_type):
     print(f"query: {query} ({rag_type})")
 
-    relevant_docs = []
-            
+    combined_docs = []    
+    rel_docs_vector_search = []
+    rel_docs_lexical_search = []        
     if rag_type == 'opensearch':                                                        
         # vector search (semantic) 
         if enalbeParentDocumentRetrival=='true':
@@ -2191,8 +2192,9 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     #"feedback_token": feedback_token
                     "assessed_score": assessed_score,
                 }
-            relevant_docs.append(doc_info)
-        
+            rel_docs_vector_search.append(doc_info)
+        print(f'rel_docs (vector): '+json.dumps(rel_docs_vector_search))
+    
         # lexical search (keyword)
         min_match = 0
         if enableHybridSearch == 'true':
@@ -2289,7 +2291,25 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                         #"feedback_token": feedback_token
                         "assessed_score": assessed_score,
                     }
-                relevant_docs.append(doc_info)
+                rel_docs_lexical_search.append(doc_info)
+            print(f'rel_docs (lexical): '+json.dumps(rel_docs_lexical_search))
+    
+    combined_docs = rel_docs_vector_search + rel_docs_lexical_search
+                
+    # check duplication
+    docList = []
+    relevant_docs = []
+    for doc in combined_docs:        
+        print('excerpt: ', doc['metadata']['excerpt'])
+        if  doc['metadata']['excerpt'] in docList:
+            print('duplicated!')
+            continue        
+        docList.append( doc['metadata']['excerpt'])
+        relevant_docs.append(doc)
+    
+    for i, doc in enumerate(relevant_docs):
+        print(f"#### relevant_docs ({i}): {json.dumps(doc)}")
+
     return relevant_docs
 
 def checkDupulication(relevant_codes, doc_info):

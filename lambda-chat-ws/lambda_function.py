@@ -2061,21 +2061,47 @@ def get_code_reference(docs):
                             
     return reference
 
-def get_parent_document(parent_doc_id):
-    response = os_client.get(
-        index="idx-rag", 
-        id = parent_doc_id
-    )
+def get_parent_content(parent_doc_id):
+    if parent_doc_id:
+        response = os_client.get(
+            index="idx-rag", 
+            id = parent_doc_id
+        )
+            
+        source = response['_source']
+        print('excerpt: ', source['text'])   
+            
+        metadata = source['metadata']    
+        #print('name: ', metadata['name'])   
+        print('uri: ', metadata['uri'])   
+        #print('doc_level: ', metadata['doc_level']) 
+                    
+    return source['text'], metadata['uri']
+
+def get_parent_document(doc):
+    # print('doc: ', doc)
+    if 'parent_doc_id' in doc['metadata']:
+        parent_doc_id = doc['metadata']['parent_doc_id']
     
-    source = response['_source']                            
-    # print('parent_doc: ', source['text'])   
-    
-    metadata = source['metadata']    
-    #print('name: ', metadata['name'])   
-    #print('uri: ', metadata['uri'])   
-    #print('doc_level: ', metadata['doc_level']) 
-    
-    return source['text'], metadata['name'], metadata['uri'], metadata['doc_level']    
+        if parent_doc_id:
+            response = os_client.get(
+                index="idx-rag", 
+                id = parent_doc_id
+            )
+            
+            #source = response['_source']
+            # print('parent_doc: ', source['text'])   
+            
+            #metadata = source['metadata']    
+            #print('name: ', metadata['name'])   
+            #print('uri: ', metadata['uri'])   
+            #print('doc_level: ', metadata['doc_level']) 
+            
+            print('text(before)', doc['metadata']['excerpt'])
+            doc['metadata']['excerpt'] = response['_source']['text']
+            print('text(after)', doc['metadata']['excerpt'])
+        
+    return doc
 
 def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
     result = vectorstore_opensearch.similarity_search_with_score(
@@ -3254,9 +3280,10 @@ def search_by_opensearch(keyword: str) -> str:
             parent_doc_id = document[0].metadata['parent_doc_id']
             doc_level = document[0].metadata['doc_level']
             print(f"child: parent_doc_id: {parent_doc_id}, doc_level: {doc_level}")
-                
-            excerpt, name, uri, doc_level = get_parent_document(parent_doc_id) # use pareant document
-            print(f"parent: name: {name}, uri: {uri}, doc_level: {doc_level}")
+            
+            excerpt, uri = get_parent_content(parent_doc_id)
+            
+            print(f"parent_doc_id: {parent_doc_id}, doc_level: {doc_level}, uri: {uri}, content: {excerpt}")
             
             answer = answer + f"{excerpt}, URL: {uri}\n\n"
     else: 

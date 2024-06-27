@@ -9,10 +9,7 @@
 OpenSearch의 index 생성시에 tokenizer로 nori를 지정합니다. 이때 vector의 embedding은 Bedrock을 이용하고, OpenSearch에 vector로 문서를 추가합니다. 
 
 ```python
-def store_document_for_opensearch_with_nori(bedrock_embeddings, docs, documentId):
-    index_name = "idx-"+documentId    
-    delete_index_if_exist(index_name)
-    
+def create_nori_index():
     index_body = {
         'settings': {
             'analysis': {
@@ -73,16 +70,16 @@ def store_document_for_opensearch_with_nori(bedrock_embeddings, docs, documentId
         }
     }
     
-    try:
-        response = os_client.indices.create(
-            index_name,
-            body=index_body
-        )
-        print('index was created with nori plugin:', response)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                
-        #raise Exception ("Not able to create the index")
+    if(is_not_exist(index_name)):
+        try: # create index
+            response = os_client.indices.create(
+                index_name,
+                body=index_body
+            )
+            print('index was created with nori plugin:', response)
+        except Exception:
+            err_msg = traceback.format_exc()
+            print('error message: ', err_msg)                
 
     try: 
         vectorstore = OpenSearchVectorSearch(

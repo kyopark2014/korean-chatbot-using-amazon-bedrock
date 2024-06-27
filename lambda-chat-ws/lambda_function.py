@@ -1724,7 +1724,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                         if confidence == 'VERY_HIGH' or confidence == 'HIGH': 
                             relevant_docs.append(extract_relevant_doc_for_kendra(query_id=query_id, api_type="query", query_result=query_result))
 
-                            if len(relevant_docs) > top_k:
+                            if len(relevant_docs)>=top_k:
                                 break
                     # print('relevant_docs: ', relevant_docs)
 
@@ -1737,7 +1737,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                 raise Exception ("Not able to query from Kendra")
 
             for doc in retrieve_docs:                
-                if len(relevant_docs) > top_k:
+                if len(relevant_docs)>=top_k:
                     break
                 else:
                     relevant_docs.append(doc)
@@ -1770,7 +1770,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                         if confidence == 'VERY_HIGH' or confidence == 'HIGH' or confidence == 'MEDIUM': 
                             relevant_docs.append(extract_relevant_doc_for_kendra(query_id=query_id, api_type="query", query_result=query_result))
 
-                            if len(relevant_docs) > top_k:
+                            if len(relevant_docs)>=top_k:
                                 break
                     # print('relevant_docs: ', relevant_docs)
 

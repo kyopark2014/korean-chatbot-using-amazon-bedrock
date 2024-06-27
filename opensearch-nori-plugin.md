@@ -161,7 +161,7 @@ def add_to_opensearch(docs, key):
             err_msg = traceback.format_exc()
             print('error message: ', err_msg)
     return ids 
-
+```
 
 
 ### 검색결과의 활용

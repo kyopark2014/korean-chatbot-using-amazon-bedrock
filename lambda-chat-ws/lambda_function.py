@@ -1802,7 +1802,7 @@ def priority_search(query, relevant_docs, minSimilarity):
         else:
             content = doc['metadata']['excerpt']
             
-        print('content: ', content)
+        # print('content: ', content)
         
         excerpts.append(
             Document(
@@ -2265,7 +2265,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 # print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
 
                 name = document['_source']['metadata']['name']
-                print('name: ', name)
+                # print('name: ', name)
 
                 page = ""
                 if "page" in document['_source']['metadata']:
@@ -2274,7 +2274,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 uri = ""
                 if "uri" in document['_source']['metadata']:
                     uri = document['_source']['metadata']['uri']
-                print('uri: ', uri)
+                # print('uri: ', uri)
 
                 confidence = str(document['_score'])
                 assessed_score = ""
@@ -2451,7 +2451,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
                     # print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
 
                     name = document['_source']['metadata']['name']
-                    print('name: ', name)
+                    # print('name: ', name)
 
                     page = ""
                     if "page" in document['_source']['metadata']:
@@ -2460,7 +2460,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
                     uri = ""
                     if "uri" in document['_source']['metadata']:
                         uri = document['_source']['metadata']['uri']
-                    print('uri: ', uri)
+                    # print('uri: ', uri)
 
                     confidence = str(document['_score'])
                     assessed_score = ""
@@ -2804,7 +2804,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             contentList.append(doc['metadata']['excerpt'])
             update_docs.append(doc)
             
-            if len(update_docs)>=top_k:
+            if len(update_docs)>top_k:
                 break
         
         print('update_docs:', json.dumps(update_docs))
@@ -2828,8 +2828,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
         reference = ""
-        if len(selected_relevant_docs)>=1 and enableReference=='true':
-            reference = get_reference(selected_relevant_docs, rag_method, rag_type, path, doc_prefix)  
+        if len(update_docs)>=1 and enableReference=='true':
+            reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)  
 
         end_time_for_inference = time.time()
         time_for_inference = end_time_for_inference - end_time_for_priority_search

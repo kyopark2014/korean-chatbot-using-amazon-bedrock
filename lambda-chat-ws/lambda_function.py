@@ -2252,6 +2252,16 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
 
                 confidence = str(document['_score'])
                 assessed_score = ""
+                
+                parent_doc_id = doc_level = ""            
+                if enalbeParentDocumentRetrival == 'true':
+                    if 'parent_doc_id' in document['_source']['metadata']:
+                        parent_doc_id = document['_source']['metadata']['parent_doc_id']
+                    if 'doc_level' in document['_source']['metadata']:
+                        doc_level = document['_source']['metadata']['doc_level']
+                    
+                    if 'parent_doc_id' in document['_source']['metadata']:  # update            
+                        excerpt, name, uri, doc_level = get_parent_document(parent_doc_id) # use pareant document
 
                 if page:
                     print('page: ', page)

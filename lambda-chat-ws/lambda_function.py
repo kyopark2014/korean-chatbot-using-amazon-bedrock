@@ -1724,7 +1724,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                         if confidence == 'VERY_HIGH' or confidence == 'HIGH': 
                             relevant_docs.append(extract_relevant_doc_for_kendra(query_id=query_id, api_type="query", query_result=query_result))
 
-                            if len(relevant_docs) >= top_k:
+                            if len(relevant_docs) > top_k:
                                 break
                     # print('relevant_docs: ', relevant_docs)
 
@@ -1737,7 +1737,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                 raise Exception ("Not able to query from Kendra")
 
             for doc in retrieve_docs:                
-                if len(relevant_docs) >= top_k:
+                if len(relevant_docs) > top_k:
                     break
                 else:
                     relevant_docs.append(doc)
@@ -1770,7 +1770,7 @@ def retrieve_from_kendra_using_custom_retriever(query, top_k):
                         if confidence == 'VERY_HIGH' or confidence == 'HIGH' or confidence == 'MEDIUM': 
                             relevant_docs.append(extract_relevant_doc_for_kendra(query_id=query_id, api_type="query", query_result=query_result))
 
-                            if len(relevant_docs) >= top_k:
+                            if len(relevant_docs) > top_k:
                                 break
                     # print('relevant_docs: ', relevant_docs)
 
@@ -2126,7 +2126,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                     relevant_documents.append(re)
                     docList.append(parent_doc_id)
                     
-                    #if len(relevant_documents)>=top_k:
+                    #if len(relevant_documents)>top_k:
                     #    break
                                 
     # print('query result: ', json.dumps(response))
@@ -2992,7 +2992,7 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
         contentList.append(doc['metadata']['excerpt'])
         update_codes.append(doc)
             
-        if len(update_codes)>=top_k:
+        if len(update_codes)>top_k:
             break
         
     print('update_docs:', json.dumps(update_codes))    
@@ -3289,11 +3289,34 @@ def search_by_opensearch(keyword: str) -> str:
     answer = ""
     top_k = 2
     
-    if enalbeParentDocumentRetrival == 'true':
-        relevant_documents = get_documents_from_opensearch(vectorstore_opensearch, keyword, top_k)
-
+    if enalbeParentDocumentRetrival == 'true': # parent/child chunking
+        result = vectorstore_opensearch.similarity_search_with_score(
+            query = keyword,
+            k = top_k*2,  # use double
+            pre_filter={"doc_level": {"$eq": "child"}}
+        )
+        print('result: ', result)
+                
+        relevant_documents = []
+        docList = []
+        for re in result:
+            if 'parent_doc_id' in re[0].metadata:
+                parent_doc_id = re[0].metadata['parent_doc_id']
+                doc_level = re[0].metadata['doc_level']
+                print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
+                        
+                if doc_level == 'child':
+                    if parent_doc_id in docList:
+                        print('duplicated!')
+                    else:
+                        relevant_documents.append(re)
+                        docList.append(parent_doc_id)
+                        
+                        if len(relevant_documents)>top_k:
+                            break
+                        
         for i, document in enumerate(relevant_documents):
-            # print(f'## Document(opensearch-vector) {i+1}: {document}')
+            #print(f'## Document(opensearch-vector) {i+1}: {document}')
             
             parent_doc_id = document[0].metadata['parent_doc_id']
             doc_level = document[0].metadata['doc_level']
@@ -3311,7 +3334,7 @@ def search_by_opensearch(keyword: str) -> str:
         )
 
         for i, document in enumerate(relevant_documents):
-            # print(f'## Document(opensearch-vector) {i+1}: {document}')
+            #print(f'## Document(opensearch-vector) {i+1}: {document}')
             
             excerpt = document[0].page_content        
             uri = document[0].metadata['uri']

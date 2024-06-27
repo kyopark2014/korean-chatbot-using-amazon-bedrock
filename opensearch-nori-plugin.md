@@ -81,54 +81,86 @@ def create_nori_index():
             err_msg = traceback.format_exc()
             print('error message: ', err_msg)                
 
-    try: 
-        vectorstore = OpenSearchVectorSearch(
-            index_name=index_name,  
-            is_aoss = False,
-            embedding_function = bedrock_embeddings,
-            opensearch_url = opensearch_url,
-            http_auth=(opensearch_account, opensearch_passwd),
-        )
-        response = vectorstore.add_documents(docs, bulk_size = 2000)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                
+def is_not_exist(index_name):    
+    if os_client.indices.exists(index_name):        
+        print('use exist index: ', index_name)    
+        return False
+    else:
+        print('no index: ', index_name)
+        return True
+
+if enableNoriPlugin == 'true':
+    create_nori_index()
 ```
 
-아래와 같이 query 문을 생성한 후에 전체 index를 검색합니다.
+아래와 같이 chunking후 vectorstore에 add_document()를 이용해 문서를 등록합니다.
+
 ```python
-query = {
-    "query": {
-        "bool": {
-            "must": [
-                {
-                    "match": {
-                        "text": {
-                            "query": query,
-                            "minimum_should_match": f'{min_shoud_match}%',
-                            "operator":  "or",
-                            # "fuzziness": "AUTO",
-                            # "fuzzy_transpositions": True,
-                            # "zero_terms_query": "none",
-                            # "lenient": False,
-                            # "prefix_length": 0,
-                            # "max_expansions": 50,
-                            # "boost": 1
-                        }
-                    }
-                },
-            ],
-            "filter": [
-            ]
-        }
-    }
-}
+def add_to_opensearch(docs, key):    
+    objectName = (key[key.find(s3_prefix)+len(s3_prefix)+1:len(key)])
+    metadata_key = meta_prefix+objectName+'.metadata.json'
+    delete_document_if_exist(metadata_key)
+        
+    ids = []
+    if enalbeParentDocumentRetrival == 'true':
+        parent_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=2000,
+            chunk_overlap=100,
+            separators=["\n\n", "\n", ".", " ", ""],
+            length_function = len,
+        )
+        child_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=400,
+            chunk_overlap=50,
+            # separators=["\n\n", "\n", ".", " ", ""],
+            length_function = len,
+        )
 
-response = os_client.search(
-    body=query,
-    index="idx-*"
-)
-```
+        parent_docs = parent_splitter.split_documents(docs)
+        print('len(parent_docs): ', len(parent_docs))
+            
+            for i, doc in enumerate(parent_docs):
+                doc.metadata["doc_level"] = "parent"
+                    
+            try:        
+                parent_doc_ids = vectorstore.add_documents(parent_docs, bulk_size = 10000)
+                
+                child_docs = []
+                       
+                for i, doc in enumerate(parent_docs):
+                    _id = parent_doc_ids[i]
+                    sub_docs = child_splitter.split_documents([doc])
+                    for _doc in sub_docs:
+                        _doc.metadata["parent_doc_id"] = _id
+                        _doc.metadata["doc_level"] = "child"
+                    child_docs.extend(sub_docs)
+                
+                child_doc_ids = vectorstore.add_documents(child_docs, bulk_size = 10000)
+                print('child_doc_ids: ', child_doc_ids)
+                    
+                ids = parent_doc_ids+child_doc_ids
+            except Exception:
+                err_msg = traceback.format_exc()
+                print('error message: ', err_msg)                
+    else:
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=100,
+            separators=["\n\n", "\n", ".", " ", ""],
+            length_function = len,
+        ) 
+        
+        documents = text_splitter.split_documents(docs)
+        print('len(documents): ', len(documents))
+        if len(documents):
+            print('documents[0]: ', documents[0])        
+            
+        try:        
+            ids = vectorstore.add_documents(documents, bulk_size = 10000)
+        except Exception:
+            err_msg = traceback.format_exc()
+            print('error message: ', err_msg)
+    return ids 
 
 
 

@@ -87,7 +87,13 @@ cdk deploy --all
 
 ![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/130bae3d-3bde-43a8-8bcb-55cee1e06e42)
 
-9) Google API Key Update하기
+9) Hybrid 검색을 위한 Nori Plug-in 설치
+
+[OpenSearch Console](https://us-west-2.console.aws.amazon.com/aos/home?region=us-west-2#opensearch/domains)에서 "korean-chatbot-with-rag"로 들어가서 [Packages] - [Associate package]을 선택한 후에, 아래와 같이 "analysis-nori"을 설치합니다. 
+
+![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/b91c91a1-b13c-4f5d-bd58-1c8298b2f128)
+
+10) Google API Key Update하기
 
 [api_key](https://developers.google.com/custom-search/docs/paid_element?hl=ko#api_key)에서 [키 가져오기] - [Select or create project]를 선택하여 Google API Key를 가져옵니다. 만약 기존 키가 없다면 새로 생성합니다.
 

@@ -307,6 +307,8 @@ def delete_index_if_exist(index_name):
     else:
         print('no index: ', index_name)
 """
+if enableNoriPlugin == 'true':
+    create_nori_index()
 
 def delete_document_if_exist(metadata_key):
     try: 

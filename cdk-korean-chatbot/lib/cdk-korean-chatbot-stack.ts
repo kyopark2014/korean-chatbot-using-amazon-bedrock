@@ -42,11 +42,11 @@ const supportedFormat = JSON.stringify(["pdf", "txt", "csv", "pptx", "ppt", "doc
 const separated_chat_history = 'true';
 
 const max_object_size = 102400000; // 100 MB max size of an object, 50MB(default)
-const enableNoriPlugin = 'false';
+const enableNoriPlugin = 'true';
 const enableParallelSummay = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
-const enableImageExtraction = 'false';
+const enableImageExtraction = 'true';
 
 const claude3_sonnet = [
   {

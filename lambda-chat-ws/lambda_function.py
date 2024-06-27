@@ -2102,37 +2102,6 @@ def get_parent_document(doc):
             print('text(after)', doc['metadata']['excerpt'])
         
     return doc
-
-def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
-    result = vectorstore_opensearch.similarity_search_with_score(
-        query = query,
-        k = top_k*2,  
-        pre_filter={"doc_level": {"$eq": "child"}}
-    )
-    print('result: ', result)
-            
-    relevant_documents = []
-    docList = []
-    for re in result:
-        if 'parent_doc_id' in re[0].metadata:
-            parent_doc_id = re[0].metadata['parent_doc_id']
-            doc_level = re[0].metadata['doc_level']
-            print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
-                    
-            if doc_level == 'child':
-                if parent_doc_id in docList:
-                    print('duplicated!')
-                else:
-                    relevant_documents.append(re)
-                    docList.append(parent_doc_id)
-                    
-                    #if len(relevant_documents)>top_k:
-                    #    break
-                                
-    # print('query result: ', json.dumps(response))
-    print('relevant_documents: ', relevant_documents)
-    
-    return relevant_documents
     
 def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_type):
     print(f"query: {query} ({rag_type})")
@@ -2142,8 +2111,30 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
     if rag_type == 'opensearch':                                                        
         # vector search (semantic) 
         if enalbeParentDocumentRetrival=='true':
-            relevant_documents = get_documents_from_opensearch(vectorstore_opensearch, query, top_k)
-                
+            result = vectorstore_opensearch.similarity_search_with_score(
+                query = query,
+                k = top_k*2,  # use double
+                pre_filter={"doc_level": {"$eq": "child"}}
+            )
+            print('result of opensearch: ', result)
+                    
+            relevant_documents = []
+            docList = []
+            for re in result:
+                if 'parent_doc_id' in re[0].metadata:
+                    parent_doc_id = re[0].metadata['parent_doc_id']
+                    doc_level = re[0].metadata['doc_level']
+                    print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
+                            
+                    if doc_level == 'child':
+                        if parent_doc_id in docList:
+                            print('duplicated!')
+                        else:
+                            relevant_documents.append(re)
+                            docList.append(parent_doc_id)
+                            
+                            #if len(relevant_documents)>=top_k:
+                            #    break    
         else:
             relevant_documents = vectorstore_opensearch.similarity_search_with_score(
                 query = query,
@@ -2257,7 +2248,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
             # print('lexical query result: ', json.dumps(response))
             
             for i, document in enumerate(response['hits']['hits']):
-                if i>top_k: 
+                if i>=top_k: 
                     break
                 
                 excerpt = document['_source']['text']
@@ -2440,7 +2431,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
             # print('lexical query result: ', json.dumps(response))
             
             for i, document in enumerate(response['hits']['hits']):
-                if i>top_k: 
+                if i>=top_k: 
                     break
                 
                 if "code" in document['_source']['metadata']:          
@@ -2803,7 +2794,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             contentList.append(doc['metadata']['excerpt'])
             update_docs.append(doc)
             
-            if len(update_docs)>top_k:
+            if len(update_docs)>=top_k:
                 break
         
         print('update_docs:', json.dumps(update_docs))
@@ -2867,7 +2858,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             contentList.append(doc['metadata']['excerpt'])
             update_docs.append(doc)
             
-            if len(update_docs)>top_k:
+            if len(update_docs)>=top_k:
                 break
         
         print('update_docs:', json.dumps(update_docs))
@@ -2992,7 +2983,7 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
         contentList.append(doc['metadata']['excerpt'])
         update_codes.append(doc)
             
-        if len(update_codes)>top_k:
+        if len(update_codes)>=top_k:
             break
         
     print('update_docs:', json.dumps(update_codes))    
@@ -3312,7 +3303,7 @@ def search_by_opensearch(keyword: str) -> str:
                         relevant_documents.append(re)
                         docList.append(parent_doc_id)
                         
-                        if len(relevant_documents)>top_k:
+                        if len(relevant_documents)>=top_k:
                             break
                         
         for i, document in enumerate(relevant_documents):

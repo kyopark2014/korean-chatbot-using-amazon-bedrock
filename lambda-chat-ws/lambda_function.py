@@ -79,7 +79,7 @@ history_length = 0
 token_counter_history = 0
 allowDualSearch = os.environ.get('allowDualSearch')
 allowDualSearchWithMulipleProcessing = True
-enableNoriPlugin = os.environ.get('enableNoriPlugin')
+enableHybridSearch = os.environ.get('enableHybridSearch')
 
 minDocSimilarity = 200
 minCodeSimilarity = 300
@@ -2195,7 +2195,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
         
         # lexical search (keyword)
         min_match = 0
-        if enableNoriPlugin == 'true':
+        if enableHybridSearch == 'true':
             query = {
                 "query": {
                     "bool": {
@@ -2370,7 +2370,7 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
     
         # Lexical Search (keyword)
         min_match = 0
-        if enableNoriPlugin == 'true':
+        if enableHybridSearch == 'true':
             query = {
                 "query": {
                     "bool": {

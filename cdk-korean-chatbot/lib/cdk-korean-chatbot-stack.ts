@@ -42,7 +42,7 @@ const supportedFormat = JSON.stringify(["pdf", "txt", "csv", "pptx", "ppt", "doc
 const separated_chat_history = 'true';
 
 const max_object_size = 102400000; // 100 MB max size of an object, 50MB(default)
-const enableNoriPlugin = 'true';
+const enableHybridSearch = 'true';
 const enableParallelSummay = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
@@ -767,7 +767,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         capabilities: capabilities,
         googleApiSecret: googleApiSecret.secretName,
         allowDualSearch: allowDualSearch,
-        enableNoriPlugin: enableNoriPlugin,
+        enableHybridSearch: enableHybridSearch,
         projectName: projectName,
         separated_chat_history: separated_chat_history,
         enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
@@ -917,7 +917,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           capabilities: capabilities,
           sqsUrl: queueUrl[i],
           max_object_size: String(max_object_size),
-          enableNoriPlugin: enableNoriPlugin,
+          enableHybridSearch: enableHybridSearch,
           supportedFormat: supportedFormat,
           LLM_for_chat: JSON.stringify(LLM_for_chat),
           enableParallelSummay: enableParallelSummay
@@ -996,7 +996,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           capabilities: capabilities,
           sqsUrl: queueUrl[i],
           max_object_size: String(max_object_size),
-          enableNoriPlugin: enableNoriPlugin,
+          enableHybridSearch: enableHybridSearch,
           supportedFormat: supportedFormat,
           LLM_for_chat:JSON.stringify(claude3_sonnet),
           LLM_for_multimodal:JSON.stringify(claude3_sonnet),

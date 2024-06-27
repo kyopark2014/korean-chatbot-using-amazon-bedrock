@@ -61,7 +61,7 @@ print('capabilities: ', capabilities)
 supportedFormat = json.loads(os.environ.get('supportedFormat'))
 print('supportedFormat: ', supportedFormat)
 
-enableNoriPlugin = os.environ.get('enableNoriPlugin')
+enableHybridSearch = os.environ.get('enableHybridSearch')
 
 enableImageExtraction = os.environ.get('enableImageExtraction')
 
@@ -307,7 +307,7 @@ def delete_index_if_exist(index_name):
     else:
         print('no index: ', index_name)
 """
-if enableNoriPlugin == 'true':
+if enableHybridSearch == 'true':
     create_nori_index()
 
 def delete_document_if_exist(metadata_key):
@@ -345,7 +345,7 @@ def delete_document_if_exist(metadata_key):
         print('error message: ', err_msg)        
         #raise Exception ("Not able to create meta file")
 
-if enableNoriPlugin == 'true':
+if enableHybridSearch == 'true':
     create_nori_index()
 
 def store_document_for_opensearch(file_type, key):

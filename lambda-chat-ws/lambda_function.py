@@ -2252,7 +2252,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     break
                 
                 excerpt = document['_source']['text']
-                # print(f'## Document(opensearch-keyward) {i+1}: {excerpt}')
+                # print(f'## Document(opensearch-keyword) {i+1}: {excerpt}')
 
                 name = document['_source']['metadata']['name']
                 # print('name: ', name)
@@ -2279,7 +2279,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 if page:
                     print('page: ', page)
                     doc_info = {
-                        "rag_type": 'opensearch-keyward',
+                        "rag_type": 'opensearch-keyword',
                         #"api_type": api_type,
                         "confidence": confidence,
                         "metadata": {
@@ -2301,7 +2301,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     }
                 else: 
                     doc_info = {
-                        "rag_type": 'opensearch-keyward',
+                        "rag_type": 'opensearch-keyword',
                         #"api_type": api_type,
                         "confidence": confidence,
                         "metadata": {

@@ -956,6 +956,7 @@ def load_document(file_type, key):
                 print('err_msg: ', err_msg)
                 # raise Exception ("Not able to load the pdf file")
         """
+        import PyPDF2            
         try: 
             # text
             reader = PyPDF2.PdfReader(BytesIO(Byte_contents))

@@ -915,7 +915,7 @@ def load_document(file_type, key):
         try: 
             for i, page in enumerate(pages):
                 print('page: ', page)
-                print('resources: ', page['/Resources']['/ProcSet'])
+                #print('resources: ', page['/Resources']['/ProcSet'])
                 
                 # read text
                 text = page.get_text("text")

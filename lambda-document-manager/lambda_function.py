@@ -927,8 +927,10 @@ def load_document(file_type, key):
                 
                 # read text
                 text = page.get_text("text")
-                text = text.encode('ascii','ignore').decode('utf-8')
-                print('text: ', text)
+                print('text1: ', text)
+                
+                text = text.encode('ascii','ignore').decode('ascii').encode('utf-8')
+                print('text2: ', text)
                 
                 texts.append(text)
                 

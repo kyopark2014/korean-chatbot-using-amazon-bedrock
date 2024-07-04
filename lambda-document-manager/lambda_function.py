@@ -671,7 +671,16 @@ def create_metadata(bucket, key, meta_prefix, s3_prefix, uri, category, document
         print('error message: ', err_msg)        
         raise Exception ("Not able to create meta file")
 
-def extract_images_from_pdf(reader, key):
+def extract_images_from_pdf(s3_bucket, key):
+    s3r = boto3.resource("s3")
+    doc = s3r.Object(s3_bucket, key)
+    Byte_contents = doc.get()['Body'].read()
+    
+    # Requred package: pypdf 
+    # RUN /var/lang/bin/python3 -m pip install pypdf
+    from pypdf import PdfReader      
+    reader = PdfReader(BytesIO(Byte_contents))
+    
     picture_count = 1
     
     extracted_image_files = []
@@ -913,7 +922,7 @@ def load_document(file_type, key):
         # page image
         texts = []
         try: 
-            for i, page in enumerate(pages):
+            for i, page in enumerate(pages, start=1):
                 print('page: ', page)
                 #print('resources: ', page['/Resources']['/ProcSet'])
                 
@@ -927,7 +936,7 @@ def load_document(file_type, key):
                 pixmap = page.get_pixmap(dpi=300)
                 img = pixmap.tobytes()
             
-                fname = 'capture/'+key.split('/')[-1].split('.')[0]+f"_{i+1}"  
+                fname = 'capture/'+key.split('/')[-1].split('.')[0]+f"_{i}"  
 
                 response = s3_client.put_object(
                     Bucket=s3_bucket,
@@ -957,11 +966,9 @@ def load_document(file_type, key):
                 texts.append(page.extract_text())
             contents = '\n'.join(texts)
             
-            # extract image file             
-            #from pypdf import PdfReader            
+            # extract image files             
             #if enableImageExtraction == 'true':
-            #    reader = PdfReader(BytesIO(Byte_contents))
-            #    image_files = extract_images_from_pdf(reader, key)                
+            #    image_files = extract_images_from_pdf(file_type, key)                
             #    for img in image_files:
             #        files.append(img)
                     

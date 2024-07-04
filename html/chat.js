@@ -840,7 +840,7 @@ attachFile.addEventListener('click', function(){
             let requestTime = datastr+' '+timestr
             let requestId = uuidv4();
 
-            let commend = message.value;
+            let command = message.value;
             if(ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
                 addSentMessageForSummary(requestId, timestr, message.value+"<br>"+"uploading the selected file in order to summerize...");
 
@@ -908,7 +908,7 @@ attachFile.addEventListener('click', function(){
                                 "request_time": requestTime,
                                 "type": "document",
                                 "body": filename,
-                                "commend": commend,
+                                "command": command,
                                 "conv_type": conv_type,
                                 "rag_type": rag_type,
                                 "function_type": function_type

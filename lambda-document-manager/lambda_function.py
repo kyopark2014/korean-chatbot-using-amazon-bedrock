@@ -26,6 +26,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_aws import ChatBedrock
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from docx.enum.shape import WD_INLINE_SHAPE_TYPE
+from pypdf import PdfReader      
         
 s3 = boto3.client('s3')
 s3_client = boto3.client('s3')  
@@ -677,7 +678,7 @@ def extract_images_from_pdf(s3_bucket, key):
     
     # Requred package: pypdf 
     # RUN /var/lang/bin/python3 -m pip install pypdf
-    from pypdf import PdfReader      
+    
     reader = PdfReader(BytesIO(Byte_contents))
     
     picture_count = 1
@@ -915,22 +916,24 @@ def load_document(file_type, key):
             contents = '\n'.join(texts)
         """
         
-        # use PyMuPDF
-        pages = fitz.open(stream=Byte_contents, filetype='pdf')                
-        
         # page image
         texts = []
+        reader = PdfReader(BytesIO(Byte_contents))
+        print('pages: ', len(reader.pages))
+        
+        for i, page in enumerate(reader.pages):
+            print('page: ', page)
+            print('resources: ', page['/Resources']['/ProcSet'])
+            
+            texts.append(page.extract_text())
+        
+        contents = '\n'.join(texts)
+
+        # save current pdf page to image using PyMuPDF
+        pages = fitz.open(stream=Byte_contents, filetype='pdf')      
         try: 
             for i, page in enumerate(pages, start=1):
                 print('page: ', page)
-                #print('resources: ', page['/Resources']['/ProcSet'])
-                
-                # read text
-                from urllib.parse import quote
-                text = quote(page.get_text("text"))
-                print('text: ', text)
-                
-                texts.append(text)
                 
                 # save current pdf page to image 
                 pixmap = page.get_pixmap(dpi=300)
@@ -956,8 +959,10 @@ def load_document(file_type, key):
                 err_msg = traceback.format_exc()
                 print('err_msg: ', err_msg)
                 # raise Exception ("Not able to load the pdf file")
+                
+            
         """
-        import PyPDF2            
+                 
         try: 
             # text
             reader = PyPDF2.PdfReader(BytesIO(Byte_contents))

@@ -7,6 +7,7 @@ import time
 import docx
 import base64
 import uuid
+import fitz
 
 from io import BytesIO
 from urllib import parse
@@ -26,7 +27,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_aws import ChatBedrock
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from docx.enum.shape import WD_INLINE_SHAPE_TYPE
-
+        
 s3 = boto3.client('s3')
 s3_client = boto3.client('s3')  
 sqs = boto3.client('sqs')
@@ -677,7 +678,7 @@ def extract_images_from_pdf(reader, key):
     print('pages: ', len(reader.pages))
     for i, page in enumerate(reader.pages):
         print('page: ', page)
-        
+        print('resources: ', page['/Resources']['/ProcSet'])
         
         for image_file_object in page.images:
             print('image_file_object: ', image_file_object)        
@@ -891,6 +892,62 @@ def load_document(file_type, key):
     if file_type == 'pdf':
         Byte_contents = doc.get()['Body'].read()
         
+        """
+        from pypdf import PdfReader
+        reader = PdfReader(BytesIO(Byte_contents))
+        for i, page in enumerate(reader.pages):
+            print('page: ', page)
+            print('resources: ', page['/Resources']['/ProcSet'])                
+            # for image_file_object in page.images:               
+            
+            for image_file_object in page.text .images:               
+            texts = []
+            for page in reader.pages:
+                texts.append(page.extract_text())
+            contents = '\n'.join(texts)
+        """
+        
+        # use PyMuPDF
+        pages = fitz.open(stream=Byte_contents, filetype='pdf')                
+        
+        # page image
+        texts = []
+        try: 
+            for i, page in enumerate(pages):
+                print('page: ', page)
+                print('resources: ', page['/Resources']['/ProcSet'])
+                
+                # read text
+                text = page.get_text("text")
+                print('text: ', text)
+                
+                texts.append(text)
+                
+                # save current pdf page to image 
+                pixmap = page.get_pixmap(dpi=300)
+                img = pixmap.tobytes()
+            
+                fname = 'capture/'+key.split('/')[-1].split('.')[0]+f"_{i+1}"  
+
+                response = s3_client.put_object(
+                    Bucket=s3_bucket,
+                    Key='photo/'+fname+'.jpg',
+                    #ContentType='image/png',
+                    Metadata = {
+                        "name": fname,
+                        "page": i
+                    },
+                    Body=img
+                )
+                print('response: ', response)
+                                
+            contents = '\n'.join(texts)
+            
+        except Exception:
+                err_msg = traceback.format_exc()
+                print('err_msg: ', err_msg)
+                # raise Exception ("Not able to load the pdf file")
+        """
         try: 
             # text
             reader = PyPDF2.PdfReader(BytesIO(Byte_contents))
@@ -900,19 +957,19 @@ def load_document(file_type, key):
                 texts.append(page.extract_text())
             contents = '\n'.join(texts)
             
-            # extract image file 
-            from pypdf import PdfReader
-            reader = PdfReader(BytesIO(Byte_contents))
-            
-            if enableImageExtraction == 'true':
-                image_files = extract_images_from_pdf(reader, key)                
-                for img in image_files:
-                    files.append(img)
+            # extract image file             
+            #from pypdf import PdfReader            
+            #if enableImageExtraction == 'true':
+            #    reader = PdfReader(BytesIO(Byte_contents))
+            #    image_files = extract_images_from_pdf(reader, key)                
+            #    for img in image_files:
+            #        files.append(img)
                     
         except Exception:
                 err_msg = traceback.format_exc()
                 print('err_msg: ', err_msg)
                 # raise Exception ("Not able to load the pdf file")
+        """
                      
     elif file_type == 'pptx':
         Byte_contents = doc.get()['Body'].read()

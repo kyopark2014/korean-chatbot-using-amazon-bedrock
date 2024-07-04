@@ -9,7 +9,7 @@ body {
 .container {
   max-height: 800px;
   /* added for height */
-  max-width: 900px;
+  max-width: 920px;
   margin: 30px auto;
   /* top margin of chat room */
   background: #fff;

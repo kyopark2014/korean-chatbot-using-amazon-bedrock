@@ -926,7 +926,7 @@ def load_document(file_type, key):
                 #print('resources: ', page['/Resources']['/ProcSet'])
                 
                 # read text
-                text = page.get_text("text")
+                text = page.get_text("text").encode('utf-8')
                 print('text: ', text)
                 
                 texts.append(text)

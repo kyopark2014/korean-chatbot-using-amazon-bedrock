@@ -926,12 +926,9 @@ def load_document(file_type, key):
                 #print('resources: ', page['/Resources']['/ProcSet'])
                 
                 # read text
-                text = page.get_text("text")
-                print('text1: ', text)
-                
-                text = text.encode('ascii','ignore')
-                #.decode('ascii').encode('utf-8')
-                print('text2: ', text)
+                from urllib.parse import quota
+                text = quota(page.get_text("text"))
+                print('text: ', text)
                 
                 texts.append(text)
                 

@@ -32,7 +32,7 @@
 
 - Linearization: Assume you have a floating figure in between a paragraph. Do you first finish the paragraph or do you put the figure text in between?
 
-## Annotationd의 활용
+## Annotation
 
 [Some notes about form fields and annotations](https://pypdf.readthedocs.io/en/stable/user/forms.html#some-notes-about-form-fields-and-annotations)와 같은 Annotationd을 가지고 있습니다. 
 

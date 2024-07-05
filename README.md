@@ -467,6 +467,11 @@ S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 
 const enableImageExtraction = 'false';
 ```
 
+### PDF에서 정보 추출하기
+
+[PDF에서 정보 추출하기](./pdf-extraction.md)에서는 pdf에서 이미지에 대한 정보를 추출하는 방법에 대해 설명합니다.
+
+
 ## Agent 정의 및 활용
 
 [LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.

@@ -136,5 +136,5 @@ page[1] -> width[0]: 628, height[0]: 375
 
 이때의 이미지는 아래와 같습니다. 왼쪽 하단의 AWS 이미지로 인해, 페이지를 선택하면 불필요한 작업을 수행하게 됩니다. 따라서, 여기서는 사용된 이미지 사이즈 기준으로 100x100이상일 때 페이지 단위로 이미지를 저장하여 정보를 추출합니다.
 
-![noname](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/a0875313-9910-4112-837d-bb3fc3c50eff)
-
+<img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/a0875313-9910-4112-837d-bb3fc3c50eff" width="500">
+   

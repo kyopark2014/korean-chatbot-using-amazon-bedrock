@@ -68,3 +68,19 @@ Resources[0]:
 MediaBox[1]: [0, 0, 960, 540]
 ```
 
+## 이미지 포함 여부 확인하기
+
+anootation이 '/XObject'의 숫자를 이용해 이미지 포함 여부를 확인합니다. 참고로, pypdf의 page.images는 '/contents'정보를 활용하는데, 특정 pdf는 contents에 없는 이미지가 확인되었습니다.
+
+```python 
+nImage = 0
+if '/Resources' in page:
+    print(f"Resources[{i}]: {page['/Resources']}")
+    if '/ProcSet' in page['/Resources']:
+        print(f"Resources/ProcSet[{i}]: {page['/Resources']['/ProcSet']}")
+    if '/XObject' in page['/Resources']:
+        print(f"Resources/XObject[{i}]: {page['/Resources']['/XObject']}")
+        nImage = len(page['/Resources']['/XObject'])                
+print(f"# of images of page[{i}] = {nImage}")
+nImages.append(nImage)
+```

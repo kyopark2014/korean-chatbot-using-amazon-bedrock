@@ -84,3 +84,22 @@ if '/Resources' in page:
 print(f"# of images of page[{i}] = {nImage}")
 nImages.append(nImage)
 ```
+
+## 이미지 정보
+
+이미지는 pypdf의 reader로 부터 page를 분리하여, get_image_info()나, get_images()을 이용해 확인할 수 있습니다. 이 함수는 /content 정보를 이용하므로 이 정보가 없을때는 추출이 불가합니다. 
+
+```python
+imgInfo = page.get_image_info()
+print(f"imgInfo[{i}]: ', {imgInfo}")
+                    
+imgList = page.get_images()
+print(f"imgList[{i}]: ', {imgList}")
+```
+
+추출되는 이미지의 정보에는 아래와 같이 위치, 크기에 대한 정보를 가지고 있습니다.
+
+```python
+imgInfo[46]: ', [{'number': 0, 'bbox': (46.79999923706055, 498.8258361816406, 74.26669311523438, 515.2589111328125), 'transform': (27.466690063476562, 0.0, -0.0, 16.433069229125977, 46.79999923706055, 498.8258361816406), 'width': 628, 'height': 375, 'colorspace': 3, 'cs-name': 'ICCBased(RGB,sRGB IEC61966-2.1)', 'xres': 96, 'yres': 96, 'bpc': 8, 'size': 36432}, {'number': 6, 'bbox': (141.27259826660156, 134.0394287109375, 885.364990234375, 493.3661193847656), 'transform': (744.0924072265625, 0.0, -0.0, 359.3266906738281, 141.27259826660156, 134.0394287109375), 'width': 936, 'height': 452, 'colorspace': 3, 'cs-name': 'ICCBased(RGB,sRGB IEC61966-2.1)', 'xres': 96, 'yres': 96, 'bpc': 8, 'size': 90434}]
+imgList[46]: ', [(10, 19, 628, 375, 8, 'ICCBased', '', 'Im3', 'FlateDecode'), (290, 0, 936, 452, 8, 'ICCBased', '', 'Im21', 'DCTDecode')]
+```

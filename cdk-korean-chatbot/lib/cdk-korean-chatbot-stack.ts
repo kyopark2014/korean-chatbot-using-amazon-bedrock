@@ -46,7 +46,6 @@ const enableHybridSearch = 'true';
 const enableParallelSummay = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
-const enableImageExtraction = 'true';
 
 const claude3_sonnet = [
   {
@@ -1002,8 +1001,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           LLM_for_multimodal:JSON.stringify(claude3_sonnet),
           LLM_embedding: JSON.stringify(titan_embedding_v2),
           enableParallelSummay: enableParallelSummay,
-          enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
-          enableImageExtraction: enableImageExtraction
+          enalbeParentDocumentRetrival: enalbeParentDocumentRetrival
         }
       });         
       s3Bucket.grantReadWrite(lambdDocumentManager[i]); // permission for s3

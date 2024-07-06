@@ -141,3 +141,18 @@ page[1] -> width[0]: 628, height[0]: 375
 아래와 같이, 작은 이미지라도 여러개를 가지고 중요한 정보를 표시할 수 있으므로 이미지 숫자가 4개 이상일 경우에는 사이즈와 관계없이 페이지를 이미지로 저장해 분석합니다.
 
 <img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/c5afeedc-9be5-4774-a3cc-c4ffd4d9fd42" width="500">
+
+
+```text
+Im1[5]: {'/Name': '/Im1', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': '/DeviceGray'}
+
+Im2[5]: {'/Name': '/Im2', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': ['/ICCBased', IndirectObject(2, 0, 139914202876496)], '/SMask': IndirectObject(7, 0, 139914202876496)}
+```
+
+```text
+Resources/XObject[1]: {'/Im1': IndirectObject(162, 0, 140006489351824)}
+Im1[1]: {'/Type': '/XObject', '/Subtype': '/Form', '/BBox': [94.29383, 852.9576, 736.2119, 1377.762], '/Filter': '/FlateDecode', '/FormType': 1, '/PTEX.FileName': './iclr2023/figure/teaser-new.pdf', '/PTEX.InfoDict': IndirectObject(189, 0, 140006489351824), '/PTEX.PageNumber': 1, '/Resources': {'/ColorSpace': {'/Cs1': IndirectObject(190, 0, 140006489351824)}, '/ExtGState': {'/Gs1': IndirectObject(191, 0, 140006489351824), '/Gs2': IndirectObject(192, 0, 140006489351824)}, '/Font': {'/G1': IndirectObject(193, 0, 140006489351824), '/G2': IndirectObject(194, 0, 140006489351824), '/G3': IndirectObject(195, 0, 140006489351824)}, '/ProcSet': ['/PDF', '/Text']}}
+
+Resources/XObject[4]: {'/Im2': IndirectObject(303, 0, 140006489351824), '/Im3': IndirectObject(304, 0, 140006489351824)}
+Im2[4]: {'/Type': '/XObject', '/Subtype': '/Form', '/BBox': [0, 0, 288, 288], '/Filter': '/FlateDecode', '/FormType': 1, '/Group': IndirectObject(314, 0, 140006489351824), '/PTEX.FileName': './iclr2023/figure/cots_scale.pdf', '/PTEX.InfoDict': IndirectObject(320, 0, 140006489351824), '/PTEX.PageNumber': 1, '/Resources': {'/ExtGState': {'/A1': {'/Type': '/ExtGState', '/CA': 0, '/ca': 1}, '/A2': {'/Type': '/ExtGState', '/CA': 1, '/ca': 1}}, '/Font': {'/F1': IndirectObject(321, 0, 140006489351824)}, '/Pattern': {}, '/ProcSet': ['/PDF', '/Text', '/ImageB', '/ImageC', '/ImageI'], '/Shading': {}, '/XObject': {}}}
+```

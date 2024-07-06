@@ -149,10 +149,18 @@ page[1] -> width[0]: 628, height[0]: 375
 Im1[5]: {'/Name': '/Im1', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': '/DeviceGray'}
 
 Im2[5]: {'/Name': '/Im2', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': ['/ICCBased', IndirectObject(2, 0, 139914202876496)], '/SMask': IndirectObject(7, 0, 139914202876496)}
+```
 
+- XObject가 있으나 이미지가 없는 경우
+  
+```text
 Resources/XObject[1]: {'/X57': IndirectObject(57, 0, 139909017426320), '/X59': IndirectObject(59, 0, 139909017426320)}
 X57[0]: {'/Type': '/XObject', '/Subtype': '/Image', '/Width': 1220, '/Height': 262, '/ColorSpace': '/DeviceRGB', '/SMask': IndirectObject(58, 0, 139909017426320), '/BitsPerComponent': 8, '/Filter': '/FlateDecode'}
 ```
+
+<img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/293ca7cf-10ac-4228-950d-4007c83a739d" width="500">
+
+
 
 [이미지가 있는 경우]
 

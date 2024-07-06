@@ -143,11 +143,18 @@ page[1] -> width[0]: 628, height[0]: 375
 <img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/c5afeedc-9be5-4774-a3cc-c4ffd4d9fd42" width="500">
 
 
+[이미지가 없는 경우]
+
 ```text
 Im1[5]: {'/Name': '/Im1', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': '/DeviceGray'}
 
 Im2[5]: {'/Name': '/Im2', '/Type': '/XObject', '/Filter': '/FlateDecode', '/Subtype': '/Image', '/Width': 200, '/Height': 81, '/BitsPerComponent': 8, '/ColorSpace': ['/ICCBased', IndirectObject(2, 0, 139914202876496)], '/SMask': IndirectObject(7, 0, 139914202876496)}
+
+Resources/XObject[1]: {'/X57': IndirectObject(57, 0, 139909017426320), '/X59': IndirectObject(59, 0, 139909017426320)}
+X57[0]: {'/Type': '/XObject', '/Subtype': '/Image', '/Width': 1220, '/Height': 262, '/ColorSpace': '/DeviceRGB', '/SMask': IndirectObject(58, 0, 139909017426320), '/BitsPerComponent': 8, '/Filter': '/FlateDecode'}
 ```
+
+[이미지가 있는 경우]
 
 ```text
 Resources/XObject[1]: {'/Im1': IndirectObject(162, 0, 140006489351824)}
@@ -155,4 +162,7 @@ Im1[1]: {'/Type': '/XObject', '/Subtype': '/Form', '/BBox': [94.29383, 852.9576,
 
 Resources/XObject[4]: {'/Im2': IndirectObject(303, 0, 140006489351824), '/Im3': IndirectObject(304, 0, 140006489351824)}
 Im2[4]: {'/Type': '/XObject', '/Subtype': '/Form', '/BBox': [0, 0, 288, 288], '/Filter': '/FlateDecode', '/FormType': 1, '/Group': IndirectObject(314, 0, 140006489351824), '/PTEX.FileName': './iclr2023/figure/cots_scale.pdf', '/PTEX.InfoDict': IndirectObject(320, 0, 140006489351824), '/PTEX.PageNumber': 1, '/Resources': {'/ExtGState': {'/A1': {'/Type': '/ExtGState', '/CA': 0, '/ca': 1}, '/A2': {'/Type': '/ExtGState', '/CA': 1, '/ca': 1}}, '/Font': {'/F1': IndirectObject(321, 0, 140006489351824)}, '/Pattern': {}, '/ProcSet': ['/PDF', '/Text', '/ImageB', '/ImageC', '/ImageI'], '/Shading': {}, '/XObject': {}}}
+
+Resources/XObject[3]: {'/X82': IndirectObject(82, 0, 139909017426320)}
+X82[0]: {'/Type': '/XObject', '/Subtype': '/Image', '/Width': 1400, '/Height': 978, '/ColorSpace': '/DeviceRGB', '/SMask': IndirectObject(83, 0, 139909017426320), '/BitsPerComponent': 8, '/Filter': '/FlateDecode'}
 ```

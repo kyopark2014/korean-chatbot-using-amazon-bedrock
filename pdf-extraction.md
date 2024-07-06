@@ -138,3 +138,4 @@ page[1] -> width[0]: 628, height[0]: 375
 
 <img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/a0875313-9910-4112-837d-bb3fc3c50eff" width="500">
    
+![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/c5afeedc-9be5-4774-a3cc-c4ffd4d9fd42)

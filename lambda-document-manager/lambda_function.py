@@ -51,7 +51,7 @@ LLM_embedding = json.loads(os.environ.get('LLM_embedding'))
 selected_chat = 0
 selected_multimodal = 0
 selected_embedding = 0
-enableImageExtraction = 'false'
+enableImageExtraction = 'true'
 enablePageImageExraction = 'true'
 
 roleArn = os.environ.get('roleArn') 
@@ -1003,8 +1003,7 @@ def load_document(file_type, key):
                                     
                 contents = '\n'.join(texts)
                 
-            # extract image files   
-            if enableImageExtraction == 'true':
+            elif enableImageExtraction == 'true':
                 image_files = extract_images_from_pdf(reader, key)
                 for img in image_files:
                     files.append(img)

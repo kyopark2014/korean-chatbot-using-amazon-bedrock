@@ -84,6 +84,7 @@ enableHybridSearch = os.environ.get('enableHybridSearch')
 minDocSimilarity = 200
 minCodeSimilarity = 300
 projectName = os.environ.get('projectName')
+maxOutputTokens = 4096
 
 # google search api
 googleApiSecret = os.environ.get('googleApiSecret')
@@ -167,7 +168,6 @@ def get_chat():
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
     print(f'LLM: {selected_chat}, bedrock_region: {bedrock_region}, modelId: {modelId}')
-    maxOutputTokens = int(profile['maxOutputTokens'])
                           
     # bedrock   
     boto3_bedrock = boto3.client(
@@ -207,7 +207,6 @@ def get_multimodal():
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
     print(f'LLM: {selected_multimodal}, bedrock_region: {bedrock_region}, modelId: {modelId}')
-    maxOutputTokens = int(profile['maxOutputTokens'])
                           
     # bedrock   
     boto3_bedrock = boto3.client(

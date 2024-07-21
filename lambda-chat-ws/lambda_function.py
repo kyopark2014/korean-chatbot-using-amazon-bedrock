@@ -39,6 +39,16 @@ from bs4 import BeautifulSoup
 from pytz import timezone
 from langchain_community.tools.tavily_search import TavilySearchResults
 
+from typing import TypedDict, Annotated, Sequence, List, Union
+from langchain_core.agents import AgentAction, AgentFinish
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
+from langgraph.prebuilt.tool_executor import ToolExecutor
+from langgraph.graph import START, END, StateGraph
+from langgraph.prebuilt import ToolNode
+from langgraph.graph.message import add_messages
+from langgraph.prebuilt import tools_condition
+from langchain_core.pydantic_v1 import BaseModel, Field
+
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
@@ -2061,21 +2071,20 @@ def get_code_reference(docs):
     return reference
 
 def get_parent_content(parent_doc_id):
-    if parent_doc_id:
-        response = os_client.get(
-            index="idx-rag", 
-            id = parent_doc_id
-        )
-            
-        source = response['_source']
-        print('excerpt: ', source['text'])   
-            
-        metadata = source['metadata']    
-        #print('name: ', metadata['name'])   
-        print('uri: ', metadata['uri'])   
-        #print('doc_level: ', metadata['doc_level']) 
-                    
-    return source['text'], metadata['uri']
+    response = os_client.get(
+        index="idx-rag", 
+        id = parent_doc_id
+    )
+    
+    source = response['_source']                            
+    # print('parent_doc: ', source['text'])   
+    
+    metadata = source['metadata']    
+    #print('name: ', metadata['name'])   
+    #print('uri: ', metadata['uri'])   
+    #print('doc_level: ', metadata['doc_level']) 
+    
+    return source['text'], metadata['name'], metadata['uri']
 
 def get_parent_document(doc):
     # print('doc: ', doc)
@@ -3279,31 +3288,9 @@ def search_by_opensearch(keyword: str) -> str:
     answer = ""
     top_k = 2
     
+    docs = [] 
     if enalbeParentDocumentRetrival == 'true': # parent/child chunking
-        result = vectorstore_opensearch.similarity_search_with_score(
-            query = keyword,
-            k = top_k*2,  # use double
-            pre_filter={"doc_level": {"$eq": "child"}}
-        )
-        print('result: ', result)
-                
-        relevant_documents = []
-        docList = []
-        for re in result:
-            if 'parent_doc_id' in re[0].metadata:
-                parent_doc_id = re[0].metadata['parent_doc_id']
-                doc_level = re[0].metadata['doc_level']
-                print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
-                        
-                if doc_level == 'child':
-                    if parent_doc_id in docList:
-                        print('duplicated!')
-                    else:
-                        relevant_documents.append(re)
-                        docList.append(parent_doc_id)
-                        
-                        if len(relevant_documents)>=top_k:
-                            break
+        relevant_documents = get_documents_from_opensearch(vectorstore_opensearch, keyword, top_k)
                         
         for i, document in enumerate(relevant_documents):
             #print(f'## Document(opensearch-vector) {i+1}: {document}')
@@ -3312,9 +3299,20 @@ def search_by_opensearch(keyword: str) -> str:
             doc_level = document[0].metadata['doc_level']
             print(f"child: parent_doc_id: {parent_doc_id}, doc_level: {doc_level}")
             
-            excerpt, uri = get_parent_content(parent_doc_id)
-            
+            excerpt, name, uri = get_parent_content(parent_doc_id) # use pareant document
             print(f"parent_doc_id: {parent_doc_id}, doc_level: {doc_level}, uri: {uri}, content: {excerpt}")
+            
+            docs.append(
+                Document(
+                    page_content=excerpt,
+                    metadata={
+                        'name': name,
+                        'uri': uri,
+                        'doc_level': doc_level,
+                        'from': 'vector'
+                    },
+                )
+            )
             
             answer = answer + f"{excerpt}, URL: {uri}\n\n"
     else: 
@@ -3328,166 +3326,366 @@ def search_by_opensearch(keyword: str) -> str:
             
             excerpt = document[0].page_content        
             uri = document[0].metadata['uri']
+            
+            docs.append(
+                Document(
+                    page_content=excerpt,
+                    metadata={
+                        'name': name,
+                        'uri': uri,
+                        'from': 'vector'
+                    },
+                )
+            )
                             
             answer = answer + f"{excerpt}, URL: {uri}\n\n"
     
+    if enableHybridSearch == 'true':
+        docs_lexical = lexical_search_for_tool(keyword, top_k)        
+        docs.append(docs_lexical)
+    
+    filtered_docs = grade_documents(keyword, docs)
+    
+    answer2 = "" 
+    for doc in filtered_docs:
+        excerpt = doc.page_content
+        uri = doc.metadata['uri']
+        
+        answer2 = answer2 + f"{excerpt}, URL: {uri}\n\n"
+    
+    print('answer: ', answer)    
+    print('answer2: ', answer2)
+        
     return answer
+
+def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
+    result = vectorstore_opensearch.similarity_search_with_score(
+        query = query,
+        k = top_k*2,  
+        pre_filter={"doc_level": {"$eq": "child"}}
+    )
+    print('result: ', result)
+            
+    relevant_documents = []
+    docList = []
+    for re in result:
+        if 'parent_doc_id' in re[0].metadata:
+            parent_doc_id = re[0].metadata['parent_doc_id']
+            doc_level = re[0].metadata['doc_level']
+            print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
+                    
+            if doc_level == 'child':
+                if parent_doc_id in docList:
+                    print('duplicated!')
+                else:
+                    relevant_documents.append(re)
+                    docList.append(parent_doc_id)
+                    
+                    if len(relevant_documents)>=top_k:
+                        break
+                                
+    # print('lexical query result: ', json.dumps(response))
+    print('relevant_documents: ', relevant_documents)
+    
+    return relevant_documents
+
+def lexical_search_for_tool(query, top_k):
+    # lexical search (keyword)
+    min_match = 0
+    
+    query = {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "match": {
+                            "text": {
+                                "query": query,
+                                "minimum_should_match": f'{min_match}%',
+                                "operator":  "or",
+                            }
+                        }
+                    },
+                ],
+                "filter": [
+                ]
+            }
+        }
+    }
+
+    response = os_client.search(
+        body=query,
+        index="idx-*", # all
+    )
+    # print('lexical query result: ', json.dumps(response))
+        
+    docs = ""
+    for i, document in enumerate(response['hits']['hits']):
+        if i>=top_k: 
+            break
+                    
+        excerpt = document['_source']['text']
+        
+        name = document['_source']['metadata']['name']
+        # print('name: ', name)
+
+        page = ""
+        if "page" in document['_source']['metadata']:
+            page = document['_source']['metadata']['page']
+        
+        uri = ""
+        if "uri" in document['_source']['metadata']:
+            uri = document['_source']['metadata']['uri']            
+        print(f"lexical search --> doc[{i}]: {excerpt}, uri:{uri}\n")
+        
+        docs.append(
+                Document(
+                    page_content=excerpt,
+                    metadata={
+                        'name': name,
+                        'uri': uri,
+                        'page': page,
+                        'from': 'lexical'
+                    },
+                )
+            )
+
+    return docs
+
+class GradeDocuments(BaseModel):
+    """Binary score for relevance check on retrieved documents."""
+
+    binary_score: str = Field(description="Documents are relevant to the question, 'yes' or 'no'")
+
+def get_retrieval_grader():
+    system = """You are a grader assessing relevance of a retrieved document to a user question. \n 
+    If the document contains keyword(s) or semantic meaning related to the question, grade it as relevant. \n
+    Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""
+
+    grade_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system),
+            ("human", "Retrieved document: \n\n {document} \n\n User question: {question}"),
+        ]
+    )
+    
+    chat = get_chat()
+    structured_llm_grader = chat.with_structured_output(GradeDocuments)
+    retrieval_grader = grade_prompt | structured_llm_grader
+    return retrieval_grader
+
+def grade_documents(question, documents):
+    print("###### grade_documents ######")
+
+    # Score each doc
+    filtered_docs = []
+    
+    retrieval_grader = get_retrieval_grader()
+    for doc in documents:
+        score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
+        grade = score.binary_score
+        # Document relevant
+        if grade.lower() == "yes":
+            print("---GRADE: DOCUMENT RELEVANT---")
+            filtered_docs.append(doc)
+        # Document not relevant
+        else:
+            print("---GRADE: DOCUMENT NOT RELEVANT---")
+            # We do not include the document in filtered_docs
+            # We set a flag to indicate that we want to run web search
+            continue
+    print('len(docments): ', len(filtered_docs))
+    
+    return filtered_docs
 
 # define tools
 tools = [get_current_time, get_book_list, get_weather_info, search_by_tavily, search_by_opensearch]        
 
-def get_react_prompt_template(): # (hwchase17/react) https://smith.langchain.com/hub/hwchase17/react
-    # Get the react prompt template    
-    return PromptTemplate.from_template("""다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+####################### LangGraph #######################
+# Chat Agent Executor
+#########################################################
+chatModel = get_chat() 
 
-사용할 수 있는 tools은 아래와 같습니다:
+model = chatModel.bind_tools(tools)
 
-{tools}
+class ChatAgentState(TypedDict):
+    # messages: Annotated[Sequence[BaseMessage], operator.add]
+    messages: Annotated[list, add_messages]
 
-다음의 format을 사용하세요.:
+tool_node = ToolNode(tools)
 
-Question: 답변하여야 할 input question 
-Thought: you should always think about what to do. 
-Action: 해야 할 action로서 [{tool_names}]에서 tool의 name만을 가져옵니다. 
-Action Input: action의 input
-Observation: action의 result
-... (Thought/Action/Action Input/Observation을 5번 반복 할 수 있습니다.)
-Thought: 나는 이제 Final Answer를 알고 있습니다. 
-Final Answer: original input에 대한 Final Answer
+from typing import Literal
+def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
+    messages = state["messages"]
+    last_message = messages[-1]
+    if not last_message.tool_calls:
+        return "end"
+    else:
+        return "continue"
 
-너는 Human에게 해줄 응답이 있거나, Tool을 사용하지 않아도 되는 경우에, 다음 format을 사용하세요.:
-'''
-Thought: Tool을 사용해야 하나요? No
-Final Answer: [your response here]
-'''
+#def call_model(state: ChatAgentState):
+#    response = model.invoke(state["messages"])
+#    return {"messages": [response]}    
 
-Begin!
-
-Question: {input}
-Thought:{agent_scratchpad}
-""")
+def call_model(state: ChatAgentState):
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system",
+                "다음의 Human과 Assistant의 친근한 이전 대화입니다."
+                "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
+                "Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
+                "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요.",
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+    chain = prompt | model
         
-def run_agent_react(connectionId, requestId, chat, query):
-    prompt_template = get_react_prompt_template()
-    print('prompt_template: ', prompt_template)
-    
-    #from langchain import hub
-    #prompt_template = hub.pull("hwchase17/react")
-    #print('prompt_template: ', prompt_template)
-    
-     # create agent
+    response = chain.invoke(state["messages"])
+    return {"messages": [response]}    
+
+def buildChatAgent():
+    workflow = StateGraph(ChatAgentState)
+
+    workflow.add_node("agent", call_model)
+    workflow.add_node("action", tool_node)
+    workflow.add_edge(START, "agent")
+    workflow.add_conditional_edges(
+        "agent",
+        should_continue,
+        {
+            "continue": "action",
+            "end": END,
+        },
+    )
+    workflow.add_edge("action", "agent")
+
+    return workflow.compile()
+
+chat_app = buildChatAgent()
+
+def run_agent_executor(connectionId, requestId, app, query):
     isTyping(connectionId, requestId)
-    agent = create_react_agent(chat, tools, prompt_template)
     
-    agent_executor = AgentExecutor(
-        agent=agent, 
-        tools=tools, 
-        verbose=True, 
-        handle_parsing_errors=True,
-        max_iterations = 5
+    inputs = [HumanMessage(content=query)]
+    config = {"recursion_limit": 50}
+    
+    message = ""
+    for event in app.stream({"messages": inputs}, config, stream_mode="values"):   
+        print('event: ', event)
+        
+        message = event["messages"][-1]
+        print('message: ', message)
+
+    msg = readStreamMsg(connectionId, requestId, message.content)
+
+    return msg
+
+####################### LangGraph #######################
+# Reflection Agent
+#########################################################
+def generation_node(state: ChatAgentState):    
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "당신은 5문단의 에세이 작성을 돕는 작가이고 이름은 서연입니다"
+                "사용자의 요청에 대해 최고의 에세이를 작성하세요."
+                "사용자가 에세이에 대해 평가를 하면, 이전 에세이를 수정하여 답변하세요."
+                "최종 답변에는 완성된 에세이 전체 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요.",
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
     )
     
-    # run agent
-    response = agent_executor.invoke({"input": query})
-    print('response: ', response)
+    chat = get_chat()
+    chain = prompt | chat
 
-    # streaming    
-    msg = readStreamMsg(connectionId, requestId, response['output'])
+    response = chain.invoke(state["messages"])
+    return {"messages": [response]}
 
-    msg = response['output']
-    print('msg: ', msg)
-            
-    return msg
-
-def get_react_chat_prompt_template():
-    # Get the react prompt template
-
-    return PromptTemplate.from_template("""다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
-
-사용할 수 있는 tools은 아래와 같습니다:
-
-{tools}
-
-다음의 format을 사용하세요.:
-
-Question: 답변하여야 할 input question 
-Thought: you should always think about what to do. 
-Action: 해야 할 action로서 [{tool_names}]에서 tool의 name만을 가져옵니다. 
-Action Input: action의 input
-Observation: action의 result
-... (Thought/Action/Action Input/Observation을 5번 반복 할 수 있습니다.)
-Thought: 나는 이제 Final Answer를 알고 있습니다. 
-Final Answer: original input에 대한 Final Answer
-
-너는 Human에게 해줄 응답이 있거나, Tool을 사용하지 않아도 되는 경우에, 다음 format을 사용하세요.:
-'''
-Thought: Tool을 사용해야 하나요? No
-Final Answer: [your response here]
-'''
-
-Begin!
-
-Previous conversation history:
-{chat_history}
-
-New input: {input}
-Thought:{agent_scratchpad}
-""")
+def reflection_node(state: ChatAgentState):
+    messages = state["messages"]
     
-def run_agent_react_chat(connectionId, requestId, chat, query):
-    # get template based on react 
-    prompt_template = get_react_chat_prompt_template()
-    print('prompt_template: ', prompt_template)
+    reflection_prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "당신은 교사로서 학셍의 에세이를 평가하삽니다. 비평과 개선사항을 친절하게 설명해주세요."
+                "이때 장점, 단점, 길이, 깊이, 스타일등에 대해 충분한 정보를 제공합니다."
+                #"특히 주제에 맞는 적절한 예제가 잘 반영되어있는지 확인합니다"
+                "각 문단의 길이는 최소 200자 이상이 되도록 관련된 예제를 충분히 포함합니다.",
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
     
-    # create agent
+    chat = get_chat()
+    reflect = reflection_prompt | chat
+    
+    cls_map = {"ai": HumanMessage, "human": AIMessage}
+    translated = [messages[0]] + [
+        cls_map[msg.type](content=msg.content) for msg in messages[1:]
+    ]
+    res = reflect.invoke({"messages": translated})    
+    response = HumanMessage(content=res.content)    
+    return {"messages": [response]}
+
+def should_continue_of_reflection(state: ChatAgentState) -> Literal["continue", "end"]:
+    messages = state["messages"]
+    
+    if len(messages) >= 6:   # End after 3 iterations        
+        return "end"
+    else:
+        return "continue"
+
+def buildReflectionAgent():
+    workflow = StateGraph(ChatAgentState)
+    workflow.add_node("generate", generation_node)
+    workflow.add_node("reflect", reflection_node)
+    workflow.set_entry_point("generate")
+    workflow.add_conditional_edges(
+        "generate",
+        should_continue_of_reflection,
+        {
+            "continue": "reflect",
+            "end": END,
+        },
+    )
+
+    workflow.add_edge("reflect", "generate")
+    return workflow.compile()
+
+reflection_app = buildReflectionAgent()
+
+def run_reflection_agent(connectionId, requestId, app, query):
     isTyping(connectionId, requestId)
-    agent = create_react_agent(chat, tools, prompt_template)
     
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+    inputs = [HumanMessage(content=query)]
+    config = {"recursion_limit": 50}
     
-    history = memory_chain.load_memory_variables({})["chat_history"]
-    print('memory_chain: ', history)
+    msg = ""
     
-    # run agent
-    response = agent_executor.invoke({
-        "input": query,
-        "chat_history": history
-    })
-    print('response: ', response)
-    
-    # streaming
-    msg = readStreamMsg(connectionId, requestId, response['output'])
-
-    msg = response['output']
-    print('msg: ', msg)
-            
-    return msg
-
-def run_agent_react_chat_using_revised_question(connectionId, requestId, chat, query):
-    # revise question
-    revised_question = revise_question(connectionId, requestId, chat, query)     
-    print('revised_question: ', revised_question)  
+    for event in app.stream({"messages": inputs}, config, stream_mode="values"):   
+        print('event: ', event)
         
-    # get template based on react 
-    prompt_template = get_react_prompt_template()
-    print('prompt_template: ', prompt_template)
-    
-    # create agent
-    isTyping(connectionId, requestId)
-    agent = create_react_agent(chat, tools, prompt_template)
-    
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
-    
-    # run agent
-    response = agent_executor.invoke({"input": revised_question})
-    print('response: ', response)
-    
-    # streaming
-    msg = readStreamMsg(connectionId, requestId, response['output'])
+        message = event["messages"][-1]
+        print('message: ', message)
+        
+        if len(event["messages"])>1:
+            if msg == "":
+                msg = message.content
+            else:
+                msg = f"{msg}\n\n{message.content}"
 
-    msg = response['output']
-    print('msg: ', msg)
-            
+            result = {
+                'request_id': requestId,
+                'msg': msg,
+                'status': 'proceeding'
+            }
+            #print('result: ', json.dumps(result))
+            sendMessage(connectionId, result)
+
     return msg
 
 def getResponse(connectionId, jsonBody):
@@ -3623,14 +3821,16 @@ def getResponse(connectionId, jsonBody):
                 msg  = "The chat memory was intialized in this session."
             else:       
                 if conv_type == 'normal' or conv_type == 'funny':      # normal
-                    msg = general_conversation(connectionId, requestId, chat, text)                  
-                elif conv_type == 'agent-react':
-                    msg = run_agent_react(connectionId, requestId, chat, text)                
-                elif conv_type == 'agent-react-chat':         
-                    if separated_chat_history=='true': 
-                        msg = run_agent_react_chat_using_revised_question(connectionId, requestId, chat, text)
-                    else:
-                        msg = run_agent_react_chat(connectionId, requestId, chat, text)
+                    msg = general_conversation(connectionId, requestId, chat, text)        
+                              
+                elif conv_type == 'agent-executor':
+                    msg = run_agent_executor(connectionId, requestId, chat_app, text)
+                elif conv_type == 'agent-executor-chat':
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)  
+                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)                                      
+                elif conv_type == 'agent-reflection':  # reflection
+                    msg = run_reflection_agent(connectionId, requestId, reflection_app, text)     
                 
                 elif conv_type == 'qa':   # RAG
                     print(f'rag_type: {rag_type}')

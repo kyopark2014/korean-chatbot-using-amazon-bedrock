@@ -3390,19 +3390,18 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                     docList.append(parent_doc_id)
                         
                     if len(relevant_documents)>=top_k:
-                        break
-                                
+                        break                                
     # print('lexical query result: ', json.dumps(response))
     
     for i, doc in enumerate(relevant_documents):
-        print('doc: ', doc)
-        print('doc content: ', doc.page_content)
+        print('doc: ', doc[0])
+        print('doc content: ', doc[0].page_content)
         
-        if len(doc.page_content)>=100:
-            text = doc.page_content[:100]
+        if len(doc[0].page_content)>=100:
+            text = doc[0].page_content[:100]
         else:
-            text = doc.page_content            
-        print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc.metadata}")        
+            text = doc[0].page_content            
+        print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc[0].metadata}")        
 
     return relevant_documents
 

@@ -3302,7 +3302,7 @@ def search_by_opensearch(keyword: str) -> str:
             excerpt, name, uri = get_parent_content(parent_doc_id) # use pareant document
             print(f"parent_doc_id: {parent_doc_id}, doc_level: {doc_level}, uri: {uri}, content: {excerpt}")
             
-            print(f"vector search --> doc[{i}]: {excerpt}\n")
+            print(f"vector search --> doc[{i}]\n")
             
             docs.append(
                 Document(
@@ -3328,7 +3328,7 @@ def search_by_opensearch(keyword: str) -> str:
             uri = document[0].metadata['uri']            
             name = document[0].metadata['name']
             
-            print(f"vector search --> doc[{i}]: {excerpt}\n")
+            print(f"vector search --> doc[{i}]\n")
             
             docs.append(
                 Document(
@@ -3436,7 +3436,7 @@ def lexical_search_for_tool(query, top_k):
         uri = ""
         if "uri" in document['_source']['metadata']:
             uri = document['_source']['metadata']['uri']            
-        print(f"lexical search --> doc[{i}]: {excerpt}\n")
+        print(f"lexical search --> doc[{i}]:\n")
         
         docs.append(
                 Document(
@@ -3495,6 +3495,8 @@ def grade_documents_using_parallel_processing(question, documents):
     processes = []
     parent_connections = []
     for i, doc in documents:
+        print(f"grading doc[{i}]: {doc.page_content}")
+        
         parent_conn, child_conn = Pipe()
         parent_connections.append(parent_conn)
             

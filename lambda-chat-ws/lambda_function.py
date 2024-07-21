@@ -3557,14 +3557,20 @@ def get_references_for_agent(docs):
         page = ""
         if "page" in doc.metadata:
             page = doc.metadata['page']
+        print('page: ', page)
         uri = doc.metadata['uri']
+        print('uri: ', uri)        
         name = doc.metadata['name']
+        print('name: ', name)
+        sourceType = doc.metadata['from']
+        print('sourceType: ', sourceType)
         excerpt = doc.page_content
-
+        print('excerpt: ', excerpt)
+        
         if page:                
-            reference = reference + f"{i+1}. {page}page in <a href={uri} target=_blank>{name}</a>, {doc['rag_type']} ({doc['assessed_score']})\n"
+            reference = reference + f"{i+1}. {page}page in <a href={uri} target=_blank>{name}</a>, {sourceType}, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
         else:
-            reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, {doc['rag_type']} ({doc['assessed_score']}), <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"                            
+            reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, {sourceType}, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
     return reference
 
 # define tools

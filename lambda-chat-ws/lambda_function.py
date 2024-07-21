@@ -48,6 +48,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import tools_condition
 from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import Literal
 
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
@@ -3627,7 +3628,6 @@ class ChatAgentState(TypedDict):
 tool_node = ToolNode(tools)
 
 reference_msg = ""
-from typing import Literal
 def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     global reference_msg, reference_docs
     
@@ -3646,10 +3646,6 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
         return "end"
     else:                
         return "continue"
-
-#def call_model(state: ChatAgentState):
-#    response = model.invoke(state["messages"])
-#    return {"messages": [response]}    
 
 def call_model(state: ChatAgentState):
     question = state["messages"]
@@ -3968,7 +3964,10 @@ def getResponse(connectionId, jsonBody):
                 elif conv_type == 'agent-executor-chat':
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)  
-                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)                                      
+                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)        
+                    if reference_msg:
+                        reference = reference_msg
+                                                      
                 elif conv_type == 'agent-reflection':  # reflection
                     msg = run_reflection_agent(connectionId, requestId, reflection_app, text)     
                 

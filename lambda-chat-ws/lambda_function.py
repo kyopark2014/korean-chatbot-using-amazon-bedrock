@@ -3359,6 +3359,36 @@ def search_by_opensearch(keyword: str) -> str:
             
     return answer
 
+def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
+    result = vectorstore_opensearch.similarity_search_with_score(
+        query = query,
+        k = top_k*2,  
+        pre_filter={"doc_level": {"$eq": "child"}}
+    )
+    # print('result: ', result)
+                
+    relevant_documents = []
+    docList = []
+    for re in result:
+        if 'parent_doc_id' in re[0].metadata:
+            parent_doc_id = re[0].metadata['parent_doc_id']
+            doc_level = re[0].metadata['doc_level']
+            print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
+                        
+            if doc_level == 'child':
+                if parent_doc_id in docList:
+                    print('duplicated!')
+                else:
+                    relevant_documents.append(re)
+                    docList.append(parent_doc_id)
+                        
+                    if len(relevant_documents)>=top_k:
+                        break
+                                
+    # print('lexical query result: ', json.dumps(response))
+    print('relevant_documents: ', relevant_documents)    
+    return relevant_documents
+
 def lexical_search_for_tool(query, top_k):
     # lexical search (keyword)
     min_match = 0
@@ -3453,7 +3483,7 @@ def grade_document_based_on_relevance(conn, question, doc):
     if grade == 'yes':
         print("---GRADE: DOCUMENT RELEVANT---")
         conn.send(doc)
-    else:
+    else:  # no
         print("---GRADE: DOCUMENT NOT RELEVANT---")
         conn.send(None)
     

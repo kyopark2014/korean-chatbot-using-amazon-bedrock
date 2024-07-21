@@ -3341,9 +3341,8 @@ def search_by_opensearch(keyword: str) -> str:
             answer = answer + f"{excerpt}, URL: {uri}\n\n"
     
     if enableHybridSearch == 'true':
-        for doc in lexical_search_for_tool(keyword, top_k):
-            docs.append(doc)
-    
+        docs = docs + lexical_search_for_tool(keyword, top_k):
+                
     filtered_docs = grade_documents(keyword, docs)
     
     answer2 = "" 
@@ -3419,7 +3418,7 @@ def lexical_search_for_tool(query, top_k):
     )
     # print('lexical query result: ', json.dumps(response))
         
-    docs = ""
+    docs = []
     for i, document in enumerate(response['hits']['hits']):
         if i>=top_k: 
             break

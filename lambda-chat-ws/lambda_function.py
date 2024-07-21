@@ -3495,11 +3495,8 @@ def grade_documents_using_parallel_processing(question, documents):
     processes = []
     parent_connections = []
     
-    print('length: ', len(documents))
-    
-    for i, doc in documents:
-        print(f"grading doc[{i}]: {doc.page_content}")
-        
+    for i, doc in enumerate(documents):
+        #print(f"grading doc[{i}]: {doc.page_content}")        
         parent_conn, child_conn = Pipe()
         parent_connections.append(parent_conn)
             

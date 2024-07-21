@@ -3337,9 +3337,6 @@ def search_by_opensearch(keyword: str) -> str:
                 )
             )
     
-    for i, doc in enumerate(docs):
-        print(f"vector search --> doc[{i}: {doc}]\n")
-    
     if enableHybridSearch == 'true':
         docs = docs + lexical_search_for_tool(keyword, top_k)
     
@@ -3388,7 +3385,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
     # print('lexical query result: ', json.dumps(response))
     
     for i, rel_doc in enumerate(relevant_documents):
-        print(f"[Vector Search] doc[{i}]: {rel_doc}")
+        print(f"--> (vector search) doc[{i}]: {rel_doc}")
 
     return relevant_documents
 
@@ -3453,7 +3450,7 @@ def lexical_search_for_tool(query, top_k):
             )
     
     for i, rel_doc in enumerate(docs):
-        print(f"lexical search --> doc[{i}: {rel_doc}]\n")
+        print(f"--> (lexical search) doc[{i}: {rel_doc}]\n")
         
     return docs
 

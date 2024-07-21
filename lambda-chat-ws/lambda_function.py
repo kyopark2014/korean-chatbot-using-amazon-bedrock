@@ -3359,37 +3359,6 @@ def search_by_opensearch(keyword: str) -> str:
             
     return answer
 
-def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
-    result = vectorstore_opensearch.similarity_search_with_score(
-        query = query,
-        k = top_k*2,  
-        pre_filter={"doc_level": {"$eq": "child"}}
-    )
-    # print('result: ', result)
-            
-    relevant_documents = []
-    docList = []
-    for re in result:
-        if 'parent_doc_id' in re[0].metadata:
-            parent_doc_id = re[0].metadata['parent_doc_id']
-            doc_level = re[0].metadata['doc_level']
-            print(f"doc_level: {doc_level}, parent_doc_id: {parent_doc_id}")
-                    
-            if doc_level == 'child':
-                if parent_doc_id in docList:
-                    print('duplicated!')
-                else:
-                    relevant_documents.append(re)
-                    docList.append(parent_doc_id)
-                    
-                    if len(relevant_documents)>=top_k:
-                        break
-                                
-    # print('lexical query result: ', json.dumps(response))
-    print('relevant_documents: ', relevant_documents)
-    
-    return relevant_documents
-
 def lexical_search_for_tool(query, top_k):
     # lexical search (keyword)
     min_match = 0
@@ -3475,28 +3444,73 @@ def get_retrieval_grader():
     retrieval_grader = grade_prompt | structured_llm_grader
     return retrieval_grader
 
+def grade_document_based_on_relevance(conn, question, doc):     
+    retrieval_grader = get_retrieval_grader()       
+    score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
+    print(f"score: {score}")
+    
+    grade = score.binary_score    
+    if grade == 'yes':
+        print("---GRADE: DOCUMENT RELEVANT---")
+        conn.send(doc)
+    else:
+        print("---GRADE: DOCUMENT NOT RELEVANT---")
+        conn.send(None)
+    
+    conn.close()
+                                
+def grade_documents_using_parallel_processing(question, documents):
+    relevant_docs = []    
+
+    processes = []
+    parent_connections = []
+    for i, doc in documents:
+        parent_conn, child_conn = Pipe()
+        parent_connections.append(parent_conn)
+            
+        process = Process(target=grade_document_based_on_relevance, args=(child_conn, question, doc))
+        processes.append(process)
+
+    for process in processes:
+        process.start()
+            
+    for parent_conn in parent_connections:
+        doc = parent_conn.recv()
+
+        if doc is not None:
+            relevant_docs.append(doc)    
+
+    for process in processes:
+        process.join()
+    
+    #print('relevant_docs: ', relevant_docs)
+    return relevant_docs
+
 def grade_documents(question, documents):
     print("###### grade_documents ######")
-
-    # Score each doc
+    
     filtered_docs = []
-    
-    retrieval_grader = get_retrieval_grader()
-    for doc in documents:
-        score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
-        grade = score.binary_score
-        # Document relevant
-        if grade.lower() == "yes":
-            print("---GRADE: DOCUMENT RELEVANT---")
-            filtered_docs.append(doc)
-        # Document not relevant
-        else:
-            print("---GRADE: DOCUMENT NOT RELEVANT---")
-            # We do not include the document in filtered_docs
-            # We set a flag to indicate that we want to run web search
-            continue
-    print('len(docments): ', len(filtered_docs))
-    
+    if useParallelRAG == 'true':  # parallel processing
+        filtered_docs = grade_documents_using_parallel_processing(question, documents)
+
+    else:
+        # Score each doc    
+        retrieval_grader = get_retrieval_grader()
+        for doc in documents:
+            score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
+            grade = score.binary_score
+            # Document relevant
+            if grade.lower() == "yes":
+                print("---GRADE: DOCUMENT RELEVANT---")
+                filtered_docs.append(doc)
+            # Document not relevant
+            else:
+                print("---GRADE: DOCUMENT NOT RELEVANT---")
+                # We do not include the document in filtered_docs
+                # We set a flag to indicate that we want to run web search
+                continue
+            
+    print('len(docments): ', len(filtered_docs))    
     return filtered_docs
 
 # define tools

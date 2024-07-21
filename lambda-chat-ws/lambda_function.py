@@ -3633,7 +3633,8 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     isFirst = True
     for i, msg in enumerate(messages):
         print(f"{i}: ", msg)
-        if i>=1 and msg.tool_calls: 
+        
+        if "tool_calls" in msg:
             print('tool_calls: ', msg.tool_calls)
             if msg.tool_calls[0]['name'] == 'search_by_opensearch':
                 isFirst = False

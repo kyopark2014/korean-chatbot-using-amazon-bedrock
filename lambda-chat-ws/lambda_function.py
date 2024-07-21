@@ -3397,8 +3397,8 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
         #print('doc: ', doc[0])
         #print('doc content: ', doc[0].page_content)
         
-        if len(doc[0].page_content)>=100:
-            text = doc[0].page_content[:100]
+        if len(doc[0].page_content)>=30:
+            text = doc[0].page_content[:30]
         else:
             text = doc[0].page_content            
         print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc[0].metadata}")        
@@ -3469,8 +3469,8 @@ def lexical_search_for_tool(query, top_k):
         print('doc: ', doc)
         print('doc content: ', doc.page_content)
         
-        if len(doc.page_content)>=100:
-            text = doc.page_content[:100]
+        if len(doc.page_content)>=30:
+            text = doc.page_content[:30]
         else:
             text = doc.page_content            
         print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc.metadata}")   
@@ -3924,6 +3924,8 @@ def getResponse(connectionId, jsonBody):
                               
                 elif conv_type == 'agent-executor':
                     msg = run_agent_executor(connectionId, requestId, chat_app, text)
+                    if reference_msg:
+                        reference = reference_msg
                 elif conv_type == 'agent-executor-chat':
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)  

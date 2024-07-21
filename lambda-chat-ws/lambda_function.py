@@ -3392,8 +3392,12 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                                 
     # print('lexical query result: ', json.dumps(response))
     
-    for i, rel_doc in enumerate(relevant_documents):
-        print(f"--> (vector search) doc[{i}]: {rel_doc}")
+    for i, doc in enumerate(relevant_documents):
+        if len(doc.page_content)>=100:
+            text = doc.page_content[:99]
+        else:
+            text = doc.page_content            
+        print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc.metadata}")        
 
     return relevant_documents
 
@@ -3457,8 +3461,12 @@ def lexical_search_for_tool(query, top_k):
                 )
             )
     
-    for i, rel_doc in enumerate(docs):
-        print(f"--> (lexical search) doc[{i}: {rel_doc}]\n")
+    for i, doc in enumerate(docs):
+        if len(doc.page_content)>=100:
+            text = doc.page_content[:99]
+        else:
+            text = doc.page_content            
+        print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc.metadata}")   
         
     return docs
 

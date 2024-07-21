@@ -3315,8 +3315,6 @@ def search_by_opensearch(keyword: str) -> str:
                     },
                 )
             )
-            
-            answer = answer + f"{excerpt}, URL: {uri}\n\n"
     else: 
         relevant_documents = vectorstore_opensearch.similarity_search_with_score(
             query = keyword,
@@ -3342,8 +3340,6 @@ def search_by_opensearch(keyword: str) -> str:
                     },
                 )
             )
-                            
-            answer = answer + f"{excerpt}, URL: {uri}\n\n"
     
     if enableHybridSearch == 'true':
         docs = docs + lexical_search_for_tool(keyword, top_k)
@@ -3354,16 +3350,13 @@ def search_by_opensearch(keyword: str) -> str:
     
     print('filtered doc length: ', len(filtered_docs))
     
-    answer2 = "" 
+    answer = "" 
     for doc in filtered_docs:
         excerpt = doc.page_content
         uri = doc.metadata['uri']
         
-        answer2 = answer2 + f"{excerpt}, URL: {uri}\n\n"
-    
-    print('answer: ', answer)    
-    print('answer2: ', answer2)
-        
+        answer = answer + f"{excerpt}\n\n"
+            
     return answer
 
 def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):

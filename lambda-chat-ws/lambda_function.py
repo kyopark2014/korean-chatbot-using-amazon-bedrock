@@ -3632,12 +3632,12 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     global reference_msg, reference_docs
     
     messages = state["messages"]    
-    print('(should_continue) messages: ', messages)
+    # print('(should_continue) messages: ', messages)
     
     # initiate
     isFirst = True
     for i, msg in enumerate(messages):
-        print(f"{i}: ", msg)
+        # print(f"{i}: ", msg)
         
         if i==0 or not msg.tool_calls:
             continue
@@ -3664,21 +3664,34 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
 #    return {"messages": [response]}    
 
 def call_model(state: ChatAgentState):
+    question = state["messages"]
+    print('question: ', question)
+    
+    if isKorean(question)==True:
+        system = (
+            "다음의 Human과 Assistant의 친근한 이전 대화입니다."
+            "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
+            "Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
+            "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요."
+        )
+    else: 
+        system = (            
+            "Answer friendly for the newest question using the following conversation"
+            "If you don't know the answer, just say that you don't know, don't try to make up an answer."
+            "You will be acting as a thoughtful advisor."
+            "Put it in <result> tags."
+        )
+         
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system",
-                "다음의 Human과 Assistant의 친근한 이전 대화입니다."
-                "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
-                "Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
-                "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요.",
-            ),
+            ("system", system),
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
     chain = prompt | model
         
-    response = chain.invoke(state["messages"])
-    return {"messages": [response]}    
+    response = chain.invoke()
+    return {"messages": [response]}
 
 def buildChatAgent():
     workflow = StateGraph(ChatAgentState)

@@ -3667,7 +3667,7 @@ def call_model(state: ChatAgentState):
     question = state["messages"]
     print('question: ', question)
     
-    if isKorean(question)==True:
+    if isKorean(question[0].content)==True:
         system = (
             "다음의 Human과 Assistant의 친근한 이전 대화입니다."
             "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
@@ -3690,7 +3690,7 @@ def call_model(state: ChatAgentState):
     )
     chain = prompt | model
         
-    response = chain.invoke()
+    response = chain.invoke(question)
     return {"messages": [response]}
 
 def buildChatAgent():

@@ -3325,7 +3325,8 @@ def search_by_opensearch(keyword: str) -> str:
             #print(f'## Document(opensearch-vector) {i+1}: {document}')
             
             excerpt = document[0].page_content        
-            uri = document[0].metadata['uri']
+            uri = document[0].metadata['uri']            
+            name = document[0].metadata['name']
             
             docs.append(
                 Document(
@@ -3341,7 +3342,7 @@ def search_by_opensearch(keyword: str) -> str:
             answer = answer + f"{excerpt}, URL: {uri}\n\n"
     
     if enableHybridSearch == 'true':
-        docs = docs + lexical_search_for_tool(keyword, top_k):
+        docs = docs + lexical_search_for_tool(keyword, top_k)
                 
     filtered_docs = grade_documents(keyword, docs)
     

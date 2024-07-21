@@ -3258,6 +3258,7 @@ def search_by_tavily(keyword: str) -> str:
         
     return answer
 
+reference_msg = ""
 @tool    
 def search_by_opensearch(keyword: str) -> str:
     """
@@ -3265,6 +3266,7 @@ def search_by_opensearch(keyword: str) -> str:
     keyword: search keyword
     return: the technical information of keyword
     """    
+    global reference_msg
     
     print('keyword: ', keyword)
     keyword = keyword.replace('\'','')
@@ -3346,14 +3348,14 @@ def search_by_opensearch(keyword: str) -> str:
         
     for i, doc in enumerate(filtered_docs):
         if len(doc.page_content)>=100:
-            text = doc.page_content[:99]
+            text = doc.page_content[:100]
         else:
             text = doc.page_content
             
         print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
         
-    reference = get_references_for_agent(filtered_docs)
-    print('reference: ', reference)
+    reference_msg = get_references_for_agent(filtered_docs)
+    print('reference: ', reference_msg)
     
     answer = "" 
     for doc in filtered_docs:
@@ -3393,8 +3395,11 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
     # print('lexical query result: ', json.dumps(response))
     
     for i, doc in enumerate(relevant_documents):
+        print('doc: ', doc)
+        print('doc content: ', doc.page_content)
+        
         if len(doc.page_content)>=100:
-            text = doc.page_content[:99]
+            text = doc.page_content[:100]
         else:
             text = doc.page_content            
         print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc.metadata}")        
@@ -3463,7 +3468,7 @@ def lexical_search_for_tool(query, top_k):
     
     for i, doc in enumerate(docs):
         if len(doc.page_content)>=100:
-            text = doc.page_content[:99]
+            text = doc.page_content[:100]
         else:
             text = doc.page_content            
         print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc.metadata}")   

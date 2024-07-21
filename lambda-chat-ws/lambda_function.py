@@ -3586,6 +3586,9 @@ tool_node = ToolNode(tools)
 from typing import Literal
 def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     messages = state["messages"]
+    
+    print('(should_continue) messages: ', messages)
+    
     last_message = messages[-1]
     if not last_message.tool_calls:
         return "end"

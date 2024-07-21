@@ -3466,14 +3466,14 @@ def lexical_search_for_tool(query, top_k):
             )
     
     for i, doc in enumerate(docs):
-        print('doc: ', doc[0])
-        print('doc content: ', doc[0].page_content)
+        #print('doc: ', doc])
+        #print('doc content: ', doc.page_content)
         
-        if len(doc[0].page_content)>=100:
-            text = doc[0].page_content[:100]
+        if len(doc.page_content)>=100:
+            text = doc.page_content[:100]
         else:
-            text = doc[0].page_content            
-        print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc[0].metadata}")   
+            text = doc.page_content            
+        print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc.metadata}")   
         
     return docs
 

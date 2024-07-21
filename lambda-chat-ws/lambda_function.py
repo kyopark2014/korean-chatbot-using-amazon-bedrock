@@ -3466,8 +3466,8 @@ def lexical_search_for_tool(query, top_k):
             )
     
     for i, doc in enumerate(docs):
-        #print('doc: ', doc])
-        #print('doc content: ', doc.page_content)
+        print('doc: ', doc)
+        print('doc content: ', doc.page_content)
         
         if len(doc.page_content)>=100:
             text = doc.page_content[:100]

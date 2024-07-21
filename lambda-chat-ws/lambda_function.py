@@ -3593,6 +3593,7 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     if not last_message.tool_calls:
         return "end"
     else:
+        print('tool_calls: ', last_message.tool_calls)
         return "continue"
 
 #def call_model(state: ChatAgentState):

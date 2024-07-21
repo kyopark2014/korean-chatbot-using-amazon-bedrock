@@ -3639,7 +3639,7 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     for i, msg in enumerate(messages):
         print(f"{i}: ", msg)
         
-        if i==1 or not msg.tool_calls:
+        if i==0 or not msg.tool_calls:
             continue
         else:
             print('tool_calls: ', msg.tool_calls)

@@ -3386,7 +3386,10 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
                         break
                                 
     # print('lexical query result: ', json.dumps(response))
-    print('relevant_documents: ', relevant_documents)    
+    
+    for i, rel_doc in enumerate(relevant_documents):
+        print(f"doc[{i}]: {rel_doc}")
+
     return relevant_documents
 
 def lexical_search_for_tool(query, top_k):
@@ -3477,7 +3480,7 @@ def get_retrieval_grader():
 def grade_document_based_on_relevance(conn, question, doc):     
     retrieval_grader = get_retrieval_grader()       
     score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
-    print(f"score: {score}")
+    # print(f"score: {score}")
     
     grade = score.binary_score    
     if grade == 'yes':
@@ -3543,7 +3546,7 @@ def grade_documents(question, documents):
                 # We set a flag to indicate that we want to run web search
                 continue
             
-    print('len(docments): ', len(filtered_docs))    
+    # print('len(docments): ', len(filtered_docs))    
     return filtered_docs
 
 # define tools

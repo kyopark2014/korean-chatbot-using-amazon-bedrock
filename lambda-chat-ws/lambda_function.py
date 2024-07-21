@@ -3634,23 +3634,11 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     messages = state["messages"]    
     # print('(should_continue) messages: ', messages)
     
-    # initiate
-    isFirst = True
-    for i, msg in enumerate(messages):
-        # print(f"{i}: ", msg)
-        
-        if i==0 or not msg.tool_calls:
-            continue
-        else:
-            print('tool_calls: ', msg.tool_calls)
-            if msg.tool_calls[0]['name'] == 'search_by_opensearch' or msg.tool_calls[0]['name'] == 'search_by_tavily':
-                isFirst = False
-                break
-    if isFirst:
+    if len(messages)==1:
         reference_docs = []
         reference_msg = ""
         print('initialized')
-    
+        
     last_message = messages[-1]
     if not last_message.tool_calls:
         if reference_docs:

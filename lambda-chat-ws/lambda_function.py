@@ -3918,11 +3918,12 @@ def getResponse(connectionId, jsonBody):
                     
                 print('initiate the chat memory!')
                 msg  = "The chat memory was intialized in this session."
-            else:       
+            else:                       
                 if conv_type == 'normal' or conv_type == 'funny':      # normal
                     msg = general_conversation(connectionId, requestId, chat, text)        
                               
                 elif conv_type == 'agent-executor':
+                    reference_msg = ""
                     msg = run_agent_executor(connectionId, requestId, chat_app, text)
                     if reference_msg:
                         reference = reference_msg

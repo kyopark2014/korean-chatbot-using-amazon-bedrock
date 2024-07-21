@@ -3343,9 +3343,12 @@ def search_by_opensearch(keyword: str) -> str:
     print('doc length: ', len(docs))
                 
     filtered_docs = grade_documents(keyword, docs)
-    
+        
     for i, doc in enumerate(filtered_docs):
         print(f"filtered doc[{i}]: {doc}")
+        
+    reference = get_references_for_agent(filtered_docs)
+    print('reference: ', reference)
     
     answer = "" 
     for doc in filtered_docs:
@@ -3353,7 +3356,7 @@ def search_by_opensearch(keyword: str) -> str:
         uri = doc.metadata['uri']
         
         answer = answer + f"{excerpt}\n\n"
-            
+        
     return answer
 
 def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
@@ -3547,6 +3550,22 @@ def grade_documents(question, documents):
             
     # print('len(docments): ', len(filtered_docs))    
     return filtered_docs
+
+def get_references_for_agent(docs):
+    reference = "\n\nFrom\n"
+    for i, doc in enumerate(docs):
+        page = ""
+        if "page" in doc.metadata:
+            page = doc.metadata['page']
+        uri = doc.metadata['uri']
+        name = doc.metadata['name']
+        excerpt = doc.page_content
+
+        if page:                
+            reference = reference + f"{i+1}. {page}page in <a href={uri} target=_blank>{name}</a>, {doc['rag_type']} ({doc['assessed_score']})\n"
+        else:
+            reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, {doc['rag_type']} ({doc['assessed_score']}), <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"                            
+    return reference
 
 # define tools
 tools = [get_current_time, get_book_list, get_weather_info, search_by_tavily, search_by_opensearch]        

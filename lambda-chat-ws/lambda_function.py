@@ -3264,7 +3264,6 @@ def search_by_tavily(keyword: str) -> str:
                         metadata={
                             'name': 'WWW',
                             'uri': url,
-                            'content': content,
                             'from': 'tavily'
                         },
                     )
@@ -3283,7 +3282,6 @@ def search_by_opensearch(keyword: str) -> str:
     keyword: search keyword
     return: the technical information of keyword
     """    
-    global reference_docs
     
     print('keyword: ', keyword)
     keyword = keyword.replace('\'','')
@@ -3370,11 +3368,7 @@ def search_by_opensearch(keyword: str) -> str:
             text = doc.page_content
             
         print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
-        
-    reference_docs += filtered_docs
-    
-    print('langth of reference_docs: ', len(reference_docs))
-    
+       
     answer = "" 
     for doc in filtered_docs:
         excerpt = doc.page_content
@@ -3585,7 +3579,11 @@ def grade_documents(question, documents):
                 # We do not include the document in filtered_docs
                 # We set a flag to indicate that we want to run web search
                 continue
-            
+    
+    global reference_docs 
+    reference_docs += filtered_docs    
+    # print('langth of reference_docs: ', len(reference_docs))
+    
     # print('len(docments): ', len(filtered_docs))    
     return filtered_docs
 
@@ -3629,20 +3627,11 @@ tool_node = ToolNode(tools)
 
 reference_msg = ""
 def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
-    global reference_msg, reference_docs
-    
     messages = state["messages"]    
     # print('(should_continue) messages: ', messages)
-    
-    if len(messages)==1:
-        reference_docs = []
-        reference_msg = ""
-        print('initialized')
-        
+            
     last_message = messages[-1]
     if not last_message.tool_calls:
-        if reference_docs:
-            reference_msg = get_references_for_agent(reference_docs)
         return "end"
     else:                
         return "continue"
@@ -3837,6 +3826,10 @@ def getResponse(connectionId, jsonBody):
     function_type = jsonBody['function_type']  # conversation type
     print('Function Type: ', function_type)
     
+    print('initiate....')
+    global reference_docs
+    reference_docs = []
+    
     rag_type = ""
     if 'rag_type' in jsonBody:
         if jsonBody['rag_type']:
@@ -3958,15 +3951,15 @@ def getResponse(connectionId, jsonBody):
                               
                 elif conv_type == 'agent-executor':                    
                     msg = run_agent_executor(connectionId, requestId, chat_app, text)
-                    if reference_msg:
-                        reference = reference_msg
+                    if reference_docs:
+                        reference = get_references_for_agent(reference_docs)      
                         
                 elif conv_type == 'agent-executor-chat':
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)  
-                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)        
-                    if reference_msg:
-                        reference = reference_msg
+                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)  
+                    if reference_docs:
+                        reference = get_references_for_agent(reference_docs)      
                                                       
                 elif conv_type == 'agent-reflection':  # reflection
                     msg = run_reflection_agent(connectionId, requestId, reflection_app, text)     
@@ -4000,7 +3993,7 @@ def getResponse(connectionId, jsonBody):
                 
                 memory_chain.chat_memory.add_user_message(text)  # append new diaglog
                 memory_chain.chat_memory.add_ai_message(msg)
-        
+                
         elif type == 'code':
             msg, reference = get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_embedding)  
             

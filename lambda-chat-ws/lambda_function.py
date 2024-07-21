@@ -3629,7 +3629,7 @@ tool_node = ToolNode(tools)
 reference_msg = ""
 from typing import Literal
 def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
-    global reference_msg
+    global reference_msg, reference_docs
     
     messages = state["messages"]    
     print('(should_continue) messages: ', messages)
@@ -3649,6 +3649,7 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     if isFirst:
         reference_docs = []
         reference_msg = ""
+        print('initialized')
     
     last_message = messages[-1]
     if not last_message.tool_calls:

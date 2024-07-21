@@ -3345,7 +3345,12 @@ def search_by_opensearch(keyword: str) -> str:
     filtered_docs = grade_documents(keyword, docs)
         
     for i, doc in enumerate(filtered_docs):
-        print(f"filtered doc[{i}]: {doc}")
+        if len(doc.page_content)>=100:
+            text = doc.page_content[:99]
+        else:
+            text = doc.page_content
+            
+        print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
         
     reference = get_references_for_agent(filtered_docs)
     print('reference: ', reference)

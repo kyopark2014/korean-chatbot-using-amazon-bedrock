@@ -3355,7 +3355,7 @@ def search_by_opensearch(keyword: str) -> str:
         print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
         
     reference_msg = get_references_for_agent(filtered_docs)
-    print('reference: ', reference_msg)
+    print('reference_msg: ', reference_msg)
     
     answer = "" 
     for doc in filtered_docs:
@@ -3466,8 +3466,8 @@ def lexical_search_for_tool(query, top_k):
             )
     
     for i, doc in enumerate(docs):
-        print('doc: ', doc)
-        print('doc content: ', doc.page_content)
+        #print('doc: ', doc)
+        #print('doc content: ', doc.page_content)
         
         if len(doc.page_content)>=30:
             text = doc.page_content[:30]
@@ -3577,15 +3577,15 @@ def get_references_for_agent(docs):
         page = ""
         if "page" in doc.metadata:
             page = doc.metadata['page']
-        print('page: ', page)
+        #print('page: ', page)
         uri = doc.metadata['uri']
-        print('uri: ', uri)        
+        #print('uri: ', uri)        
         name = doc.metadata['name']
-        print('name: ', name)
+        #print('name: ', name)
         sourceType = doc.metadata['from']
-        print('sourceType: ', sourceType)
+        #print('sourceType: ', sourceType)
         excerpt = doc.page_content
-        print('excerpt: ', excerpt)
+        #print('excerpt: ', excerpt)
         
         if page:                
             reference = reference + f"{i+1}. {page}page in <a href={uri} target=_blank>{name}</a>, {sourceType}, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
@@ -3851,6 +3851,7 @@ def getResponse(connectionId, jsonBody):
     time_for_inference = 0
     history_length = 0
     isControlMsg = False
+    reference_msg = ""
     
     if type == 'text' and body[:11] == 'list models':
         isControlMsg = True
@@ -3922,12 +3923,11 @@ def getResponse(connectionId, jsonBody):
                 if conv_type == 'normal' or conv_type == 'funny':      # normal
                     msg = general_conversation(connectionId, requestId, chat, text)        
                               
-                elif conv_type == 'agent-executor':
-                    reference_msg = ""
+                elif conv_type == 'agent-executor':                    
                     msg = run_agent_executor(connectionId, requestId, chat_app, text)
                     if reference_msg:
                         reference = reference_msg
-                        reference_msg = ""
+                        
                 elif conv_type == 'agent-executor-chat':
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)  

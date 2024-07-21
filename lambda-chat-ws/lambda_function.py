@@ -3258,7 +3258,7 @@ def search_by_tavily(keyword: str) -> str:
         
     return answer
 
-reference_msg = ""
+reference_docs = ""
 @tool    
 def search_by_opensearch(keyword: str) -> str:
     """
@@ -3266,7 +3266,7 @@ def search_by_opensearch(keyword: str) -> str:
     keyword: search keyword
     return: the technical information of keyword
     """    
-    global reference_msg
+    global reference_docs
     
     print('keyword: ', keyword)
     keyword = keyword.replace('\'','')
@@ -3354,8 +3354,7 @@ def search_by_opensearch(keyword: str) -> str:
             
         print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
         
-    reference_msg = get_references_for_agent(filtered_docs)
-    print('reference_msg: ', reference_msg)
+    reference_docs += filtered_docs
     
     answer = "" 
     for doc in filtered_docs:
@@ -3401,7 +3400,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
             text = doc[0].page_content[:30]
         else:
             text = doc[0].page_content            
-        print(f"--> (vector search) doc[{i}]: {text}, metadata:{doc[0].metadata}")        
+        print(f"--> vector search doc[{i}]: {text}, metadata:{doc[0].metadata}")        
 
     return relevant_documents
 
@@ -3473,7 +3472,7 @@ def lexical_search_for_tool(query, top_k):
             text = doc.page_content[:30]
         else:
             text = doc.page_content            
-        print(f"--> (lexical search) doc[{i}]: {text}, metadata:{doc.metadata}")   
+        print(f"--> lexical search doc[{i}]: {text}, metadata:{doc.metadata}")   
         
     return docs
 
@@ -3609,17 +3608,32 @@ class ChatAgentState(TypedDict):
 
 tool_node = ToolNode(tools)
 
+reference_msg = ""
 from typing import Literal
 def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
-    messages = state["messages"]
+    global reference_msg
     
-    print('(should_continue) messages: ', messages)
+    messages = state["messages"]    
+    # print('(should_continue) messages: ', messages)
+    
+    # initiate
+    isFirst = True
+    for msg in messages:
+        if msg.tool_calls: 
+            print('tool_calls: ', msg.tool_calls)
+            if msg.tool_calls[0]['name'] == 'search_by_opensearch':
+                isFirst = False
+                break
+    if isFirst:
+        reference_docs = []
+        reference_msg = ""
     
     last_message = messages[-1]
-    if not last_message.tool_calls:
+    if not last_message.tool_calls:        
+        if reference_docs:
+            reference_msg = get_references_for_agent(reference_docs)
         return "end"
-    else:
-        print('tool_calls: ', last_message.tool_calls)
+    else:                
         return "continue"
 
 #def call_model(state: ChatAgentState):

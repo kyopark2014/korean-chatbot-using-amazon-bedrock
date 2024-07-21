@@ -3302,8 +3302,6 @@ def search_by_opensearch(keyword: str) -> str:
             excerpt, name, uri = get_parent_content(parent_doc_id) # use pareant document
             #print(f"parent_doc_id: {parent_doc_id}, doc_level: {doc_level}, uri: {uri}, content: {excerpt}")
             
-            print(f"vector search --> doc[{i}]\n")
-            
             docs.append(
                 Document(
                     page_content=excerpt,
@@ -3328,8 +3326,6 @@ def search_by_opensearch(keyword: str) -> str:
             uri = document[0].metadata['uri']            
             name = document[0].metadata['name']
             
-            print(f"vector search --> doc[{i}]\n")
-            
             docs.append(
                 Document(
                     page_content=excerpt,
@@ -3341,6 +3337,9 @@ def search_by_opensearch(keyword: str) -> str:
                 )
             )
     
+    for i, doc in enumerate(docs):
+        print(f"vector search --> doc[{i}: {doc}]\n")
+    
     if enableHybridSearch == 'true':
         docs = docs + lexical_search_for_tool(keyword, top_k)
     
@@ -3348,7 +3347,8 @@ def search_by_opensearch(keyword: str) -> str:
                 
     filtered_docs = grade_documents(keyword, docs)
     
-    print('filtered doc length: ', len(filtered_docs))
+    for i, doc in enumerate(filtered_docs):
+        print(f"filtered doc[{i}]: {doc}")
     
     answer = "" 
     for doc in filtered_docs:
@@ -3388,7 +3388,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
     # print('lexical query result: ', json.dumps(response))
     
     for i, rel_doc in enumerate(relevant_documents):
-        print(f"doc[{i}]: {rel_doc}")
+        print(f"[Vector Search] doc[{i}]: {rel_doc}")
 
     return relevant_documents
 
@@ -3439,7 +3439,6 @@ def lexical_search_for_tool(query, top_k):
         uri = ""
         if "uri" in document['_source']['metadata']:
             uri = document['_source']['metadata']['uri']            
-        print(f"lexical search --> doc[{i}]\n")
         
         docs.append(
                 Document(
@@ -3452,7 +3451,10 @@ def lexical_search_for_tool(query, top_k):
                     },
                 )
             )
-
+    
+    for i, rel_doc in enumerate(docs):
+        print(f"lexical search --> doc[{i}: {rel_doc}]\n")
+        
     return docs
 
 class GradeDocuments(BaseModel):

@@ -3639,7 +3639,7 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     for i, msg in enumerate(messages):
         print(f"{i}: ", msg)
         
-        if not msg.tool_calls:
+        if i==1 or not msg.tool_calls:
             continue
         else:
             print('tool_calls: ', msg.tool_calls)
@@ -3651,7 +3651,7 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
         reference_msg = ""
     
     last_message = messages[-1]
-    if not last_message.tool_calls:        
+    if not last_message.tool_calls:
         if reference_docs:
             reference_msg = get_references_for_agent(reference_docs)
         return "end"

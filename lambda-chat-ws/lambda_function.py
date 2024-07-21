@@ -96,6 +96,8 @@ minCodeSimilarity = 300
 projectName = os.environ.get('projectName')
 maxOutputTokens = 4096
 
+reference_docs = []
+
 # google search api
 googleApiSecret = os.environ.get('googleApiSecret')
 secretsmanager = boto3.client('secretsmanager')
@@ -3230,7 +3232,6 @@ def get_weather_info(city: str) -> str:
     print('weather_str: ', weather_str)                            
     return weather_str
 
-reference_docs = []
 @tool
 def search_by_tavily(keyword: str) -> str:
     """
@@ -3267,6 +3268,8 @@ def search_by_tavily(keyword: str) -> str:
                         },
                     )
                 )
+                
+                print('langth of reference_docs: ', len(reference_docs))
             
                 answer = answer + f"{content}, URL: {url}\n"
         
@@ -3368,6 +3371,8 @@ def search_by_opensearch(keyword: str) -> str:
         print(f"filtered doc[{i}]: {text}, metadata:{doc.metadata}")
         
     reference_docs += filtered_docs
+    
+    print('langth of reference_docs: ', len(reference_docs))
     
     answer = "" 
     for doc in filtered_docs:
@@ -3634,9 +3639,11 @@ def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
     for i, msg in enumerate(messages):
         print(f"{i}: ", msg)
         
-        if "tool_calls" in msg:
+        if not msg.tool_calls:
+            continue
+        else:
             print('tool_calls: ', msg.tool_calls)
-            if msg.tool_calls[0]['name'] == 'search_by_opensearch':
+            if msg.tool_calls[0]['name'] == 'search_by_opensearch' or msg.tool_calls[0]['name'] == 'search_by_tavily':
                 isFirst = False
                 break
     if isFirst:

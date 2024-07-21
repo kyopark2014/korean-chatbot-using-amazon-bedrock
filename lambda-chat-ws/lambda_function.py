@@ -3927,6 +3927,7 @@ def getResponse(connectionId, jsonBody):
                     msg = run_agent_executor(connectionId, requestId, chat_app, text)
                     if reference_msg:
                         reference = reference_msg
+                        reference_msg = ""
                 elif conv_type == 'agent-executor-chat':
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)  

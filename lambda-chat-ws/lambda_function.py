@@ -3302,6 +3302,8 @@ def search_by_opensearch(keyword: str) -> str:
             excerpt, name, uri = get_parent_content(parent_doc_id) # use pareant document
             print(f"parent_doc_id: {parent_doc_id}, doc_level: {doc_level}, uri: {uri}, content: {excerpt}")
             
+            print(f"vector search --> doc[{i}]: {excerpt}\n")
+            
             docs.append(
                 Document(
                     page_content=excerpt,
@@ -3328,6 +3330,8 @@ def search_by_opensearch(keyword: str) -> str:
             uri = document[0].metadata['uri']            
             name = document[0].metadata['name']
             
+            print(f"vector search --> doc[{i}]: {excerpt}\n")
+            
             docs.append(
                 Document(
                     page_content=excerpt,
@@ -3343,8 +3347,12 @@ def search_by_opensearch(keyword: str) -> str:
     
     if enableHybridSearch == 'true':
         docs = docs + lexical_search_for_tool(keyword, top_k)
+    
+    print('doc length: ', len(docs))
                 
     filtered_docs = grade_documents(keyword, docs)
+    
+    print('filtered doc length: ', len(filtered_docs))
     
     answer2 = "" 
     for doc in filtered_docs:
@@ -3364,7 +3372,7 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
         k = top_k*2,  
         pre_filter={"doc_level": {"$eq": "child"}}
     )
-    print('result: ', result)
+    # print('result: ', result)
             
     relevant_documents = []
     docList = []
@@ -3436,7 +3444,7 @@ def lexical_search_for_tool(query, top_k):
         uri = ""
         if "uri" in document['_source']['metadata']:
             uri = document['_source']['metadata']['uri']            
-        print(f"lexical search --> doc[{i}]: {excerpt}, uri:{uri}\n")
+        print(f"lexical search --> doc[{i}]: {excerpt}\n")
         
         docs.append(
                 Document(
@@ -3572,10 +3580,10 @@ def run_agent_executor(connectionId, requestId, app, query):
     
     message = ""
     for event in app.stream({"messages": inputs}, config, stream_mode="values"):   
-        print('event: ', event)
+        # print('event: ', event)
         
         message = event["messages"][-1]
-        print('message: ', message)
+        # print('message: ', message)
 
     msg = readStreamMsg(connectionId, requestId, message.content)
 

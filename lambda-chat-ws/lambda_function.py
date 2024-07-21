@@ -3230,6 +3230,7 @@ def get_weather_info(city: str) -> str:
     print('weather_str: ', weather_str)                            
     return weather_str
 
+reference_docs = ""
 @tool
 def search_by_tavily(keyword: str) -> str:
     """
@@ -3237,6 +3238,7 @@ def search_by_tavily(keyword: str) -> str:
     keyword: search keyword
     return: the information of keyword
     """    
+    global reference_docs
     
     answer = ""
     
@@ -3253,12 +3255,23 @@ def search_by_tavily(keyword: str) -> str:
             if result:
                 content = result.get("content")
                 url = result.get("url")
+                
+                reference_docs.append(
+                    Document(
+                        page_content=content,
+                        metadata={
+                            'name': 'WWW',
+                            'uri': url,
+                            'content': content,
+                            'from': 'tavily'
+                        },
+                    )
+                )
             
                 answer = answer + f"{content}, URL: {url}\n"
         
     return answer
 
-reference_docs = ""
 @tool    
 def search_by_opensearch(keyword: str) -> str:
     """

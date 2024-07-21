@@ -3230,7 +3230,7 @@ def get_weather_info(city: str) -> str:
     print('weather_str: ', weather_str)                            
     return weather_str
 
-reference_docs = ""
+reference_docs = []
 @tool
 def search_by_tavily(keyword: str) -> str:
     """

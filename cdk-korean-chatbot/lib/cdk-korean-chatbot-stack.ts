@@ -43,7 +43,7 @@ const separated_chat_history = 'true';
 
 const max_object_size = 102400000; // 100 MB max size of an object, 50MB(default)
 const enableHybridSearch = 'true';
-const enableParallelSummay = 'true';
+const enableParallelSummary = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
 
@@ -909,7 +909,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           enableHybridSearch: enableHybridSearch,
           supportedFormat: supportedFormat,
           LLM_for_chat: JSON.stringify(LLM_for_chat),
-          enableParallelSummay: enableParallelSummay
+          enableParallelSummary: enableParallelSummary
         }
       });         
       s3Bucket.grantReadWrite(lambdDocumentManager[i]); // permission for s3
@@ -1007,7 +1007,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           LLM_for_chat:JSON.stringify(claude3_sonnet),
           LLM_for_multimodal:JSON.stringify(claude3_sonnet),
           LLM_embedding: JSON.stringify(titan_embedding_v2),
-          enableParallelSummay: enableParallelSummay,
+          enableParallelSummary: enableParallelSummary,
           enalbeParentDocumentRetrival: enalbeParentDocumentRetrival
         }
       });         

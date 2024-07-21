@@ -36,7 +36,7 @@ s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
 meta_prefix = "metadata/"
 kendra_region = os.environ.get('kendra_region', 'us-west-2')
-enableParallelSummay = os.environ.get('enableParallelSummay')
+enableParallelSummary = os.environ.get('enableParallelSummary')
 enalbeParentDocumentRetrival = os.environ.get('enalbeParentDocumentRetrival')
  
 opensearch_account = os.environ.get('opensearch_account')
@@ -377,7 +377,7 @@ def store_document_for_opensearch(file_type, key):
 def store_code_for_opensearch(file_type, key):
     codes = load_code(file_type, key)  # number of functions in the code
             
-    if enableParallelSummay=='true':
+    if enableParallelSummary=='true':
         docs = summarize_relevant_codes_using_parallel_processing(codes, key)
                                 
     else:

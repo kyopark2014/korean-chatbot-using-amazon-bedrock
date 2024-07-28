@@ -451,13 +451,20 @@ RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Paren
 
 S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 RAG 등록을 할 수 있습니다. 이때 필요한 event에 대해 [RAG-s3-event.md](./RAG-s3-event.md)에서 설명합니다.
 
-## 문서의 이미지 활용
 
-### 문서를 페이지 단위로 이미지 추출하기
+## 문서의 정보 추출
+
+### Chunking Strategy
+
+[Chunking Strategy](./chunking_stretegy.md)에서는 문서를 분할하여 chunk를 만드는 방법에 대해 설명합니다. 
+
+### 문서의 이미지 활용
+
+#### 문서를 페이지 단위로 이미지 추출하기
 
 [page-image-extraction.md](./page-image-extraction.md)에서는 문서의 페이지 단위로 저장하는 방법에 대해 설명합니다. 이미지를 단독 저장할때보다 삽입된 이미지 근처의 텍스트를 같이 추출하면 더 많은 설명을 할 수 있습니다. 
 
-### 문서에 포함된 이미지를 추출하기 
+#### 문서에 포함된 이미지를 추출하기 
 
 [image-extraction.md](./image-extraction.md)에서는 pdf, docx, pptx에서 이미지를 추출하여 S3에 저장하는 방법을 설명합니다.
 
@@ -467,7 +474,7 @@ S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 
 const enableImageExtraction = 'false';
 ```
 
-### PDF에서 정보 추출하기
+#### PDF에서 정보 추출하기
 
 [PDF에서 정보 추출하기](./pdf-extraction.md)에서는 pdf에서 이미지에 대한 정보를 추출하는 방법에 대해 설명합니다.
 

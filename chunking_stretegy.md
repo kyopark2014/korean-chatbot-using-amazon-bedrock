@@ -33,6 +33,32 @@ LLM의 context window를 고려하여 문서는 적절한 크기의 chunk로 잘
     3) 문서의 끝에 도달할 때까지 이 과정을 계속합니다. 
 
 
+## Semantic Chunking
+
+LangChain의 [SemanticChunker](https://api.python.langchain.com/en/latest/text_splitter/langchain_experimental.text_splitter.SemanticChunker.html)를 이용할 수 있습니다. 
+
+breakpoint_threshold_type으로 'percentile', 'standard_deviation', 'interquartile', 'gradient'를 이용할 수 있습니다.
+
+- percentile: 문장 간의 차이를 계산한 다음 백분위 수보다 큰 차이는 분할됩니다.
+- standard_deviation: 표준 편차보다 크면 분할 합니다.
+- interquartile: 사분위(interquartile) 거리로 분할합니다.
+  
+
+```python
+from langchain_experimental.text_splitter import SemanticChunker
+
+semantic_chunker = SemanticChunker(
+  embed_model,
+  breakpoint_threshold_type="percentile")
+
+semantic_chunks = semantic_chunker.create_documents(
+  [d.page_content for d in documents])
+
+for semantic_chunk in semantic_chunks:
+  if "Effect of Pre-training Tasks" in semantic_chunk.page_content:
+    print(semantic_chunk.page_content)
+    print(len(semantic_chunk.page_content))
+```
 
 
 ## Reference

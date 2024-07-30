@@ -1,5 +1,7 @@
 # PDF에서 텍스트, 이미지, 테이블 정보를 추출하기
 
+[pdf-extraction.ipynb](./docs/pdf-extraction.ipynb)에서는 PDF에서 텍스트, 이미지, 표를 추출하는 방법을 설명하고 있습니다.
+
 ## S3로부터 PDF Loading하기
 
 pypdf를 이용하여 S3에 있는 pdf 파일을 로드합니다. 

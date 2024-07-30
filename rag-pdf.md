@@ -17,7 +17,7 @@ Byte_contents = doc.get()['Body'].read()
 reader = PdfReader(BytesIO(Byte_contents))
 ```
 
-## Text
+## Text 추출
 
 페이지 단위로 pdf의 text를 extract_text()로 읽은 후에 contents를 생성하여 활용합니다. 
 
@@ -30,7 +30,7 @@ for i, page in enumerate(reader.pages):
     contents = '\n'.join(texts)    
 ```
 
-## Image
+## Image 추출
 
 ### 개별 이미지 추출하기
 
@@ -171,7 +171,7 @@ for i, page in enumerate(pages):
 
 
 
-## Table
+## Table 추출
 
 ### MarkDown으로 변환
 

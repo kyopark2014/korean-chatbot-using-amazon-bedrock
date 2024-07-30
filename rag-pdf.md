@@ -203,8 +203,6 @@ splitter.create_documents([md_text])
 
 ## Reference
 
-[PyMuPDF 상세 설명](https://pymupdf.readthedocs.io/en/latest/)
-
 [Table Recognition and Extraction With PyMuPDF](https://medium.com/@pymupdf/table-recognition-and-extraction-with-pymupdf-54e54b40b760)
 
 [How can I extract semi structured tables from PDF using pdfplumber](https://stackoverflow.com/questions/56155676/how-do-i-extract-a-table-from-a-pdf-file-using-pymupdf)
@@ -220,3 +218,7 @@ splitter.create_documents([md_text])
 [Generate Synthetic QnAs from Real-world Data](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
 
 [Generate QnA synthetic dataset from a Complex PDF](https://github.com/Azure/synthetic-qa-generation/blob/main/seed/make_qa_multimodal_pdf_docai.ipynb)
+
+[Introducing PyMuPDF4LLM](https://medium.com/@pymupdf/introducing-pymupdf4llm-d2c39442f445)
+
+[Welcome to PyMuPDF](https://pymupdf.readthedocs.io/en/latest/)

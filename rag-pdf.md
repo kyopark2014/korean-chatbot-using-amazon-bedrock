@@ -173,7 +173,7 @@ for i, page in enumerate(pages):
 
 ## Table 추출
 
-### MarkDown으로 변환
+### MarkDown 형식
 
 fitz로 추출한 페이지에서 아래와 같이 find_tables()로 테이블 객체를 찾아서 to_markdown()로 markdown 형태로 추출할 수 있습니다. 
 
@@ -187,7 +187,7 @@ for i, page in enumerate(pages):
 
 추출된 markdown 형태의 table은 RAG에 문서로 등록할 수 있습니다. 
 
-### 그림으로 변환
+### 이미지 형식
 
 표에 그림이 포함되어 있거나 표의 요약을 RAG에 등록함으로써 RAG 검색의 정확도를 높일수 있습니다. 또한 추출된 이미지는 표에 대한 링크를 생성할 때 활용됩니다. 
 

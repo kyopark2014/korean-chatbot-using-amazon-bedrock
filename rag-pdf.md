@@ -222,3 +222,5 @@ splitter.create_documents([md_text])
 [Introducing PyMuPDF4LLM](https://medium.com/@pymupdf/introducing-pymupdf4llm-d2c39442f445)
 
 [Welcome to PyMuPDF](https://pymupdf.readthedocs.io/en/latest/)
+
+[find_table()](https://pymupdf.readthedocs.io/en/latest/page.html#Page.find_tables)

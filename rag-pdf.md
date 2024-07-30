@@ -173,3 +173,22 @@ for i, page in enumerate(pages):
 
 ## Table
 
+## MarkDown Output
+
+[How to use Markdown output](https://pymupdf.readthedocs.io/en/latest/recipes-text.html#how-to-extract-text-as-markdown)와 같이 pdf를 markdown output으로 저장할 수 있습니다. 
+
+```python
+import pymupdf4llm
+from langchain.text_splitter import MarkdownTextSplitter
+
+# Get the MD text
+md_text = pymupdf4llm.to_markdown("input.pdf")  # get markdown for all pages
+
+splitter = MarkdownTextSplitter(chunk_size=40, chunk_overlap=0)
+
+splitter.create_documents([md_text])
+```
+
+## Reference
+
+[PyMuPDF 상세 설명[(https://pymupdf.readthedocs.io/en/latest/)

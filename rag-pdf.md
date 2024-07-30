@@ -218,3 +218,5 @@ splitter.create_documents([md_text])
 [PyMuPDF4LLM을 활용한 PDF 파싱 및 FAISS 벡터 스토어를 사용한 RAG](https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/master/genai/aws-gen-ai-kr/10_advanced_question_answering/06_rag_faiss_with_images.ipynb)
 
 [Generate Synthetic QnAs from Real-world Data](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
+
+[Generate QnA synthetic dataset from a Complex PDF](https://github.com/Azure/synthetic-qa-generation/blob/main/seed/make_qa_multimodal_pdf_docai.ipynb)

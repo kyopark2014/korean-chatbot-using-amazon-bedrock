@@ -215,3 +215,4 @@ splitter.create_documents([md_text])
 
 [Preprocessing for complex PDF](https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/9782bcc083e72693cc1b26aa81b2201bb3d3b07c/genai/aws-gen-ai-kr/20_applications/02_qa_chatbot/01_preprocess_docs/05_0_load_complex_pdf_kr_opensearch.ipynb)
 
+[PyMuPDF4LLM을 활용한 PDF 파싱 및 FAISS 벡터 스토어를 사용한 RAG](https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/master/genai/aws-gen-ai-kr/10_advanced_question_answering/06_rag_faiss_with_images.ipynb)

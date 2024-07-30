@@ -173,6 +173,15 @@ for i, page in enumerate(pages):
 
 ## Table
 
+### MarkDown으로 변환
+
+
+### 그림으로 변환
+
+
+
+
+
 ## MarkDown Output
 
 [How to use Markdown output](https://pymupdf.readthedocs.io/en/latest/recipes-text.html#how-to-extract-text-as-markdown)와 같이 pdf를 markdown output으로 저장할 수 있습니다. 
@@ -194,4 +203,15 @@ splitter.create_documents([md_text])
 
 ## Reference
 
-[PyMuPDF 상세 설명[(https://pymupdf.readthedocs.io/en/latest/)
+[PyMuPDF 상세 설명](https://pymupdf.readthedocs.io/en/latest/)
+
+[Table Recognition and Extraction With PyMuPDF](https://medium.com/@pymupdf/table-recognition-and-extraction-with-pymupdf-54e54b40b760)
+
+[How can I extract semi structured tables from PDF using pdfplumber](https://stackoverflow.com/questions/56155676/how-do-i-extract-a-table-from-a-pdf-file-using-pymupdf)
+
+[How do I extract a table from a pdf file using pymupdf](https://stackoverflow.com/questions/56155676/how-do-i-extract-a-table-from-a-pdf-file-using-pymupdf)
+
+[How to save a pandas DataFrame table as a png](https://stackoverflow.com/questions/35634238/how-to-save-a-pandas-dataframe-table-as-a-png)
+
+[Preprocessing for complex PDF](https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/9782bcc083e72693cc1b26aa81b2201bb3d3b07c/genai/aws-gen-ai-kr/20_applications/02_qa_chatbot/01_preprocess_docs/05_0_load_complex_pdf_kr_opensearch.ipynb)
+

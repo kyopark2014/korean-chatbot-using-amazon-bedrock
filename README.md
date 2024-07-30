@@ -478,6 +478,8 @@ const enableImageExtraction = 'false';
 
 [PDF에서 정보 추출하기](./pdf-extraction.md)에서는 pdf에서 이미지에 대한 정보를 추출하는 방법에 대해 설명합니다.
 
+[PDF에서 텍스트, 이미지, 테이블 정보를 추출하기](./rag-pdf.md)에서는 S3의 PDF 문서에서 텍스트, 이미지, 테이블을 추출하는 방법에 대해 설명합니다. 
+
 
 ## Agent 정의 및 활용
 

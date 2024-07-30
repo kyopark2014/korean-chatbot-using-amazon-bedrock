@@ -175,6 +175,13 @@ for i, page in enumerate(pages):
 
 ## 테이블 추출
 
+### PDF에서 테이블 추출의 어려움
+
+[prompt.pdf](./docs/prompt.pdf)와 같이 PDF안에 Header와 Footer가 있을 수 있고, 표과 2개의 페이지에 걸쳐서 있다면, 하나의 표를 만들기 위해, Header/Footer의 제거 및 2개로 나누어진 표를 하나로 합치는 과정이 필요합니다. 
+
+![image](https://github.com/user-attachments/assets/d27e4044-b32f-4f36-bc9a-7e1b40056f4d)
+
+
 ### MarkDown 형식
 
 fitz로 추출한 페이지에서 아래와 같이 find_tables()로 테이블 객체를 찾아서 to_markdown()로 markdown 형태로 추출할 수 있습니다. 

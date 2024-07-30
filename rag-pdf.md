@@ -175,15 +175,87 @@ for i, page in enumerate(pages):
 
 ### MarkDown으로 변환
 
+fitz로 추출한 페이지에서 아래와 같이 find_tables()로 테이블 객체를 찾아서 to_markdown()로 markdown 형태로 추출할 수 있습니다. 
 
+```python
+table_md = []
+for i, page in enumerate(pages):
+    tab = page.find_tables()
+    if tab.tables:
+        table_md.append(tab[0].to_markdown())
+```
 
-MarkDown을 LLM으로 요약한 결과는 아래와 같습니다.
-
-"이 표는 주요 클라우드 공급업체(AWS, OpenAI, Microsoft Azure, Google Cloud Platform)의 대규모 언어모델(LLM) 관련 제품 및 서비스를 비교하고 있습니다. 각 공급업체는 애플리케이션, 서비스, 인프라 측면에서 다양한 제품을 제공하고 있습니다. 애플리케이션 계층에서는 기업용 ChatGPT, 협업 도구 통합 등의 제품이 있고, 서비스 계층에서는 기초 모델, 파인튜닝, 프롬프트 관리 등의 기능을 제공합니다. 인프라 측면에서는 고성능 GPU, TPU 등 하드웨어 자원과 프로비저닝된 처리량 등의 기능을 비교하고 있습니다. 전반적으로 각 공급업체가 LLM 기술을 활용한 다양한 제품과 서비스를 경쟁적으로 출시하고 있음을 보여줍니다."
+추출된 markdown 형태의 table은 RAG에 문서로 등록할 수 있습니다. 
 
 ### 그림으로 변환
 
+표에 그림이 포함되어 있거나 표의 요약을 RAG에 등록함으로써 RAG 검색의 정확도를 높일수 있습니다. 또한 추출된 이미지는 표에 대한 링크를 생성할 때 활용됩니다. 
 
+```python
+tables = []
+for i, page in enumerate(pages):
+    page_tables = page.find_tables()
+    
+    if page_tables.tables:
+        tab = page_tables[0]
+        
+        print(tab.to_markdown())
+    
+        print(f"index: {i}")
+        print(f"bounding box: {tab.bbox}")  # bounding box of the full table
+        print(f"top-left cell: {tab.cells[0]}")  # top-left cell
+        print(f"bottom-right cell: {tab.cells[-1]}")  # bottom-right cell
+        print(f"row count: {tab.row_count}, column count: {tab.col_count}") # row and column counts
+        print("\n\n")
+        
+        extract_table_image(page, i, tab.bbox)
+```
+
+이때, 이미지 추출을 위한 함수는 아래와 같습니다.
+
+```python
+from PIL import Image
+
+def extract_table_image(page, index, bbox):
+    pixmap_ori = page.get_pixmap()
+    print(f"width: {pixmap_ori.width}, height: {pixmap_ori.height}")
+        
+    pixmap = page.get_pixmap(dpi=200)  # dpi=300
+    #pixels = pixmap.tobytes() # output: jpg
+    
+    # convert to png
+    img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+    print(f"width: {pixmap.width}, height: {pixmap.height}")
+    
+    rate_width = pixmap.width / pixmap_ori.width
+    rate_height = pixmap.height / pixmap_ori.height
+    print(f"rate_width={rate_width}, rate_height={rate_height}")
+    
+    crop_img = img.crop((bbox[0]*rate_width, bbox[1]*rate_height, bbox[2]*rate_width, bbox[3]*rate_height))
+    
+    pixels = BytesIO()
+    crop_img.save(pixels, format='PNG')
+    pixels.seek(0, 0)
+
+    # get path from key
+    objectName = (key[key.find(s3_prefix)+len(s3_prefix)+1:len(key)])
+    folder = s3_prefix+'/captures/'+objectName+'/'
+                                
+    fname = 'table_'+key.split('/')[-1].split('.')[0]+f"_{index}"
+
+    response = s3_client.put_object(
+    Bucket=s3_bucket,
+        Key=folder+fname+'.png',
+        ContentType='image/png',
+        Metadata = {
+            "ext": 'png',
+            "page": str(index)
+        },
+        Body=pixels
+    )
+                                                        
+    files.append(folder+fname+'.png')
+```
 
 
 

@@ -58,7 +58,7 @@ kendra_region = os.environ.get('kendra_region', 'us-west-2')
 LLM_for_chat = json.loads(os.environ.get('LLM_for_chat'))
 LLM_for_multimodal= json.loads(os.environ.get('LLM_for_multimodal'))
 LLM_embedding = json.loads(os.environ.get('LLM_embedding'))
-priorty_search_embedding = json.loads(os.environ.get('priorty_search_embedding'))
+priority_search_embedding = json.loads(os.environ.get('priority_search_embedding'))
 selected_chat = 0
 selected_multimodal = 0
 selected_embedding = 0
@@ -284,7 +284,7 @@ def get_embedding():
 
 def get_ps_embedding():
     global selected_ps_embedding
-    profile = priorty_search_embedding[selected_ps_embedding]
+    profile = priority_search_embedding[selected_ps_embedding]
     bedrock_region =  profile['bedrock_region']
     model_id = profile['model_id']
     print(f'selected_ps_embedding: {selected_ps_embedding}, bedrock_region: {bedrock_region}, model_id: {model_id}')
@@ -307,7 +307,7 @@ def get_ps_embedding():
     )  
     
     selected_ps_embedding = selected_ps_embedding + 1
-    if selected_ps_embedding == len(priorty_search_embedding):
+    if selected_ps_embedding == len(priority_search_embedding):
         selected_ps_embedding = 0
     
     return bedrock_ps_embedding

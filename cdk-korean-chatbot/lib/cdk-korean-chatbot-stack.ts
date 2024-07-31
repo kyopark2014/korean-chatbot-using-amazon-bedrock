@@ -103,51 +103,44 @@ const claude3_haiku = [
   }
 ];
 
-const titan_embedding_v1 = [
+const titan_embedding_v1 = [  // dimension = 1536
   {
     "bedrock_region": "us-west-2", // Oregon
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v1",
-    "dimmension": "1536"
+    "model_id": "amazon.titan-embed-text-v1"
   },
   {
     "bedrock_region": "us-east-1", // N.Virginia
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v1",
-    "dimmension": "1536"
+    "model_id": "amazon.titan-embed-text-v1"
   }
 ];
 
-const titan_embedding_v2 = [
+const titan_embedding_v2 = [  // dimension = 1024
   {
     "bedrock_region": "us-west-2", // Oregon
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v2:0",
-    "dimmension": "1024"
+    "model_id": "amazon.titan-embed-text-v2:0"
   },
   {
     "bedrock_region": "us-east-1", // N.Virginia
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v2:0",
-    "dimmension": "1024"
+    "model_id": "amazon.titan-embed-text-v2:0"
   },
   {
     "bedrock_region": "ca-central-1", // Canada
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v2:0",
-    "dimmension": "1024"
+    "model_id": "amazon.titan-embed-text-v2:0"
   },
   {
     "bedrock_region": "eu-west-2", // London
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v2:0",
-    "dimmension": "1024"
+    "model_id": "amazon.titan-embed-text-v2:0"
   },
   {
     "bedrock_region": "sa-east-1", // Sao Paulo
     "model_type": "titan",
-    "model_id": "amazon.titan-embed-text-v2:0",
-    "dimmension": "1024"
+    "model_id": "amazon.titan-embed-text-v2:0"
   }
 ];
 

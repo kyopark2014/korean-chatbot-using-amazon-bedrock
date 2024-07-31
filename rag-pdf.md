@@ -181,6 +181,14 @@ for i, page in enumerate(pages):
 
 ![image](https://github.com/user-attachments/assets/d27e4044-b32f-4f36-bc9a-7e1b40056f4d)
 
+아래는 테이블 결합을 한 예입니다. 다만 이것은 대량의 다른 문서에는 적용이 어렵습니다.
+
+|Input (LLM + tool for SQL to DB)|Output (with SQL tool) – Right answer|
+|---|---|
+|Calculate the price ratio for stock &#x27;ABC&#x27; between 2023&amp;#45; 01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04?|&gt; Entering new AgentExecutor chain... I will need historical stock price data for the two dates Action: Stock DB Action Input: Price of ABC stock on 2023&amp;#45;01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 &gt; Entering new SQLDatabaseChain chain...Price of ABC stock on 2023&amp;#45;01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 SQLQuery:SELECT price FROM stocks WHERE stock_ticker = &quot;ABC&quot; AND date BETWEEN &quot;2023&amp;#45; 01&amp;#45;03&quot; AND &quot;2023&amp;#45;01&amp;#45;04&quot; SQLResult: [(232.0,), (225.0,)] Answer: The price of ABC stock on January 03, 2023 was 232.0 and on January 04, 2023 was 225.0. &gt; Finished chain. Observation: The price of ABC stock on January 03, 2023 was 232.0 and on January 04, 2023 was 225.0. Thought: Now I can compute the price ratio Final Answer: The price ratio for stock &#x27;ABC&#x27; between 2023&amp;#45; 01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 is 232.0/225.0 = 1.0311|
+|---|---|
+
+
 
 ### MarkDown 형식
 
@@ -265,14 +273,6 @@ def extract_table_image(page, index, bbox):
                                                         
     files.append(folder+fname+'.png')
 ```
-
-### 테이블의 결합
-
-|Input (LLM + tool for SQL to DB)|Output (with SQL tool) – Right answer|
-|---|---|
-|Calculate the price ratio for stock &#x27;ABC&#x27; between 2023&amp;#45; 01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04?|&gt; Entering new AgentExecutor chain... I will need historical stock price data for the two dates Action: Stock DB Action Input: Price of ABC stock on 2023&amp;#45;01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 &gt; Entering new SQLDatabaseChain chain...Price of ABC stock on 2023&amp;#45;01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 SQLQuery:SELECT price FROM stocks WHERE stock_ticker = &quot;ABC&quot; AND date BETWEEN &quot;2023&amp;#45; 01&amp;#45;03&quot; AND &quot;2023&amp;#45;01&amp;#45;04&quot; SQLResult: [(232.0,), (225.0,)] Answer: The price of ABC stock on January 03, 2023 was 232.0 and on January 04, 2023 was 225.0. &gt; Finished chain. Observation: The price of ABC stock on January 03, 2023 was 232.0 and on January 04, 2023 was 225.0. Thought: Now I can compute the price ratio Final Answer: The price ratio for stock &#x27;ABC&#x27; between 2023&amp;#45; 01&amp;#45;03 and 2023&amp;#45;01&amp;#45;04 is 232.0/225.0 = 1.0311|
-|---|---|
-
 
 
 

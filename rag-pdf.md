@@ -177,7 +177,7 @@ for i, page in enumerate(pages):
 
 ### PDF에서 테이블 추출의 어려움
 
-[prompt.pdf](./docs/prompt.pdf)와 같이 PDF안에 Header와 Footer가 있을 수 있고, 표과 2개의 페이지에 걸쳐서 있다면, 하나의 표를 만들기 위해, Header/Footer의 제거 및 2개로 나누어진 표를 하나로 합치는 과정이 필요합니다. 
+[prompt.pdf](./docs/prompt.pdf)와 같이 PDF안에 Header와 Footer가 있을 수 있고, 표과 2개의 페이지에 걸쳐서 있다면, 하나의 표를 만들기 위해, Header/Footer의 제거 및 2개로 나누어진 표를 하나로 합치는 과정이 필요합니다. Header와 Footer의 크기는 문서마다 다를수 있고 같은 문서라도 페이지마다 다를 수 있어서 문서마다 customize가 필요하며 나누어진 표라는것을 인식하는것도 문서마다 다를 수 있어서 표준화된 문서에 대해서만 테이블 결합이 가능합니다. 
 
 ![image](https://github.com/user-attachments/assets/d27e4044-b32f-4f36-bc9a-7e1b40056f4d)
 

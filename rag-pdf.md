@@ -181,7 +181,7 @@ for i, page in enumerate(pages):
 
 ![image](https://github.com/user-attachments/assets/d27e4044-b32f-4f36-bc9a-7e1b40056f4d)
 
-아래는 테이블 결합을 한 예입니다. 다만 이것은 대량의 다른 문서에는 적용이 어렵습니다.
+아래는 테이블 결합을 한 예입니다. 다만 이것은 다양한 포맷을 가지고 있는 문서들에는 적용이 어렵고, 표준화된 문서에 대해서만 적용 가능합니다. 
 
 |Input (LLM + tool for SQL to DB)|Output (with SQL tool) – Right answer|
 |---|---|

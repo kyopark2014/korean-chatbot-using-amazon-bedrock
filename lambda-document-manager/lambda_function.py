@@ -78,7 +78,42 @@ os_client = OpenSearch(
     ssl_assert_hostname = False,
     ssl_show_warn = False,
 )
- 
+
+def delete_document_if_exist(metadata_key):
+    try: 
+        s3r = boto3.resource("s3")
+        bucket = s3r.Bucket(s3_bucket)
+        objs = list(bucket.objects.filter(Prefix=metadata_key))
+        print('objs: ', objs)
+        
+        if(len(objs)>0):
+            doc = s3r.Object(s3_bucket, metadata_key)
+            meta = doc.get()['Body'].read().decode('utf-8')
+            print('meta: ', meta)
+            
+            ids = json.loads(meta)['ids']
+            print('ids: ', ids)
+            
+            # delete ids
+            result = vectorstore.delete(ids)
+            print('result: ', result)   
+            
+            # delete files 
+            files = json.loads(meta)['files']
+            print('files: ', files)
+            
+            for file in files:
+                s3r.Object(s3_bucket, file).delete()
+                print('delete file: ', file)
+            
+        else:
+            print('no meta file: ', metadata_key)
+            
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)        
+        raise Exception ("Not able to create meta file")
+     
 # Kendra
 kendra_client = boto3.client(
     service_name='kendra', 

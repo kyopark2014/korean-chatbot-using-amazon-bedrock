@@ -423,7 +423,7 @@ def create_nori_index():
                     'type': 'text'
                 },
                 'vector_field': {
-                    'type': 'knn_vector',
+                    'type': 'knn_vector', 
                     'dimension': 1024
                 }
             }

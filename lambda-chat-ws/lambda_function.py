@@ -1987,7 +1987,7 @@ def get_reference(docs, rag_method, rag_type, path, doc_prefix):
             else:
                 excerpt = str(doc['metadata']['excerpt']).replace('"'," ")
             
-            excerpt = excerpt.replace('\n','\\n')            
+            excerpt = excerpt.replace('\n','\\n')                        
                 
             if doc['rag_type'] == 'kendra':                
                 if doc['api_type'] == 'kendraRetriever': # provided by kendraRetriever from langchain

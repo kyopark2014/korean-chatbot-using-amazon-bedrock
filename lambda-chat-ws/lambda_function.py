@@ -3593,15 +3593,35 @@ def get_references_for_agent(docs):
         page = ""
         if "page" in doc.metadata:
             page = doc.metadata['page']
-        #print('page: ', page)
-        uri = doc.metadata['uri']
-        #print('uri: ', uri)        
-        name = doc.metadata['name']
-        #print('name: ', name)
-        sourceType = doc.metadata['from']
-        #print('sourceType: ', sourceType)
-        excerpt = doc.page_content
-        #print('excerpt: ', excerpt)
+            #print('page: ', page)            
+        uri = ""
+        if "uri" in doc.metadata:
+            uri = doc.metadata['uri']
+            #print('uri: ', uri)                
+        name = ""
+        if "name" in doc.metadata:
+            name = doc.metadata['name']
+            #print('name: ', name)     
+           
+        sourceType = ""
+        if "from" in doc.metadata:
+            sourceType = doc.metadata['from']
+        else:
+            sourceType = "OpenSearch"
+        #print('sourceType: ', sourceType)        
+        
+        #if len(doc.page_content)>=1000:
+        #    excerpt = ""+doc.page_content[:1000]
+        #else:
+        #    excerpt = ""+doc.page_content
+        excerpt = ""+doc.page_content
+        print('excerpt: ', excerpt)
+        
+        # for some of unusual case 
+        #excerpt = excerpt.replace('"', '')        
+        #excerpt = ''.join(c for c in excerpt if c not in '"')
+        excerpt = re.sub('"', '', excerpt)
+        print('excerpt(quotation removed): ', excerpt)
         
         if page:                
             reference = reference + f"{i+1}. {page}page in <a href={uri} target=_blank>{name}</a>, {sourceType}, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"

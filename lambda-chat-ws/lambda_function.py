@@ -3955,9 +3955,9 @@ def getResponse(connectionId, jsonBody):
                         reference = get_references_for_agent(reference_docs)      
                         
                 elif conv_type == 'agent-executor-chat':
-                    revised_question = revise_question(connectionId, requestId, chat, text)     
-                    print('revised_question: ', revised_question)  
-                    msg = run_agent_executor(connectionId, requestId, chat_app, revised_question)  
+                    #revised_question = revise_question(connectionId, requestId, chat, text)     
+                    #print('revised_question: ', revised_question)  
+                    msg = run_agent_executor(connectionId, requestId, chat_app, text)  
                     if reference_docs:
                         reference = get_references_for_agent(reference_docs)      
                                                       

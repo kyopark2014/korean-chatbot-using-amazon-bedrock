@@ -56,12 +56,12 @@ RAG(Retrieval-Augmented Generation)를 활용하면, LLM(Large Language Model)�
 
 이때의 Sequence diagram은 아래와 같습니다. 만약 RAG에서 관련된 문서를 찾지못할 경우에는 Google Search API를 통해 Query를 수행하여 RAG처럼 활용합니다. 대화이력을 가져오기 위한 DynamoDB는 첫번째 질문에만 해당됩니다. 여기서는 "us-east-1"과 "us-west-2"의 Bedrock을 사용하므로, 아래와 같이 질문마다 다른 Region의 Bedrock Claude LLM을 사용합니다.
 
-<img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/251d2666-8837-4e8b-8521-534cbd3ced53" width="1000">
+
+<img width="661" alt="image" src="https://github.com/user-attachments/assets/59708ba0-1408-4a12-b7b9-fe1c549ac609">
 
 대량으로 파일 업로드 또는 삭제시는 아래와 같은 Event driven구조를 활용할 수 있습니다. 이를 통해 S3로 대규모로 문서 또는 코드를 넣을때에 정보의 유출없이 RAG의 지식저장소를 데이터를 주입할 수 있습니다. 
 
-<img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/eaace9e5-9d4e-4bdc-aa67-bad935dffaa3" width="900">
-
+<img width="629" alt="image" src="https://github.com/user-attachments/assets/39fb0b48-a72e-4092-8c65-d66951ebf07b">
 
 ## 향상된 RAG 구현하기
 

@@ -768,17 +768,20 @@ response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 
 #### Agent 사용하기
 
-채팅창에서 뒤로가기 한 후에 "1-2 Agent"를 선택합니다. 아래와 같이 "여행 관련 도서 추천해줘."와 같이 입력하면 교보문고의 API를 이용하여 "여행"과 관련된 문서를 조회한 후 결과를 보여줍니다.
+채팅창에서 뒤로가기 한 후에 "2-1 Agent Executor (LangGraph)"를 선택합니다. 아래와 같이 "여행 관련 도서 추천해줘."와 같이 입력하면 교보문고의 API를 이용하여 "여행"과 관련된 문서를 조회한 후 결과를 보여줍니다.
 
-![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/b3997df2-b6ea-4419-9843-1dfe420fef2d)
+![image](https://github.com/user-attachments/assets/a71d4ddd-985e-4b27-a889-d326f7f49af7)
+
 
 "서울의 오늘 날씨 알려줘"라고 입력하면 아래와 같이 날씨 정보를 조회하여 보여줍니다.
 
-![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/f805a915-0d8a-4124-8243-a08fb1463919)
+![image](https://github.com/user-attachments/assets/8e58e7e4-4614-4d68-9929-4d971733568b)
+
 
 LLM에 시간을 물어보면 마지막 Training 시간이나 전혀 관련없는 Hallucination 값을 줍니다. Agent를 사용할 경우에 아래와 같이 현재 시간을 조회하여 보여줍니다. "오늘 날짜 알려줘."와 "현재 시간은?"을 이용하여 동작을 확인합니다.
 
-![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/69b370c5-882a-4031-8e54-b4840d023b90)
+
+![image](https://github.com/user-attachments/assets/b0656166-6a1d-4b15-8369-cc20297b008b)
 
 
 #### 잘못된 응답 유도해보기

@@ -91,7 +91,8 @@ cdk deploy --all
 
 [OpenSearch Console](https://ap-northeast-1.console.aws.amazon.com/aos/home?region=ap-northeast-1#opensearch/domains)에서 "korean-chatbot-with-rag"로 들어가서 [Packages] - [Associate package]을 선택한 후에, 아래와 같이 "analysis-nori"을 설치합니다. 
 
-![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/b91c91a1-b13c-4f5d-bd58-1c8298b2f128)
+![image](https://github.com/user-attachments/assets/4e5e68d9-c525-4c25-85b9-65f4ae1e54a4)
+
 
 10) Google API Key Update하기
 

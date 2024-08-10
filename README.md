@@ -30,7 +30,9 @@ RAG(Retrieval-Augmented Generation)를 활용하면, LLM(Large Language Model)�
 
 전체적인 아키텍처는 아래와 같습니다. 사용자의 질문은 WebSocket을 이용하여 AWS Lambda에서 RAG와 LLM을 이용하여 답변합니다. 대화 이력(chat history)를 이용하여 사용자의 질문(Question)을 새로운 질문(Revised question)으로 생성합니다. 새로운 질문으로 지식 저장소(Knowledge Store)인 Kendra와 OpenSearch에 활용합니다. 두개의 지식저장소에는 용도에 맞는 데이터가 입력되어 있는데, 만약 같은 데이터가 가지고 있더라도, 두개의 지식저장소의 문서를 검색하는 방법의 차이로 인해, 서로 보완적인 역할을 합니다. 지식저장소에 한국어/한국어로 된 문서들이 있다면, 한국어 질문은 영어로 된 문서를 검색할 수 없습니다. 따라서 질문이 한국어라면 한국어로 한국어 문서를 먼저 검색한 후에, 영어로 번역하여 다시 한번 영어 문서들을 검색합니다. 이렇게 함으로써 한국어로 질문을 하더라도 영어 문서까지 검색하여 더 나은 결과를 얻을 수 있습니다. 만약 두 지식저장소가 관련된 문서(Relevant documents)를 가지고 있지 않다면, Google Search API를 이용하여 인터넷에 관련된 웹페이지들이 있는지 확인하고, 이때 얻어진 결과를 RAG처럼 활용합니다. 
 
-<img src="https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/1636dcbb-611f-41fb-9051-e9fe0e4f6b29" width="800">
+<img src="https://github.com/user-attachments/assets/9cd581dc-00de-4790-aa77-f9f56a3c8f9d" width="800">
+
+
 
 상세하게 단계별로 설명하면 아래와 같습니다.
 

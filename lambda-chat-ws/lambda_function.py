@@ -3529,7 +3529,7 @@ class GradeDocuments(BaseModel):
 
     binary_score: str = Field(description="Documents are relevant to the question, 'yes' or 'no'")
 
-def get_retrieval_grader():
+def get_retrieval_grader(chat):
     system = """You are a grader assessing relevance of a retrieved document to a user question. \n 
     If the document contains keyword(s) or semantic meaning related to the question, grade it as relevant. \n
     Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""
@@ -3541,14 +3541,13 @@ def get_retrieval_grader():
         ]
     )
     
-    chat = get_chat()
     structured_llm_grader = chat.with_structured_output(GradeDocuments)
     retrieval_grader = grade_prompt | structured_llm_grader
     return retrieval_grader
 
 def grade_document_based_on_relevance(conn, question, doc, models, selected):     
     chat = get_multi_region_chat(models, selected)
-    retrieval_grader = get_retrieval_grader()       
+    retrieval_grader = get_retrieval_grader(chat)       
     score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
     # print(f"score: {score}")
     
@@ -3606,7 +3605,8 @@ def grade_documents(question, documents):
 
     else:
         # Score each doc    
-        retrieval_grader = get_retrieval_grader()
+        chat = get_chat()
+        retrieval_grader = get_retrieval_grader(chat)
         for doc in documents:
             score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
             grade = score.binary_score

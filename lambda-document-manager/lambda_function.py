@@ -49,7 +49,6 @@ LLM_embedding = json.loads(os.environ.get('LLM_embedding'))
 selected_chat = 0
 selected_multimodal = 0
 selected_embedding = 0
-maxOutputTokens = 4096
 
 roleArn = os.environ.get('roleArn') 
 path = os.environ.get('path')
@@ -134,6 +133,7 @@ def get_chat():
     profile = LLM_for_chat[selected_chat]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
+    maxOutputTokens= profile['max_tokens']
     print(f'selected_chat: {selected_chat}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   
@@ -173,6 +173,7 @@ def get_multimodal():
     profile = LLM_for_multimodal[selected_multimodal]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
+    maxOutputTokens= profile['max_tokens']
     print(f'LLM: {selected_multimodal}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   

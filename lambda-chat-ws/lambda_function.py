@@ -95,7 +95,6 @@ enableHybridSearch = os.environ.get('enableHybridSearch')
 minDocSimilarity = 200
 minCodeSimilarity = 300
 projectName = os.environ.get('projectName')
-maxOutputTokens = 4096
 
 reference_docs = []
 
@@ -180,6 +179,7 @@ def get_chat():
     profile = LLM_for_chat[selected_chat]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
+    maxOutputTokens= profile['max_tokens']
     print(f'LLM: {selected_chat}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   
@@ -219,6 +219,7 @@ def get_multimodal():
     profile = LLM_for_multimodal[selected_multimodal]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
+    maxOutputTokens= profile['max_tokens']
     print(f'LLM: {selected_multimodal}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   

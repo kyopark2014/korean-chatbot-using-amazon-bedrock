@@ -1,5 +1,9 @@
 # RAG를 활용하여 향상된 Korean Chatbot 만들기
 
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkyopark2014%2Fkorean-chatbot-using-amazon-bedrock&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+<img alt="License" src="https://img.shields.io/badge/LICENSE-MIT-green">
+
+
 RAG(Retrieval-Augmented Generation)를 활용하면, LLM(Large Language Model)의 기능을 강화하여 다양한 어플리케이션을 개발할 수 있습니다. 여기에서는 RAG의 성능을 향상시키는 방법들에 대해 설명하고 이를 이용하여 기업 또는 개인의 데이터를 쉽게 활용할 수 있는 한국어 Chatbot을 만들고자 합니다. 
 
 - Multimodal: 텍스트뿐 아니라 이미지에 대한 분석을 할 수 있습니다.

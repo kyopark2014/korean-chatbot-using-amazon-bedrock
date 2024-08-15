@@ -3302,10 +3302,7 @@ def search_by_tavily(keyword: str) -> str:
                             'from': 'tavily'
                         },
                     )
-                )
-                
-                print('langth of reference_docs: ', len(reference_docs))
-            
+                )                
                 answer = answer + f"{content}, URL: {url}\n"
         
     return answer

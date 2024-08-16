@@ -4055,7 +4055,7 @@ def run_knowledge_guru(connectionId, requestId, query):
             "revision_number": revision_number + 1
         }
     
-    MAX_REVISIONS = 2
+    MAX_REVISIONS = 1
     def should_continue(state: State, config):
         max_revisions = config.get("configurable", {}).get("max_revisions", MAX_REVISIONS)
         print("max_revisions: ", max_revisions)

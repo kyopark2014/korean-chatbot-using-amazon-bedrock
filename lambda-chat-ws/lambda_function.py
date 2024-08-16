@@ -3673,78 +3673,77 @@ tools = [get_current_time, get_book_list, get_weather_info, search_by_tavily, se
 ####################### LangGraph #######################
 # Chat Agent Executor
 #########################################################
-chatModel = get_chat() 
+def run_agent_executor(connectionId, requestId, query):
+    chatModel = get_chat() 
 
-model = chatModel.bind_tools(tools)
+    model = chatModel.bind_tools(tools)
 
-class ChatAgentState(TypedDict):
-    # messages: Annotated[Sequence[BaseMessage], operator.add]
-    messages: Annotated[list, add_messages]
+    class State(TypedDict):
+        # messages: Annotated[Sequence[BaseMessage], operator.add]
+        messages: Annotated[list, add_messages]
 
-tool_node = ToolNode(tools)
+    tool_node = ToolNode(tools)
 
-reference_msg = ""
-def should_continue(state: ChatAgentState) -> Literal["continue", "end"]:
-    messages = state["messages"]    
-    # print('(should_continue) messages: ', messages)
-            
-    last_message = messages[-1]
-    if not last_message.tool_calls:
-        return "end"
-    else:                
-        return "continue"
-
-def call_model(state: ChatAgentState):
-    question = state["messages"]
-    print('question: ', question)
-    
-    if isKorean(question[0].content)==True:
-        system = (
-            "다음의 Human과 Assistant의 친근한 이전 대화입니다."
-            "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
-            "Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
-            "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요."
-        )
-    else: 
-        system = (            
-            "Answer friendly for the newest question using the following conversation"
-            "If you don't know the answer, just say that you don't know, don't try to make up an answer."
-            "You will be acting as a thoughtful advisor."
-            "Put it in <result> tags."
-        )
-         
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system),
-            MessagesPlaceholder(variable_name="messages"),
-        ]
-    )
-    chain = prompt | model
+    def should_continue(state: State) -> Literal["continue", "end"]:
+        messages = state["messages"]    
+        # print('(should_continue) messages: ', messages)
         
-    response = chain.invoke(question)
-    return {"messages": [response]}
+        last_message = messages[-1]
+        if not last_message.tool_calls:
+            return "end"
+        else:                
+            return "continue"
 
-def buildChatAgent():
-    workflow = StateGraph(ChatAgentState)
+    def call_model(state: State):
+        question = state["messages"]
+        print('question: ', question)
+        
+        if isKorean(question[0].content)==True:
+            system = (
+                "다음의 Human과 Assistant의 친근한 이전 대화입니다."
+                "Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
+                "Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
+                "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요."
+            )
+        else: 
+            system = (            
+                "Answer friendly for the newest question using the following conversation"
+                "If you don't know the answer, just say that you don't know, don't try to make up an answer."
+                "You will be acting as a thoughtful advisor."
+                "Put it in <result> tags."
+            )
+            
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system),
+                MessagesPlaceholder(variable_name="messages"),
+            ]
+        )
+        chain = prompt | model
+            
+        response = chain.invoke(question)
+        return {"messages": [response]}
 
-    workflow.add_node("agent", call_model)
-    workflow.add_node("action", tool_node)
-    workflow.add_edge(START, "agent")
-    workflow.add_conditional_edges(
-        "agent",
-        should_continue,
-        {
-            "continue": "action",
-            "end": END,
-        },
-    )
-    workflow.add_edge("action", "agent")
+    def buildChatAgent():
+        workflow = StateGraph(State)
 
-    return workflow.compile()
+        workflow.add_node("agent", call_model)
+        workflow.add_node("action", tool_node)
+        workflow.add_edge(START, "agent")
+        workflow.add_conditional_edges(
+            "agent",
+            should_continue,
+            {
+                "continue": "action",
+                "end": END,
+            },
+        )
+        workflow.add_edge("action", "agent")
 
-chat_app = buildChatAgent()
+        return workflow.compile()
 
-def run_agent_executor(connectionId, requestId, app, query):
+    app = buildChatAgent()
+        
     isTyping(connectionId, requestId)
     
     inputs = [HumanMessage(content=query)]
@@ -3764,81 +3763,87 @@ def run_agent_executor(connectionId, requestId, app, query):
 ####################### LangGraph #######################
 # Reflection Agent
 #########################################################
-def generation_node(state: ChatAgentState):    
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "당신은 5문단의 에세이 작성을 돕는 작가이고 이름은 서연입니다"
-                "사용자의 요청에 대해 최고의 에세이를 작성하세요."
-                "사용자가 에세이에 대해 평가를 하면, 이전 에세이를 수정하여 답변하세요."
-                "최종 답변에는 완성된 에세이 전체 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요.",
-            ),
-            MessagesPlaceholder(variable_name="messages"),
+def run_reflection_agent(connectionId, requestId, query):
+    class State(TypedDict):
+        # messages: Annotated[Sequence[BaseMessage], operator.add]
+        messages: Annotated[list, add_messages]
+
+    def generation(state: State):    
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "당신은 5문단의 에세이 작성을 돕는 작가이고 이름은 서연입니다"
+                    "사용자의 요청에 대해 최고의 에세이를 작성하세요."
+                    "사용자가 에세이에 대해 평가를 하면, 이전 에세이를 수정하여 답변하세요."
+                    "최종 답변에는 완성된 에세이 전체 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요.",
+                ),
+                MessagesPlaceholder(variable_name="messages"),
+            ]
+        )
+        
+        chat = get_chat()
+        chain = prompt | chat
+
+        response = chain.invoke(state["messages"])
+        return {"messages": [response]}
+
+    def reflection(state: State):
+        messages = state["messages"]
+        
+        reflection_prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "당신은 교사로서 학셍의 에세이를 평가하삽니다. 비평과 개선사항을 친절하게 설명해주세요."
+                    "이때 장점, 단점, 길이, 깊이, 스타일등에 대해 충분한 정보를 제공합니다."
+                    #"특히 주제에 맞는 적절한 예제가 잘 반영되어있는지 확인합니다"
+                    "각 문단의 길이는 최소 200자 이상이 되도록 관련된 예제를 충분히 포함합니다.",
+                ),
+                MessagesPlaceholder(variable_name="messages"),
+            ]
+        )
+        
+        chat = get_chat()
+        reflect = reflection_prompt | chat
+        
+        cls_map = {"ai": HumanMessage, "human": AIMessage}
+        translated = [messages[0]] + [
+            cls_map[msg.type](content=msg.content) for msg in messages[1:]
         ]
-    )
-    
-    chat = get_chat()
-    chain = prompt | chat
+        print('translated: ', translated)
+        
+        res = reflect.invoke({"messages": translated})    
+        response = HumanMessage(content=res.content)    
+        return {"messages": [response]}
 
-    response = chain.invoke(state["messages"])
-    return {"messages": [response]}
+    def should_continue(state: State) -> Literal["continue", "end"]:
+        messages = state["messages"]
+        
+        if len(messages) >= 6:   # End after 3 iterations        
+            return "end"
+        else:
+            return "continue"
 
-def reflection_node(state: ChatAgentState):
-    messages = state["messages"]
-    
-    reflection_prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "당신은 교사로서 학셍의 에세이를 평가하삽니다. 비평과 개선사항을 친절하게 설명해주세요."
-                "이때 장점, 단점, 길이, 깊이, 스타일등에 대해 충분한 정보를 제공합니다."
-                #"특히 주제에 맞는 적절한 예제가 잘 반영되어있는지 확인합니다"
-                "각 문단의 길이는 최소 200자 이상이 되도록 관련된 예제를 충분히 포함합니다.",
-            ),
-            MessagesPlaceholder(variable_name="messages"),
-        ]
-    )
-    
-    chat = get_chat()
-    reflect = reflection_prompt | chat
-    
-    cls_map = {"ai": HumanMessage, "human": AIMessage}
-    translated = [messages[0]] + [
-        cls_map[msg.type](content=msg.content) for msg in messages[1:]
-    ]
-    res = reflect.invoke({"messages": translated})    
-    response = HumanMessage(content=res.content)    
-    return {"messages": [response]}
+    def buildReflectionAgent():
+        workflow = StateGraph(State)
+        workflow.add_node("generate", generation)
+        workflow.add_node("reflect", reflection)
+        workflow.set_entry_point("generate")
+        workflow.add_conditional_edges(
+            "generate",
+            should_continue,
+            {
+                "continue": "reflect",
+                "end": END,
+            },
+        )
 
-def should_continue_of_reflection(state: ChatAgentState) -> Literal["continue", "end"]:
-    messages = state["messages"]
-    
-    if len(messages) >= 6:   # End after 3 iterations        
-        return "end"
-    else:
-        return "continue"
+        workflow.add_edge("reflect", "generate")
+        return workflow.compile()
 
-def buildReflectionAgent():
-    workflow = StateGraph(ChatAgentState)
-    workflow.add_node("generate", generation_node)
-    workflow.add_node("reflect", reflection_node)
-    workflow.set_entry_point("generate")
-    workflow.add_conditional_edges(
-        "generate",
-        should_continue_of_reflection,
-        {
-            "continue": "reflect",
-            "end": END,
-        },
-    )
+    app = buildReflectionAgent()
 
-    workflow.add_edge("reflect", "generate")
-    return workflow.compile()
-
-reflection_app = buildReflectionAgent()
-
-def run_reflection_agent(connectionId, requestId, app, query):
     isTyping(connectionId, requestId)
     
     inputs = [HumanMessage(content=query)]
@@ -3868,6 +3873,7 @@ def run_reflection_agent(connectionId, requestId, app, query):
 
     return msg
 
+#########################################################
 def getResponse(connectionId, jsonBody):
     userId  = jsonBody['user_id']
     # print('userId: ', userId)
@@ -4008,19 +4014,19 @@ def getResponse(connectionId, jsonBody):
                     msg = general_conversation(connectionId, requestId, chat, text)        
                               
                 elif conv_type == 'agent-executor':                    
-                    msg = run_agent_executor(connectionId, requestId, chat_app, text)
+                    msg = run_agent_executor(connectionId, requestId, text)
                     if reference_docs:
                         reference = get_references_for_agent(reference_docs)      
                         
                 elif conv_type == 'agent-executor-chat':
                     #revised_question = revise_question(connectionId, requestId, chat, text)     
                     #print('revised_question: ', revised_question)  
-                    msg = run_agent_executor(connectionId, requestId, chat_app, text)  
+                    msg = run_agent_executor(connectionId, requestId, text)  
                     if reference_docs:
                         reference = get_references_for_agent(reference_docs)      
                                                       
                 elif conv_type == 'agent-reflection':  # reflection
-                    msg = run_reflection_agent(connectionId, requestId, reflection_app, text)     
+                    msg = run_reflection_agent(connectionId, requestId, text)     
                 
                 elif conv_type == 'qa':   # RAG
                     print(f'rag_type: {rag_type}')

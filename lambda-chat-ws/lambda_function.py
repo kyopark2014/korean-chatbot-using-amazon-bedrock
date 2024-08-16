@@ -4094,7 +4094,7 @@ def run_knowledge_guru(connectionId, requestId, query):
     inputs = {"task": query}
     config = {
         "recursion_limit": 50,
-        "max_revisions": 2
+        "max_revisions": MAX_REVISIONS
     }
     
     for output in app.stream(inputs, config):   
@@ -4106,7 +4106,7 @@ def run_knowledge_guru(connectionId, requestId, query):
         
     readStreamMsg(connectionId, requestId, value["draft"].content)
     
-    return value["draft"].content
+    return value["draft"].content[value["draft"].content.find('<result>')+8:len(value["draft"].content)-9]
 
 #########################################################
 def getResponse(connectionId, jsonBody):

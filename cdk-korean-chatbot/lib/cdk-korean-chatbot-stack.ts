@@ -74,6 +74,34 @@ const claude3_5_sonnet = [
   }
 ];
 
+const claude3_sonnet = [
+  {
+    "bedrock_region": "us-west-2", // Oregon
+    "model_type": "claude3",
+    "model_id": "anthropic.claude-3-sonnet-20240229-v1:0"
+  },
+  {
+    "bedrock_region": "us-east-1", // N.Virginia
+    "model_type": "claude3",
+    "model_id": "anthropic.claude-3-sonnet-20240229-v1:0"
+  },
+  {
+    "bedrock_region": "ca-central-1", // Canada
+    "model_type": "claude3",
+    "model_id": "anthropic.claude-3-sonnet-20240229-v1:0"
+  },
+  {
+    "bedrock_region": "eu-west-2", // London
+    "model_type": "claude3",
+    "model_id": "anthropic.claude-3-sonnet-20240229-v1:0"
+  },
+  {
+    "bedrock_region": "sa-east-1", // Sao Paulo
+    "model_type": "claude3",
+    "model_id": "anthropic.claude-3-sonnet-20240229-v1:0"
+  }
+];
+
 const claude3_haiku = [
   {
     "bedrock_region": "us-west-2", // Oregon
@@ -143,6 +171,8 @@ const titan_embedding_v2 = [  // dimension = 1024
   }
 ];
 
+const LLM_for_chat = claude3_sonnet;
+const LLM_for_multimodal = claude3_sonnet;
 const LLM_embedding = titan_embedding_v2;
 
 export class CdkKoreanChatbotStack extends cdk.Stack {
@@ -748,8 +778,8 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         useParallelRAG: useParallelRAG,
         numberOfRelevantDocs: numberOfRelevantDocs,
         kendraMethod: kendraMethod,
-        LLM_for_chat:JSON.stringify(claude3_5_sonnet),
-        LLM_for_multimodal:JSON.stringify(claude3_5_sonnet),
+        LLM_for_chat:JSON.stringify(LLM_for_chat),
+        LLM_for_multimodal:JSON.stringify(LLM_for_multimodal),
         LLM_embedding: JSON.stringify(titan_embedding_v2),
         priority_search_embedding: JSON.stringify(titan_embedding_v1),
         capabilities: capabilities,
@@ -1003,8 +1033,8 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           max_object_size: String(max_object_size),
           enableHybridSearch: enableHybridSearch,
           supportedFormat: supportedFormat,
-          LLM_for_chat:JSON.stringify(claude3_5_sonnet),
-          LLM_for_multimodal:JSON.stringify(claude3_5_sonnet),
+          LLM_for_chat:JSON.stringify(LLM_for_chat),
+          LLM_for_multimodal:JSON.stringify(LLM_for_multimodal),
           LLM_embedding: JSON.stringify(titan_embedding_v2),
           enableParallelSummary: enableParallelSummary,
           enalbeParentDocumentRetrival: enalbeParentDocumentRetrival

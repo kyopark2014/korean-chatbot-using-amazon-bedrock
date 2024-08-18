@@ -181,7 +181,7 @@ def get_chat():
     profile = LLM_for_chat[selected_chat]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
-    maxOutputTokens= profile['max_tokens']
+    maxOutputTokens = 4096
     print(f'LLM: {selected_chat}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   
@@ -219,7 +219,7 @@ def get_multi_region_chat(models, selected):
     profile = models[selected]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
-    maxOutputTokens = profile['max_tokens']
+    maxOutputTokens = 4096
     print(f'selected_chat: {selected}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   
@@ -255,7 +255,7 @@ def get_multimodal():
     profile = LLM_for_multimodal[selected_multimodal]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
-    maxOutputTokens= profile['max_tokens']
+    maxOutputTokens = 4096
     print(f'LLM: {selected_multimodal}, bedrock_region: {bedrock_region}, modelId: {modelId}')
                           
     # bedrock   

@@ -3754,7 +3754,7 @@ def enhanced_search(query):
     message = result["messages"][-1]
     print('enhanced_search: ', message)
 
-    return msg[msg.find('<result>')+8:len(msg)-9]
+    return message.content[message.content.find('<result>')+8:len(message.content)-9]
 
 ####################### LangGraph #######################
 # Chat Agent Executor
@@ -3790,14 +3790,13 @@ def run_agent_executor(connectionId, requestId, query):
                 "당신의 이름은 서연이고, 질문에 친근한 방식으로 대답하도록 설계된 대화형 AI입니다."
                 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
                 "모르는 질문을 받으면 솔직히 모른다고 말합니다."
-                "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요."      
+                "최종 답변에는 조사한 내용을 반드시 포함합니다."
             )
         else: 
             system = (            
                 "You are a conversational AI designed to answer in a friendly way to a question."
                 "If you don't know the answer, just say that you don't know, don't try to make up an answer."
-                "You will be acting as a thoughtful advisor."            
-                "Put it in <result> tags."    
+                "You will be acting as a thoughtful advisor."                
             )
             
         prompt = ChatPromptTemplate.from_messages(
@@ -3844,9 +3843,9 @@ def run_agent_executor(connectionId, requestId, query):
         # print('message: ', message)
 
     msg = readStreamMsg(connectionId, requestId, message.content)
-    
-    return msg[msg.find('<result>')+8:len(msg)-9]
-    
+
+    return msg    
+
 ####################### LangGraph #######################
 # Reflection Agent
 #########################################################

@@ -3771,6 +3771,7 @@ def run_agent_executor(connectionId, requestId, query):
     tool_node = ToolNode(tools)
 
     def should_continue(state: State) -> Literal["continue", "end"]:
+        print("###### should_continue ######")
         messages = state["messages"]    
         # print('(should_continue) messages: ', messages)
         
@@ -3781,10 +3782,10 @@ def run_agent_executor(connectionId, requestId, query):
             return "continue"
 
     def call_model(state: State):
-        question = state["messages"]
-        print('question: ', question)
+        print("###### call_model ######")
+        print('state: ', state["messages"])
         
-        if isKorean(question[0].content)==True:
+        if isKorean(state["messages"][0].content)==True:
             system = (
                 "당신의 이름은 서연이고, 질문에 친근한 방식으로 대답하도록 설계된 대화형 AI입니다."
                 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
@@ -3805,7 +3806,7 @@ def run_agent_executor(connectionId, requestId, query):
         )
         chain = prompt | model
             
-        response = chain.invoke(question)
+        response = chain.invoke(state["messages"])
         return {"messages": [response]}
 
     def buildChatAgent():
@@ -3962,17 +3963,19 @@ def run_reflection_agent(connectionId, requestId, query):
 #########################################################
 def run_knowledge_guru(connectionId, requestId, query):
     class State(TypedDict):
-        task: str
         messages: Annotated[list, add_messages]
         reflection: list
         search_queries: list
             
     def generate(state: State):    
-        draft = enhanced_search(state['task'])  
+        print("###### generate ######")
+        print('state: ', state["messages"])
+        print('task: ', state['messages'][0].content)
+        
+        draft = enhanced_search(state['messages'][0].content)  
         print('draft: ', draft)
         
         return {
-            "task": state['task'],
             "messages": [AIMessage(content=draft)]
         }
     
@@ -3990,6 +3993,8 @@ def run_knowledge_guru(connectionId, requestId, query):
         )
     
     def reflect(state: State):
+        print("###### reflect ######")
+        print('state: ', state["messages"])    
         print('draft: ', state["messages"][-1].content)
     
         reflection = []
@@ -4012,13 +4017,13 @@ def run_knowledge_guru(connectionId, requestId, query):
                 break
         
         return {
-            "task": state["task"],
             "messages": state["messages"],
             "reflection": reflection,
             "search_queries": search_queries
         }
 
     def revise_answer(state: State):   
+        print("###### revise_answer ######")
         system = """Revise your previous answer using the new information. 
 You should use the previous critique to add important information to your answer. provide the final answer with <result> tag. 
 <critique>
@@ -4036,16 +4041,6 @@ You should use the previous critique to add important information to your answer
             ]
         )
             
-        chat = get_chat()
-        reflect = reflection_prompt | chat
-            
-        messages = [HumanMessage(content=state["task"])] + state["messages"]
-        cls_map = {"ai": HumanMessage, "human": AIMessage}
-        translated = [messages[0]] + [
-            cls_map[msg.type](content=msg.content) for msg in messages[1:]
-        ]
-        print('translated: ', translated)
-        
         content = []        
         if useEnhancedSearch:
             for q in state["search_queries"]:
@@ -4058,7 +4053,17 @@ You should use the previous critique to add important information to your answer
                 response = search.invoke(q)     
                 for r in response:
                     content.append(r['content'])     
-        
+
+        chat = get_chat()
+        reflect = reflection_prompt | chat
+            
+        messages = state["messages"]
+        cls_map = {"ai": HumanMessage, "human": AIMessage}
+        translated = [messages[0]] + [
+            cls_map[msg.type](content=msg.content) for msg in messages[1:]
+        ]
+        print('translated: ', translated)     
+           
         res = reflect.invoke(
             {
                 "messages": translated,
@@ -4072,13 +4077,13 @@ You should use the previous critique to add important information to your answer
                 
         revision_number = state["revision_number"] if state.get("revision_number") is not None else 1
         return {
-            "task": state["task"],
             "messages": [response], 
             "revision_number": revision_number + 1
         }
     
     MAX_REVISIONS = 1
     def should_continue(state: State, config):
+        print("###### should_continue ######")
         max_revisions = config.get("configurable", {}).get("max_revisions", MAX_REVISIONS)
         print("max_revisions: ", max_revisions)
             
@@ -4113,13 +4118,13 @@ You should use the previous critique to add important information to your answer
     app = buildKnowledgeGuru()
         
     isTyping(connectionId, requestId)    
-    inputs = {"task": query}
+    inputs = [HumanMessage(content=query)]
     config = {
         "recursion_limit": 50,
         "max_revisions": MAX_REVISIONS
     }
     
-    for output in app.stream(inputs, config):   
+    for output in app.stream({"messages": inputs}, config):   
         for key, value in output.items():
             print(f"Finished: {key}")
             #print("value: ", value)
@@ -4128,7 +4133,6 @@ You should use the previous critique to add important information to your answer
         
     readStreamMsg(connectionId, requestId, value["messages"][-1].content)
     
-    # return value["messages"][-1].content[value["messages"][-1].content.find('<result>')+8:len(value["messages"][-1].content)-9]
     return value["messages"][-1].content
 
 #########################################################

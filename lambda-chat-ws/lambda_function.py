@@ -2654,9 +2654,12 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
         uri = document.metadata["location"]["s3Location"]["uri"] if document.metadata["location"]["s3Location"]["uri"] is not None else ""
         print('uri:', uri)
         
-        pos = uri.find('/doc_prefix/')
-        name = uri[pos+len(doc_prefix)+2:]
+        pos = uri.find(f"/{doc_prefix}/")
+        name = uri[pos+len(doc_prefix)+3:]
         print('name:', name)
+        
+        uri = f"{path}/{doc_prefix}/name"
+        print('uri:', uri)
         
         reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
                     

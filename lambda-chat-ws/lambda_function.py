@@ -2644,26 +2644,27 @@ def translate_relevant_documents_using_parallel_processing(docs):
 
 def get_reference_of_knoweledge_base(docs, path, doc_prefix):
     reference = "\n\nFrom\n"
-    print('path: ', path)
-    print('doc_prefix: ', doc_prefix)
-    print('prefix: ', f"/{doc_prefix}")
+    #print('path: ', path)
+    #print('doc_prefix: ', doc_prefix)
+    #print('prefix: ', f"/{doc_prefix}")
     
     for i, document in enumerate(docs):
         if document.page_content:
             excerpt = document.page_content
         
         score = document.metadata["score"]
-        print('score:', score)
+        #print('score:', score)
             
         uri = document.metadata["location"]["s3Location"]["uri"] if document.metadata["location"]["s3Location"]["uri"] is not None else ""
-        print('uri:', uri)
+        #print('uri:', uri)
         
         pos = uri.find(f"/{doc_prefix}")
         name = uri[pos+len(doc_prefix)+1:]
-        print('name:', name)
+        encoded_name = parse.quote(name)
+        #print('name:', name)
         
-        uri = f"{path}{doc_prefix}{name}"
-        print('uri:', uri)
+        uri = f"{path}{doc_prefix}{encoded_name}"
+        #print('uri:', uri)
         
         reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
                     

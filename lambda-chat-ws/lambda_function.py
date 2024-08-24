@@ -2659,7 +2659,7 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
         print('uri:', uri)
         
         pos = uri.find(f"/{doc_prefix}")
-        name = uri[pos+len(doc_prefix)+2:]
+        name = uri[pos+len(doc_prefix)+1:]
         print('name:', name)
         
         uri = f"{path}{doc_prefix}{name}"

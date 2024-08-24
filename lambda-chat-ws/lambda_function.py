@@ -2642,16 +2642,40 @@ def translate_relevant_documents_using_parallel_processing(docs):
     #print('relevant_docs: ', relevant_docs)
     return relevant_docs
 
-def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding):
+def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding):    
+    #revised_question = revise_question(connectionId, requestId, chat, text)     
+    #print('revised_question: ', revised_question)  
+    #revised_question = revised_question.replace('\n', '')
+    
+    revised_question = text # use original question for test
+    
     retriever = AmazonKnowledgeBasesRetriever(
-        knowledge_base_id="JKJ4Q5PXJD", # 👈 Set your Knowledge base ID
+        knowledge_base_id="CFVYNN0NQN", 
         retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
     )
-    query = "What did the president say about Ketanji Brown?"
-
-    output = retriever.invoke(query)
-    print(output)
     
+    relevant_docs = retriever.invoke(revised_question)
+    print(relevant_docs)
+    
+    #selected_relevant_docs = []
+    #if len(relevant_docs)>=1:
+    #    print('start priority search')
+    #    selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+    #    print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
+    
+    #relevant_context = ""
+    #for document in relevant_docs:
+    #    if document['metadata']['translated_excerpt']:
+    #        content = document['metadata']['translated_excerpt']
+    #    else:
+    #        content = document['metadata']['excerpt']
+        
+    #    relevant_context = relevant_context + content + "\n\n"
+    #print('relevant_context: ', relevant_context)
+
+    # query using RAG context    
+    #msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+
     msg = ""
     reference = ""
     
@@ -2848,7 +2872,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         # update doc using parent
         contentList = []
         update_docs = []
-        for doc in selected_relevant_docs:        
+        for doc in selected_relevant_docs:
             doc = get_parent_document(doc) # use pareant document
             
             # print('excerpt: ', doc['metadata']['excerpt'])

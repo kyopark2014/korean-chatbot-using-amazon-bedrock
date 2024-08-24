@@ -2666,11 +2666,11 @@ def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, request
     relevant_context = ""
     for i, document in enumerate(relevant_docs):
         print(f"{i}: {document}")
-        if document['page_content']:
-            content = document['page_content']
-        print('score:', document["score"])
+        if document.page_content:
+            content = document.page_content
+        print('score:', document.metadata["score"])
         
-        uri = document["location"]["s3Location"]["uri"] if document["location"]["s3Location"]["uri"] is not None else ""
+        uri = document.metadata["location"]["s3Location"]["uri"] if document.metadata["location"]["s3Location"]["uri"] is not None else ""
         print('uri:', uri)
         
         relevant_context = relevant_context + content + "\n\n"

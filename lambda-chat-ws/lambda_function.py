@@ -2677,7 +2677,7 @@ def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, request
     
     print('relevant_context: ', relevant_context)
 
-    #msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+    msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
     msg = ""
     reference = ""

@@ -2642,6 +2642,26 @@ def translate_relevant_documents_using_parallel_processing(docs):
     #print('relevant_docs: ', relevant_docs)
     return relevant_docs
 
+def get_reference_of_knoweledge_base(docs, path, doc_prefix):
+    reference = "\n\nFrom\n"
+    for i, document in enumerate(docs):
+        if document.page_content:
+            excerpt = document.page_content
+        
+        score = document.metadata["score"]
+        print('score:', score)
+            
+        uri = document.metadata["location"]["s3Location"]["uri"] if document.metadata["location"]["s3Location"]["uri"] is not None else ""
+        print('uri:', uri)
+        
+        pos = uri.find('/doc_prefix/')
+        name = uri[pos+len(doc_prefix)+2:]
+        print('name:', name)
+        
+        reference = reference + f"{i+1}. <a href={uri} target=_blank>{name}</a>, <a href=\"#\" onClick=\"alert(`{excerpt}`)\">관련문서</a>\n"
+                    
+    return reference
+
 def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding):    
     #revised_question = revise_question(connectionId, requestId, chat, text)     
     #print('revised_question: ', revised_question)  
@@ -2679,8 +2699,7 @@ def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, request
 
     msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
-    msg = ""
-    reference = ""
+    reference = get_reference_of_knoweledge_base(relevant_docs, path, doc_prefix)  
     
     return msg, reference
 

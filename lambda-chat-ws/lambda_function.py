@@ -49,6 +49,7 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import tools_condition
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import Literal
+from langchain_aws import AmazonKnowledgeBasesRetriever
 
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
@@ -2641,6 +2642,21 @@ def translate_relevant_documents_using_parallel_processing(docs):
     #print('relevant_docs: ', relevant_docs)
     return relevant_docs
 
+def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding):
+    retriever = AmazonKnowledgeBasesRetriever(
+        knowledge_base_id="JKJ4Q5PXJD", # 👈 Set your Knowledge base ID
+        retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
+    )
+    query = "What did the president say about Ketanji Brown?"
+
+    output = retriever.invoke(query)
+    print(output)
+    
+    msg = ""
+    reference = ""
+    
+    return msg, reference
+
 def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type):
     global time_for_revise, time_for_rag, time_for_inference, time_for_priority_search, number_of_relevant_docs  # for debug
     time_for_revise = time_for_rag = time_for_inference = time_for_priority_search = number_of_relevant_docs = 0
@@ -4297,6 +4313,9 @@ def getResponse(connectionId, jsonBody):
                 elif conv_type == 'qa':   # RAG
                     print(f'rag_type: {rag_type}')
                     msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
+                    
+                elif conv_type == "qa-kb":
+                    msg, reference = get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

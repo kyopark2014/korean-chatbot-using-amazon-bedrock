@@ -2663,17 +2663,20 @@ def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, request
     #    selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
     #    print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
     
-    #relevant_context = ""
-    #for document in relevant_docs:
-    #    if document['metadata']['translated_excerpt']:
-    #        content = document['metadata']['translated_excerpt']
-    #    else:
-    #        content = document['metadata']['excerpt']
+    relevant_context = ""
+    for i, document in enumerate(relevant_docs):
+        print(f"{i}: {document}")
+        if document['page_content']:
+            content = document['page_content']
+        print('score:', document["score"])
         
-    #    relevant_context = relevant_context + content + "\n\n"
-    #print('relevant_context: ', relevant_context)
+        uri = document["location"]["s3Location"]["uri"] if document["location"]["s3Location"]["uri"] is not None else ""
+        print('uri:', uri)
+        
+        relevant_context = relevant_context + content + "\n\n"
+    
+    print('relevant_context: ', relevant_context)
 
-    # query using RAG context    
     #msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
     msg = ""

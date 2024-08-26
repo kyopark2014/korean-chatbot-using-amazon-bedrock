@@ -2728,6 +2728,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     
     result = {}
     for event in response.get("responseStream"):
+        print('event: ', event)
         result.update(event)
 
     if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':

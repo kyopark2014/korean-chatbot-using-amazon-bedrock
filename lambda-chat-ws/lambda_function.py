@@ -2705,9 +2705,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
                     #    "genre": "pop",
                     #    "number": 3
                     #}
-                    "document": {
-                        "input": revised_question
-                    }
+                    "document": revised_question
                 },
                 "nodeName": "FlowInput",
                 "nodeOutputName": "document"

@@ -35,3 +35,33 @@
     ]
 }
 ```
+
+[boto3-invoke_flow](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_flow.html)
+
+[AWS Doc: InvokeFlow](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html)
+
+```python
+POST /flows/flowIdentifier/aliases/flowAliasIdentifier HTTP/1.1
+Content-type: application/json
+
+{
+   "inputs": [ 
+      { 
+         "content": { ... },
+         "nodeName": "string",
+         "nodeOutputName": "string"
+      }
+   ]
+}
+```
+
+여기서, JSON에 필요한 값들은 아래와 같습니다. 
+
+nodeName: flow input node의 이름
+
+nodeOutputName: prompt flow의 시작인 input node의 output의 이름
+
+아래의 경우에서는 nodeName은 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
+
+![image](https://github.com/user-attachments/assets/112a8d72-956b-485d-a50a-a252e01410a3)
+

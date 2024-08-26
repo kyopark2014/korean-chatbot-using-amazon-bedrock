@@ -10,7 +10,21 @@
 
 ![noname](https://github.com/user-attachments/assets/9af83873-06d2-4ba8-b52d-e70c4fa72eac)
 
+2) 왼쪽의 [Nodes]에서 [Prompts[를 선택한 후, 아래와 같이 "Flow input", "Flow output" 노드와 연결해 줍니다.
 
+![image](https://github.com/user-attachments/assets/b279580e-3272-4633-93f6-32f74adf8a19)
+
+3) Prompts 노드는 아래와 같이 입력합니다. 여기서는 [Node name]로 "aws_chatbot", [Define in node]을 선택하고, Model은 "Claude 3 Sonnet"을 지정하였으며, Prompt에는 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다. 다음의 {{input}}에 대해 구체적인 세부 정보를 충분히 제공합니다."라고 입력하였습니다. 
+
+![noname](https://github.com/user-attachments/assets/eba3287e-d174-4d2e-8503-c04b5c87aec7)
+
+
+4) 오른쪽의 [Test Prompt flow]의 입력창에 "안녕"이라고 입력하면, 아래와 같이 "AWS" 이름을 가지는 chatbot을 생성되었음을 알 수 있습니다. 
+
+![image](https://github.com/user-attachments/assets/0544b16a-f142-425c-97db-0f8bc971c17a)
+
+
+<!--
 
 ## Role
 
@@ -42,6 +56,7 @@
     ]
 }
 ```
+--> 
 
 ## Prompt Flow의 실행
 

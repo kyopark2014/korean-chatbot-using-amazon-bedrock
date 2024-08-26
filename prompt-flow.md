@@ -75,7 +75,7 @@ Content-type: application/json
 현재 작성한 prompt flow는 nodeName이 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
 
 
-### 애플리케이션에 코드 적용하기
+### 애플리케이션에서 Prompt Flow를 이용하여 Chatbot 활용하기
 
 아래와 같이 flow_id로 "Prompt flow ARN"을 붙여 넣기하고, flow_alias는 생성할 때에 사용한 "aws"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
 
@@ -134,7 +134,7 @@ def run_prompt_flow(text, connectionId, requestId):
 
 ### 실행결과
 
-애플리케이션을 실행하고 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. 
+애플리케이션을 실행하고 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. Prompt flow를 이용하여 "AWS"라는 이름의 chatbot을 생성할 수 있었습니다.
 
 ![image](https://github.com/user-attachments/assets/38f38b74-5bcc-46e9-8019-7e8581e40465)
 

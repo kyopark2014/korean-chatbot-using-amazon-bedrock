@@ -2705,7 +2705,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     for alias in flowAlias:
         print('alias: ', alias)
         if alias['name'] == 'BasicPromptFlow':
-            flowAliasIdentifier = alias['id']
+            flowAliasIdentifier = alias['arn']
             print('flowAliasIdentifier: ', flowAliasIdentifier)
             break
     

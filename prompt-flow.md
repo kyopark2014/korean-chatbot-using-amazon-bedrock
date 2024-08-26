@@ -1,6 +1,15 @@
-# Prompt Flow
+# Prompt Flow로 Chatbot 만들기
 
-여기에서는 Prompt Flow를 이용하여 RAG가 적용된 chatbot을 만드는것을 설명합니다.
+여기에서는 Prompt Flow를 이용하여 이름을 가진 Chatbot을 만드는것을 설명합니다.
+
+## Prompt Flow 작성하기
+
+아래와 같이 매우 간단하지만 이름을 가진 prompt flow를 생성합니다. 
+
+1) [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에 접속하여 [Create prompt flow] 선택하고 아래오 같이 입력 후에 [Create]를 선택합니다.
+
+![noname](https://github.com/user-attachments/assets/9af83873-06d2-4ba8-b52d-e70c4fa72eac)
+
 
 
 ## Role

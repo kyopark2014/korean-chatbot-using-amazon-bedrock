@@ -2680,7 +2680,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     client_runtime = boto3.client('bedrock-agent-runtime')
     
     flow_id = 'TQE3MT9IQO'
-    response = client.list_flow_aliases(
+    response = client_runtime.list_flow_aliases(
         flowIdentifier=flow_id
     )
     print('response: ', response)

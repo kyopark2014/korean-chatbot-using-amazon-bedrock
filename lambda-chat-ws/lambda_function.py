@@ -2727,6 +2727,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     print('response of invoke_flow(): ', response)
     
     response_stream = response['responseStream']
+    print('response_stream: ', response_stream)
     
     result = {}
     for event in response_stream:

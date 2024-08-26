@@ -2726,10 +2726,13 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     )
     print('response of invoke_flow(): ', response)
     
+    response_stream = response['responseStream']
+    
     result = {}
-    for event in response.get("responseStream"):
+    for event in response_stream:
         print('event: ', event)
         result.update(event)
+    print('result: ', result)
 
     if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
         print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")

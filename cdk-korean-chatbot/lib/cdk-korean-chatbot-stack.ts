@@ -46,8 +46,10 @@ const enableHybridSearch = 'true';
 const enableParallelSummary = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
-const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO'
-const flow_alias = 'BasicPromptFlow'
+// const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO'
+// const flow_alias = 'BasicPromptFlow'
+const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/72JCN8U0J4'
+const flow_alias = 'aws_bot'
 
 const claude3_5_sonnet = [
   {

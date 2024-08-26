@@ -2694,7 +2694,7 @@ def run_prompt_flow(text, connectionId, requestId):
         print('connection: ', c)
     """
     
-    # get flow aliases arn
+    # get flow alias arn
     response_flow_aliases = client.list_flow_aliases(
         flowIdentifier=flow_id
     )
@@ -2744,8 +2744,7 @@ def run_prompt_flow(text, connectionId, requestId):
     except Exception as e:
         raise Exception("unexpected event.",e)
 
-    reference = ""    
-    return msg, reference
+    return msg
 
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
     revised_question = text # use original question for test
@@ -4521,11 +4520,11 @@ def getResponse(connectionId, jsonBody):
                     msg, reference = get_answer_using_knowledge_base(chat, revised_question, connectionId, requestId)                
                 
                 elif conv_type == "prompt-flow":
-                    msg, reference = run_prompt_flow(text, connectionId, requestId)                    
+                    msg = run_prompt_flow(text, connectionId, requestId)
                 elif conv_type == "prompt-flow-chat":
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)                    
-                    msg, reference = run_prompt_flow(revised_question, connectionId, requestId)
+                    msg = run_prompt_flow(revised_question, connectionId, requestId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

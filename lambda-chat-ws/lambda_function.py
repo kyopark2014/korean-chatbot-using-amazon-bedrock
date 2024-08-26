@@ -2688,6 +2688,15 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     )
     print('response_flow: ', response_flow)
     
+    definition = response_flow['definition']
+    print('definition: ', definition)
+    connections = definition['connections']
+    print('connections: ', connections)
+    for c in connections:
+        print('connection: ', c)
+        
+    
+    
     # flow aliases
     response_flow_aliases = client.list_flow_aliases(
         flowIdentifier=flow_id
@@ -2714,8 +2723,8 @@ def run_prompt_flow(chat, text, connectionId, requestId):
                     #}
                     "document": {revised_question}
                 },
-                "nodeName": "FlowInputNode",
-                "nodeOutputName": "FlowOutputNode"
+                "nodeName": "FlowInputNodeFlowInputNode0TobasicPromptsNode0",
+                "nodeOutputName": "basicPromptsNode0ToFlowOutputNodeFlowOutputNode0"
             }
         ]
     )

@@ -2715,13 +2715,16 @@ def run_prompt_flow(chat, text, connectionId, requestId):
         flowAliasIdentifier=flowAliasIdentifier,
         inputs=[
             {
-                "content": {
-                    "document": {
-                        "input": revised_question,
+                #"content": {
+                #    "document": {
+                #        "input": revised_question,
                         #"filenames":[
                         #    "service_names_limited.xml"
                         #]
-                    }
+                #    }
+                #},
+                "content": {
+                    "document": revised_question,
                 },
                 "nodeName": "FlowInputNode",
                 "nodeOutputName": "document"

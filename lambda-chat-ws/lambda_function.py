@@ -2717,10 +2717,10 @@ def run_prompt_flow(chat, text, connectionId, requestId):
             {
                 "content": {
                     "document": {
-                        "user": revised_question,
-                        "filenames":[
-                            "service_names_limited.xml"
-                        ]
+                        "input": revised_question,
+                        #"filenames":[
+                        #    "service_names_limited.xml"
+                        #]
                     }
                 },
                 "nodeName": "FlowInputNode",
@@ -2733,19 +2733,16 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     response_stream = response['responseStream']
     
     try:
-        #result = {}
+        output = []
         for event in response_stream:
             print('event: ', event)
-            #result.update(event)
-        #print('result: ', result)
+            if 'flowCompletionEvent' in event:
+                output.append(event['flowCompletionEvent'])
+            elif 'flowOutputEvent' in event:
+                output.append(event['flowOutputEvent'])
+                
+        print('output: ', output)
 
-        #if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
-        #    print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
-        #    msg = result['flowOutputEvent']['content']['document']
-        #    print('msg: ', msg)
-
-        #else:
-        #    print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
     except Exception as e:
         raise Exception("unexpected event.",e)
 

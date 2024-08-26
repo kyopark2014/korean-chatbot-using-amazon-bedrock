@@ -81,7 +81,7 @@ Content-type: application/json
 
 ```python
 flow_id = [Prompt flow ARN]
-flow_alias = "aws_bot"
+flow_alias = "aws"
 
 def run_prompt_flow(text, connectionId, requestId):    
     client = boto3.client(service_name='bedrock-agent')   

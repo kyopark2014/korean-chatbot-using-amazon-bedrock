@@ -2736,7 +2736,9 @@ def run_prompt_flow(chat, text, connectionId, requestId):
 
         if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
             print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
-            msg = result['flowOutputEvent']['content']['document']
+            # msg = result['flowOutputEvent']['content']['document']
+            
+            msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
             print('msg: ', msg)
         else:
             print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])

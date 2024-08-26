@@ -33,7 +33,7 @@
 
    
 
-### 애플리케이션에서 Prompt Flow 활용하기
+## 애플리케이션에서 Prompt Flow 활용하기
 
 [프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다. 상세한 코드는 [lambda_function.py](./lambda-chat-ws/lambda_function.py)을 참조합니다.
 
@@ -67,15 +67,18 @@ Content-type: application/json
 현재 작성한 prompt flow는 nodeName이 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
 
 
-
 ### 상세 코드 작성하기 
 
+상기에서 복사한 "Prompt flow ARN"을 flow_id로 활용합니다. flow_alias는 생성할 때에 사용한 "aws_bot"으로 Name에 해당됩니다. 
 
 ```python
+flow_id = [Prompt flow ARN]
+flow_alias = "aws_bot"
+
 def run_prompt_flow(text, connectionId, requestId):    
     client = boto3.client(service_name='bedrock-agent')   
     
-    # get flow aliases arn
+    # get flow alias arn
     response_flow_aliases = client.list_flow_aliases(
         flowIdentifier=flow_id
     )

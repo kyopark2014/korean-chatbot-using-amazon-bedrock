@@ -2675,7 +2675,8 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
 
 def run_prompt_flow(text, connectionId, requestId):    
     print('flow_id: ', flow_id)
-
+    print('flow_alias: ', flow_alias)
+    
     client = boto3.client(service_name='bedrock-agent')   
     
     """
@@ -2693,7 +2694,7 @@ def run_prompt_flow(text, connectionId, requestId):
         print('connection: ', c)
     """
     
-    # flow aliases
+    # get flow aliases arn
     response_flow_aliases = client.list_flow_aliases(
         flowIdentifier=flow_id
     )
@@ -2707,6 +2708,7 @@ def run_prompt_flow(text, connectionId, requestId):
             print('flowAliasIdentifier: ', flowAliasIdentifier)
             break
     
+    # invoke_flow
     client_runtime = boto3.client('bedrock-agent-runtime')
     response = client_runtime.invoke_flow(
         flowIdentifier=flow_id,

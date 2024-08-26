@@ -2688,7 +2688,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     
     response = client_runtime.invoke_flow(
         flowIdentifier=flow_id,
-        flowAliasIdentifier='BasicPromptFlow',
+        flowAliasIdentifier='Q9EHREF4UI',
         inputs=[
             {
                 "content": {

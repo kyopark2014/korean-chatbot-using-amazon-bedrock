@@ -2672,13 +2672,7 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
                     
     return reference
 
-def run_prompt_flow(chat, text, connectionId, requestId):    
-    #revised_question = revise_question(connectionId, requestId, chat, text)     
-    #print('revised_question: ', revised_question)  
-    #revised_question = revised_question.replace('\n', '')
-    
-    revised_question = text # use original question for test
-    
+def run_prompt_flow(text, connectionId, requestId):    
     client_runtime = boto3.client('bedrock-agent-runtime')
         
     client = boto3.client(service_name='bedrock-agent')
@@ -2717,7 +2711,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
         inputs=[
             {
                 "content": {
-                    "document": revised_question,
+                    "document": text,
                 },
                 "nodeName": "FlowInputNode",
                 "nodeOutputName": "document"
@@ -2749,10 +2743,6 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     return msg, reference
 
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
-    #revised_question = revise_question(connectionId, requestId, chat, text)     
-    #print('revised_question: ', revised_question)  
-    #revised_question = revised_question.replace('\n', '')
-    
     revised_question = text # use original question for test
     
     retriever = AmazonKnowledgeBasesRetriever(
@@ -4520,8 +4510,17 @@ def getResponse(connectionId, jsonBody):
                     
                 elif conv_type == "qa-kb":
                     msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                
+                elif conv_type == "qa-kb-chat":
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)      
+                    msg, reference = get_answer_using_knowledge_base(chat, revised_question, connectionId, requestId)                
+                
                 elif conv_type == "prompt-flow":
-                    msg, reference = run_prompt_flow(chat, text, connectionId, requestId)
+                    msg, reference = run_prompt_flow(text, connectionId, requestId)                    
+                elif conv_type == "prompt-flow-chat":
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)                    
+                    msg, reference = run_prompt_flow(revised_question, connectionId, requestId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

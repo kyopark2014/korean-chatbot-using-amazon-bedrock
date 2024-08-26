@@ -2,8 +2,6 @@
 
 여기에서는 Prompt Flow를 이용하여 RAG가 적용된 chatbot을 만드는것을 설명합니다.
 
-[프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다.
-
 
 ## Role
 
@@ -37,6 +35,59 @@
 ```
 
 ## Prompt Flow의 실행
+
+[프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다.
+
+```python
+def run_prompt_flow(text, connectionId, requestId):    
+    client = boto3.client(service_name='bedrock-agent')   
+    
+    # get flow aliases arn
+    response_flow_aliases = client.list_flow_aliases(
+        flowIdentifier=flow_id
+    )
+    print('response_flow_aliases: ', response_flow_aliases)
+    flowAliasIdentifier = ""
+    flowAlias = response_flow_aliases["flowAliasSummaries"]
+    for alias in flowAlias:
+        print('alias: ', alias)
+        if alias['name'] == flow_alias:
+            flowAliasIdentifier = alias['arn']
+            print('flowAliasIdentifier: ', flowAliasIdentifier)
+            break
+    
+    client_runtime = boto3.client('bedrock-agent-runtime')
+    response = client_runtime.invoke_flow(
+        flowIdentifier=flow_id,
+        flowAliasIdentifier=flowAliasIdentifier,
+        inputs=[
+            {
+                "content": {
+                    "document": text,
+                },
+                "nodeName": "FlowInputNode",
+                "nodeOutputName": "document"
+            }
+        ]
+    )
+    
+    response_stream = response['responseStream']
+    try:
+        result = {}
+        for event in response_stream:
+            print('event: ', event)
+            result.update(event)
+
+        if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
+            msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
+        else:
+            print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+    except Exception as e:
+        raise Exception("unexpected event.",e)
+
+    return msg
+```
+
 
 [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)에 따라서, flowAliasIdentifier와 flowIdentifier는 arn입니다. 
 

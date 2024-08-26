@@ -2670,7 +2670,50 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
                     
     return reference
 
-def get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding):    
+def run_prompt_flow(chat, text, connectionId, requestId):    
+    #revised_question = revise_question(connectionId, requestId, chat, text)     
+    #print('revised_question: ', revised_question)  
+    #revised_question = revised_question.replace('\n', '')
+    
+    revised_question = text # use original question for test
+    
+    client_runtime = boto3.client('bedrock-agent-runtime')
+    response = client_runtime.invoke_flow(
+        flowIdentifier='TQE3MT9IQO',
+        flowAliasIdentifier='BasicPromptFlow',
+        inputs=[
+            {
+                "content": {
+                    #"document": {
+                    #    "genre": "pop",
+                    #    "number": 3
+                    #}
+                    "document": {
+                        "input": revised_question
+                    }
+                },
+                "nodeName": "FlowInput",
+                "nodeOutputName": "document"
+            }
+        ]
+    )
+    
+    result = {}
+    for event in response.get("responseStream"):
+        result.update(event)
+
+    if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
+        print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
+        msg = result['flowOutputEvent']['content']['document']
+        print('msg: ', msg)
+
+    else:
+        print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+
+    reference = ""    
+    return msg, reference
+
+def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
     #revised_question = revise_question(connectionId, requestId, chat, text)     
     #print('revised_question: ', revised_question)  
     #revised_question = revised_question.replace('\n', '')
@@ -3521,6 +3564,78 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
 
     return relevant_documents
 
+"""
+from langchain.schema import BaseRetriever
+from langchain.callbacks.manager import CallbackManagerForRetrieverRun
+
+# https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/master/genai/aws-gen-ai-kr/utils/rag.py
+class OpenSearchLexicalSearchRetriever(BaseRetriever):
+
+    os_client: Any
+    index_name: str
+    k = 3
+    minimum_should_match = 0
+    filter = []
+
+    def normalize_search_results(self, search_results):
+        hits = (search_results["hits"]["hits"])
+        max_score = float(search_results["hits"]["max_score"])
+        
+        for hit in hits:
+            hit["_score"] = float(hit["_score"]) / max_score
+        
+        search_results["hits"]["max_score"] = hits[0]["_score"]
+        search_results["hits"]["hits"] = hits
+        
+        return search_results
+
+    def update_search_params(self, **kwargs):
+        self.k = kwargs.get("k", 3)
+        self.minimum_should_match = kwargs.get("minimum_should_match", 0)
+        self.filter = kwargs.get("filter", [])
+        self.index_name = kwargs.get("index_name", self.index_name)
+
+    def _reset_search_params(self, ):
+        self.k = 3
+        self.minimum_should_match = 0
+        self.filter = []
+
+    def _get_relevant_documents(
+        self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
+
+        query = opensearch_utils.get_query(
+            query=query,
+            minimum_should_match=self.minimum_should_match,
+            filter=self.filter
+        )
+        query["size"] = self.k
+
+        print ("lexical search query: ", query)
+
+        search_results = opensearch_utils.search_document(
+            os_client=self.os_client,
+            query=query,
+            index_name=self.index_name
+        )
+
+        results = []
+        if search_results["hits"]["hits"]:
+            search_results = self.normalize_search_results(search_results)
+            for res in search_results["hits"]["hits"]:
+
+                metadata = res["_source"]["metadata"]
+                metadata["id"] = res["_id"]
+
+                doc = Document(
+                    page_content=res["_source"]["text"],
+                    metadata=metadata
+                )
+                results.append((doc))
+
+        self._reset_search_params()
+
+        return results[:self.k]
+"""    
 def lexical_search_for_tool(query, top_k):
     # lexical search (keyword)
     min_match = 0
@@ -4369,7 +4484,9 @@ def getResponse(connectionId, jsonBody):
                     msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
                     
                 elif conv_type == "qa-kb":
-                    msg, reference = get_answer_using_knowledge_base(chat, text, conv_type, connectionId, requestId, bedrock_embedding)
+                    msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                
+                elif conv_type == "prompt-flow":
+                    msg, reference = run_prompt_flow(chat, text, connectionId, requestId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

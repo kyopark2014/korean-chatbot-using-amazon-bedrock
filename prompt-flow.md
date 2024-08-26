@@ -77,7 +77,7 @@ Content-type: application/json
 
 ### 애플리케이션에서 Prompt Flow를 이용하여 Chatbot 활용하기
 
-아래와 같이 flow_id로 "Prompt flow ARN"을 붙여 넣기하고, flow_alias는 생성할 때에 사용한 "aws"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
+아래와 같이 flow_id로 "Prompt flow ARN"을 붙여넣기하고, flow_alias는 생성할 때에 사용한 "aws"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
 
 ```python
 flow_id = [Prompt flow ARN]

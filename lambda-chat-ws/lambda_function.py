@@ -2686,9 +2686,18 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     )
     print('response: ', response)
     
+    flowAliasIdentifier = ""
+    flowAlias = response["flowAliasSummaries"]
+    for alias in flowAlias:
+        print('alias: ', alias)
+        if alias['name'] == 'BasicPromptFlow':
+            flowAliasIdentifier = alias['id']
+            print('flowAliasIdentifier: ', flowAliasIdentifier)
+            break
+    
     response = client_runtime.invoke_flow(
         flowIdentifier=flow_id,
-        flowAliasIdentifier='Q9EHREF4UI',
+        flowAliasIdentifier=flowAliasIdentifier,
         inputs=[
             {
                 "content": {

@@ -2729,19 +2729,19 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     response_stream = response['responseStream']
     
     try:
-        result = {}
+        #result = {}
         for event in response_stream:
             print('event: ', event)
-            result.update(event)
-        print('result: ', result)
+            #result.update(event)
+        #print('result: ', result)
 
-        if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
-            print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
-            msg = result['flowOutputEvent']['content']['document']
-            print('msg: ', msg)
+        #if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
+        #    print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
+        #    msg = result['flowOutputEvent']['content']['document']
+        #    print('msg: ', msg)
 
-        else:
-            print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+        #else:
+        #    print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
     except Exception as e:
         raise Exception("unexpected event.",e)
 

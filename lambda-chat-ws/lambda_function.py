@@ -2717,7 +2717,10 @@ def run_prompt_flow(chat, text, connectionId, requestId):
             {
                 "content": {
                     "document": {
-                        "user": revised_question
+                        "user": revised_question,
+                        "filenames":[
+                            "service_names_limited.xml"
+                        ]
                     }
                 },
                 "nodeName": "FlowInputNode",

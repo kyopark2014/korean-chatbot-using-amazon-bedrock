@@ -2722,11 +2722,11 @@ def run_prompt_flow(chat, text, connectionId, requestId):
                     #    "number": 3
                     #}
                     "document": {
-                        "input": revised_question
+                        "user": revised_question
                     }
                 },
-                "nodeName": "FlowInputNodeFlowInputNode0TobasicPromptsNode0",
-                "nodeOutputName": "basicPromptsNode0ToFlowOutputNodeFlowOutputNode0"
+                "nodeName": "FlowInputNode",
+                "nodeOutputName": "document"
             }
         ]
     )

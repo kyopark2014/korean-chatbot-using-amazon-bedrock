@@ -39,7 +39,7 @@
 
 ### 각종 Paramter
 
-- [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)에 따라서, flowAliasIdentifier와 flowIdentifier는 arn입니다. 
+- [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)와 같이  flowAliasIdentifier와 flowIdentifier는 arn입니다. 
 
 - [boto3-invoke_flow](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_flow.html)와 [AWS Doc: InvokeFlow](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html)에서는 아래와 같이 입력문을 표현하고 있습니다.
 

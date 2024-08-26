@@ -100,6 +100,7 @@ minCodeSimilarity = 300
 projectName = os.environ.get('projectName')
 
 flow_id = os.environ.get('flow_id')
+flow_alias = os.environ.get('flow_alias')
 
 reference_docs = []
 
@@ -2673,12 +2674,12 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
     return reference
 
 def run_prompt_flow(text, connectionId, requestId):    
-    client_runtime = boto3.client('bedrock-agent-runtime')
-        
-    client = boto3.client(service_name='bedrock-agent')
     print('flow_id: ', flow_id)
 
-    # flow    
+    client = boto3.client(service_name='bedrock-agent')   
+    
+    """
+    # flow (debug)      
     response_flow = client.get_flow(
         flowIdentifier=flow_id
     )
@@ -2690,6 +2691,7 @@ def run_prompt_flow(text, connectionId, requestId):
     print('connections: ', connections)
     for c in connections:
         print('connection: ', c)
+    """
     
     # flow aliases
     response_flow_aliases = client.list_flow_aliases(
@@ -2700,11 +2702,12 @@ def run_prompt_flow(text, connectionId, requestId):
     flowAlias = response_flow_aliases["flowAliasSummaries"]
     for alias in flowAlias:
         print('alias: ', alias)
-        if alias['name'] == 'BasicPromptFlow':
+        if alias['name'] == flow_alias:
             flowAliasIdentifier = alias['arn']
             print('flowAliasIdentifier: ', flowAliasIdentifier)
             break
     
+    client_runtime = boto3.client('bedrock-agent-runtime')
     response = client_runtime.invoke_flow(
         flowIdentifier=flow_id,
         flowAliasIdentifier=flowAliasIdentifier,

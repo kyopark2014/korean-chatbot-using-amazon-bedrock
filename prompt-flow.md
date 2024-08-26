@@ -27,6 +27,14 @@
    
 ![noname](https://github.com/user-attachments/assets/26c5824e-a5d8-4693-b9d6-6243e03c570b)
 
+6) 아래로 스크롤하여 [Create alias]를 선택합니다.
+
+![noname](https://github.com/user-attachments/assets/f1300dda-ae80-480a-b835-9dfc6c168e71)
+
+이후 아래와 같이 "Alias name"으로 "aws"라고 입력한 후에 [Create Alias]를 선택합니다. 
+
+![noname](https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe)
+
 6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
 
 ![noname](https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37)
@@ -67,9 +75,9 @@ Content-type: application/json
 현재 작성한 prompt flow는 nodeName이 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
 
 
-### 상세 코드 작성하기 
+### 애플리케이션에 코드 적용하기
 
-상기에서 복사한 "Prompt flow ARN"을 flow_id로 활용합니다. flow_alias는 생성할 때에 사용한 "aws_bot"으로 Name에 해당됩니다. 
+아래와 같이 flow_id로 "Prompt flow ARN"을 붙여 넣기하고, flow_alias는 생성할 때에 사용한 "aws_bot"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
 
 ```python
 flow_id = [Prompt flow ARN]
@@ -123,6 +131,10 @@ def run_prompt_flow(text, connectionId, requestId):
 
     return msg
 ```
+
+### 실행결과
+
+애플리케이션을 실행하고 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. 
 
 
 

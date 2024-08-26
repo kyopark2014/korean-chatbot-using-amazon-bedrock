@@ -2678,8 +2678,15 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     revised_question = text # use original question for test
     
     client_runtime = boto3.client('bedrock-agent-runtime')
+    
+    flow_id = 'TQE3MT9IQO'
+    response = client.list_flow_aliases(
+        flowIdentifier=flow_id
+    )
+    print('response: ', response)
+    
     response = client_runtime.invoke_flow(
-        flowIdentifier='TQE3MT9IQO',
+        flowIdentifier=flow_id,
         flowAliasIdentifier='BasicPromptFlow',
         inputs=[
             {

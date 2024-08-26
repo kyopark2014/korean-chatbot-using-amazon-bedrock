@@ -14,53 +14,62 @@
 
 ![image](https://github.com/user-attachments/assets/b279580e-3272-4633-93f6-32f74adf8a19)
 
-3) Prompts 노드는 아래와 같이 입력합니다. 여기서는 [Node name]로 "aws_chatbot", [Define in node]을 선택하고, Model은 "Claude 3 Sonnet"을 지정하였으며, Prompt에는 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다. 다음의 {{input}}에 대해 구체적인 세부 정보를 충분히 제공합니다."라고 입력하였습니다. 
+3) Prompts 노드는 아래와 같이 입력합니다. 여기서는 [Node name]로 "aws_chatbot", [Define in node]을 선택하고, Model은 "Claude 3 Sonnet"을 지정하였으며, Prompt에는 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다. 다음의 {{input}}에 대해 구체적인 세부 정보를 충분히 제공합니다."라고 입력하였습니다. [Save] 버튼을 선택하여 작업한 내용을 저장합니다. 
 
 ![noname](https://github.com/user-attachments/assets/eba3287e-d174-4d2e-8503-c04b5c87aec7)
 
 
-4) 오른쪽의 [Test Prompt flow]의 입력창에 "안녕"이라고 입력하면, 아래와 같이 "AWS" 이름을 가지는 chatbot을 생성되었음을 알 수 있습니다. 
+4) 오른쪽의 [Test Prompt flow]의 입력창에 "안녕"이라고 입력하면, 아래와 같이 "AWS"라는 이름을 가지는 chatbot이 생성되었음을 알 수 있습니다. 
 
 ![image](https://github.com/user-attachments/assets/0544b16a-f142-425c-97db-0f8bc971c17a)
 
+5) 다시 [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 생성한 "aws_bot"을 선택한 후에 아래와 같이 [Publish version]을 선택하면 "Version 1"이 생성됩니다.
+   
+![noname](https://github.com/user-attachments/assets/26c5824e-a5d8-4693-b9d6-6243e03c570b)
 
-<!--
+6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
 
-## Role
+![noname](https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37)
 
-```java
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "bedrock:GetFlow",
-            "Resource": [
-                "arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": "bedrock:GetPrompt",
-            "Resource": [
-                "arn:aws:bedrock:us-west-2:677146750822:prompt/VDZVA1UNJG"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": "bedrock:InvokeModel",
-            "Resource": [
-                "arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
-            ]
-        }
-    ]
-}
-```
---> 
+   
 
-## Prompt Flow의 실행
+### 애플리케이션에서 Prompt Flow 활용하기
 
 [프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다. 상세한 코드는 [lambda_function.py](./lambda-chat-ws/lambda_function.py)을 참조합니다.
+
+### 각종 Paramter
+
+- [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)에 따라서, flowAliasIdentifier와 flowIdentifier는 arn입니다. 
+
+- [boto3-invoke_flow](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_flow.html)와 [AWS Doc: InvokeFlow](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html)에서는 아래와 같이 입력문을 표현하고 있습니다.
+
+```python
+POST /flows/flowIdentifier/aliases/flowAliasIdentifier HTTP/1.1
+Content-type: application/json
+
+{
+   "inputs": [ 
+      { 
+         "content": { ... },
+         "nodeName": "string",
+         "nodeOutputName": "string"
+      }
+   ]
+}
+```
+
+여기서, JSON에 필요한 값들은 아래와 같습니다. 
+
+- nodeName: flow input node의 이름
+
+- nodeOutputName: prompt flow의 시작인 input node의 output의 이름
+
+현재 작성한 prompt flow는 nodeName이 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
+
+
+
+### 상세 코드 작성하기 
+
 
 ```python
 def run_prompt_flow(text, connectionId, requestId):    
@@ -113,33 +122,39 @@ def run_prompt_flow(text, connectionId, requestId):
 ```
 
 
-- [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)에 따라서, flowAliasIdentifier와 flowIdentifier는 arn입니다. 
 
 
-- [boto3-invoke_flow](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_flow.html)와 [AWS Doc: InvokeFlow](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html)에서는 아래와 같이 입력문을 표현하고 있습니다.
+<!--
 
-```python
-POST /flows/flowIdentifier/aliases/flowAliasIdentifier HTTP/1.1
-Content-type: application/json
+## Role
 
+```java
 {
-   "inputs": [ 
-      { 
-         "content": { ... },
-         "nodeName": "string",
-         "nodeOutputName": "string"
-      }
-   ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "bedrock:GetFlow",
+            "Resource": [
+                "arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "bedrock:GetPrompt",
+            "Resource": [
+                "arn:aws:bedrock:us-west-2:677146750822:prompt/VDZVA1UNJG"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "bedrock:InvokeModel",
+            "Resource": [
+                "arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
+            ]
+        }
+    ]
 }
 ```
-
-여기서, JSON에 필요한 값들은 아래와 같습니다. 
-
-- nodeName: flow input node의 이름
-
-- nodeOutputName: prompt flow의 시작인 input node의 output의 이름
-
-아래의 경우에서는 nodeName은 "FlowInputNode"이고, nodeOutputName은 "document"입니다. 
-
-![image](https://github.com/user-attachments/assets/112a8d72-956b-485d-a50a-a252e01410a3)
+--> 
 

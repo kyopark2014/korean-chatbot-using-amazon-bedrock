@@ -2714,8 +2714,8 @@ def run_prompt_flow(chat, text, connectionId, requestId):
                     #}
                     "document": {revised_question}
                 },
-                "nodeName": "FlowInput",
-                "nodeOutputName": "document"
+                "nodeName": "FlowInputNode",
+                "nodeOutputName": "FlowOutputNode"
             }
         ]
     )

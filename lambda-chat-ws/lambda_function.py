@@ -2694,8 +2694,6 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     print('connections: ', connections)
     for c in connections:
         print('connection: ', c)
-        
-    
     
     # flow aliases
     response_flow_aliases = client.list_flow_aliases(
@@ -2717,10 +2715,6 @@ def run_prompt_flow(chat, text, connectionId, requestId):
         inputs=[
             {
                 "content": {
-                    #"document": {
-                    #    "genre": revised_question,
-                    #    "number": 3
-                    #}
                     "document": {
                         "user": revised_question
                     }
@@ -2730,6 +2724,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
             }
         ]
     )
+    print('response of invoke_flow(): ', response)
     
     result = {}
     for event in response.get("responseStream"):

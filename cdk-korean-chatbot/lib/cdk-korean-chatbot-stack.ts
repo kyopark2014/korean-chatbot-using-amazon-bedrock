@@ -46,6 +46,7 @@ const enableHybridSearch = 'true';
 const enableParallelSummary = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
+const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO'
 
 const claude3_5_sonnet = [
   {
@@ -789,7 +790,8 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         projectName: projectName,
         separated_chat_history: separated_chat_history,
         enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
-        speech_generation: speech_generation
+        speech_generation: speech_generation,
+        flow_id: flow_id
       }
     });     
     lambdaChatWebsocket.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  

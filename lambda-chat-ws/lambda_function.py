@@ -99,6 +99,8 @@ minDocSimilarity = 200
 minCodeSimilarity = 300
 projectName = os.environ.get('projectName')
 
+flow_id = os.environ.get('flow_id')
+
 reference_docs = []
 
 # google search api
@@ -2678,10 +2680,9 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     revised_question = text # use original question for test
     
     client_runtime = boto3.client('bedrock-agent-runtime')
-    
-    #flow_id = 'TQE3MT9IQO'
-    flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO'
+        
     client = boto3.client(service_name='bedrock-agent')
+    print('flow_id: ', flow_id)
 
     # flow    
     response_flow = client.get_flow(

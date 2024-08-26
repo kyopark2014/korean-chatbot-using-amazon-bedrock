@@ -104,6 +104,7 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
 
 ## Knowledge Base에서 Hybrid Search
 
+[하이브리드 검색 구현하기 (feat. EnsembleRetriever, Knowledge Bases for Amazon Bedrock)](https://medium.com/@nuatmochoi/%ED%95%98%EC%9D%B4%EB%B8%8C%EB%A6%AC%EB%93%9C-%EA%B2%80%EC%83%89-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0-feat-ensembleretriever-knowledge-bases-for-amazon-bedrock-d6ef1a0daaf1)와 같이 Boto3를 이용하여 Knowledge Base에서 Hybrid Search를 구현할 수 있습니다.
 
 
 ```python

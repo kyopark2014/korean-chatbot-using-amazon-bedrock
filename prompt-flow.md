@@ -1,6 +1,6 @@
 # Prompt Flow로 Chatbot 만들기
 
-여기에서는 Prompt Flow를 이용하여 이름을 가진 Chatbot을 만드는것을 설명합니다.
+Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbot을 만들 수 있습니다. 여기에서는 Anthropic의 Claude기반으로 "AWS"라는 이름을 가진 chatbot을 prompt flow를 생성하여 애플리케이션에 boto3로 생성된 chatbot을 활용하는것을 보여줍니다. 
 
 ## Prompt Flow 작성하기
 

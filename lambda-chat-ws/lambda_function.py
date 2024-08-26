@@ -2712,7 +2712,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
                     #    "genre": revised_question,
                     #    "number": 3
                     #}
-                    "document": revised_question
+                    "document": {revised_question}
                 },
                 "nodeName": "FlowInput",
                 "nodeOutputName": "document"

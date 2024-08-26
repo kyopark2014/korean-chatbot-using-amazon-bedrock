@@ -143,3 +143,38 @@ def lambda_handler(event, context):
     
     return output
 ```
+
+retriever만 이용시 [실제 서비스에서 Knowledge Bases for Amazon Bedrock 활용 (with API, LangChain)](https://medium.com/@nuatmochoi/%EC%8B%A4%EC%A0%9C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90%EC%84%9C-knowledge-bases-for-amazon-bedrock-%ED%99%9C%EC%9A%A9-with-api-langchain-dc9b00ecc44d)을 활용할 수 있습니다.
+
+```python
+import boto3
+
+bedrock_agent_runtime = boto3.client(
+    service_name = "bedrock-agent-runtime"
+)
+
+def retrieve(query, kbId, numberOfResults=5):
+    return bedrock_agent_runtime.retrieve(
+        retrievalQuery= {
+            'text': query
+        },
+        knowledgeBaseId=kbId,
+        retrievalConfiguration= {
+            'vectorSearchConfiguration': {
+                'numberOfResults': numberOfResults
+            }
+        }
+    )
+
+def lambda_handler(event, context):
+    response = retrieve("생애최초 특별공급은 어떻게 신청하나요?", "{KnowledgeBaseID}")
+    results = response["retrievalResults"]
+    return results
+```
+
+### LangChain의 AmazonKnowledgeBasesRetriever
+
+[AmazonKnowledgeBasesRetriever](https://api.python.langchain.com/en/latest/retrievers/langchain_community.retrievers.bedrock.AmazonKnowledgeBasesRetriever.html)는 2024년 8월 현재에 아직 hybrid를 제공하지 않으므로, Hybrid 검색시는 Boto3의 bedrock_agent_runtime.retrieve을 이용하여야 합니다.
+
+
+

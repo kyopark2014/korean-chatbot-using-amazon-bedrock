@@ -2681,13 +2681,20 @@ def run_prompt_flow(chat, text, connectionId, requestId):
     
     flow_id = 'TQE3MT9IQO'
     client = boto3.client(service_name='bedrock-agent')
-    response = client.list_flow_aliases(
+
+    # flow    
+    response_flow = client.get_flow(
         flowIdentifier=flow_id
     )
-    print('response: ', response)
+    print('response_flow: ', response_flow)
     
+    # flow aliases
+    response_flow_aliases = client.list_flow_aliases(
+        flowIdentifier=flow_id
+    )
+    print('response_flow_aliases: ', response_flow_aliases)
     flowAliasIdentifier = ""
-    flowAlias = response["flowAliasSummaries"]
+    flowAlias = response_flow_aliases["flowAliasSummaries"]
     for alias in flowAlias:
         print('alias: ', alias)
         if alias['name'] == 'BasicPromptFlow':
@@ -2702,7 +2709,7 @@ def run_prompt_flow(chat, text, connectionId, requestId):
             {
                 "content": {
                     #"document": {
-                    #    "genre": "pop",
+                    #    "genre": revised_question,
                     #    "number": 3
                     #}
                     "document": revised_question

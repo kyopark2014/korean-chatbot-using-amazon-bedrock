@@ -43,3 +43,10 @@ def run_bedrock_agent(text, connectionId, requestId):
         
     return msg
 ```
+
+## 실행 결과
+
+메뉴에서 "Bedrock Agent"를 선택하고 아래와 같이 테스트해 볼 수 있습니다.
+
+<img width="785" alt="image" src="https://github.com/user-attachments/assets/4d58d2f7-7d95-4477-806f-309be24735e9">
+

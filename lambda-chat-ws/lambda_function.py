@@ -2674,13 +2674,14 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
     return reference
 
 def run_bedrock_agent(text, connectionId, requestId):
-    client = boto3.client(service_name='bedrock-agent')   
-    response =  client.invoke_agent(
-                 agentAliasId='CEXQFZT1EL',
-                 agentId='2SI1ONTVMW',
-                 inputText=text,
-                 sessionId='session-01',
-         )
+    client_runtime = boto3.client('bedrock-agent-runtime')
+    response =  client_runtime.invoke_agent(
+        agentAliasId='CEXQFZT1EL',
+        agentId='2SI1ONTVMW',
+        inputText=text,
+        sessionId='session-01',
+        # memoryId='memory-01'
+    )
     print('response of invoke_agent(): ', response)
     
     msg = ""

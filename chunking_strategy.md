@@ -59,8 +59,6 @@ semantic_chunks = semantic_chunker.create_documents(
   [d.page_content for d in documents])
 ```
 
-## Agentic Chunking
-
 
 ## Reference
 

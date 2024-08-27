@@ -51,6 +51,9 @@ const speech_generation = 'false';
 const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/72JCN8U0J4'
 const flow_alias = 'aws'
 
+const rag_flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/HCFRD6999O'
+const rag_flow_alias = 'rag_kb'
+
 const claude3_5_sonnet = [
   {
     "bedrock_region": "us-west-2", // Oregon
@@ -795,7 +798,9 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
         speech_generation: speech_generation,
         flow_id: flow_id,
-        flow_alias: flow_alias
+        flow_alias: flow_alias,
+        rag_flow_id: rag_flow_id,
+        rag_flow_alias: rag_flow_alias
       }
     });     
     lambdaChatWebsocket.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  

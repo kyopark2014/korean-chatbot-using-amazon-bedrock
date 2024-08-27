@@ -102,6 +102,9 @@ projectName = os.environ.get('projectName')
 flow_id = os.environ.get('flow_id')
 flow_alias = os.environ.get('flow_alias')
 
+rag_flow_id = os.environ.get('rag_flow_id')
+rag_flow_alias = os.environ.get('rag_flow_alias')
+
 reference_docs = []
 
 # google search api
@@ -2707,6 +2710,64 @@ def run_bedrock_agent(text, connectionId, requestId):
         
     return msg
 
+def run_RAG_prompt_flow(text, connectionId, requestId):
+    print('rag_flow_id: ', rag_flow_id)
+    print('rag_flow_alias: ', rag_flow_alias)
+    
+    client = boto3.client(service_name='bedrock-agent')   
+    
+    # get flow alias arn
+    response_flow_aliases = client.list_flow_aliases(
+        flowIdentifier=rag_flow_id
+    )
+    print('response_flow_aliases: ', response_flow_aliases)
+    flowAliasIdentifier = ""
+    flowAlias = response_flow_aliases["flowAliasSummaries"]
+    for alias in flowAlias:
+        print('alias: ', alias)
+        if alias['name'] == rag_flow_alias:
+            flowAliasIdentifier = alias['arn']
+            print('flowAliasIdentifier: ', flowAliasIdentifier)
+            break
+    
+    # invoke_flow
+    client_runtime = boto3.client('bedrock-agent-runtime')
+    response = client_runtime.invoke_flow(
+        flowIdentifier=rag_flow_id,
+        flowAliasIdentifier=flowAliasIdentifier,
+        inputs=[
+            {
+                "content": {
+                    "document": text,
+                },
+                "nodeName": "FlowInputNode",
+                "nodeOutputName": "document"
+            }
+        ]
+    )
+    print('response of invoke_flow(): ', response)
+    
+    response_stream = response['responseStream']
+    try:
+        result = {}
+        for event in response_stream:
+            print('event: ', event)
+            result.update(event)
+        print('result: ', result)
+
+        if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
+            print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
+            # msg = result['flowOutputEvent']['content']['document']
+            
+            msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
+            print('msg: ', msg)
+        else:
+            print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+    except Exception as e:
+        raise Exception("unexpected event.",e)
+
+    return msg
+
 def run_prompt_flow(text, connectionId, requestId):    
     print('flow_id: ', flow_id)
     print('flow_alias: ', flow_alias)
@@ -4559,6 +4620,9 @@ def getResponse(connectionId, jsonBody):
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)                    
                     msg = run_prompt_flow(revised_question, connectionId, requestId)
+                
+                elif conv_type == "rag-prompt-flow":
+                    msg = run_RAG_prompt_flow(text, connectionId, requestId)
                 
                 elif conv_type == "bedrock-agent":
                     msg = run_bedrock_agent(text, connectionId, requestId)

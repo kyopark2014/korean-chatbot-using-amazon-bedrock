@@ -462,7 +462,7 @@ S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 
 
 ### Chunking Strategy
 
-[Chunking Strategy](./chunking_stretegy.md)에서는 문서를 분할하여 chunk를 만드는 방법에 대해 설명합니다. 
+[Chunking Strategy](./chunking_strategy.md)에서는 문서를 분할하여 chunk를 만드는 방법에 대해 설명합니다. 
 
 ### 문서의 이미지 활용
 

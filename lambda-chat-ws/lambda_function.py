@@ -2685,27 +2685,26 @@ def run_bedrock_agent(text, connectionId, requestId):
     print('response of invoke_agent(): ', response)
     
     response_stream = response['completion']
+    
+    msg = ""
     try:
-        #result = {}
         for event in response_stream:
             chunk = event.get('chunk')
             if chunk:
-                print(chunk.get('bytes').decode())
-            #result.update(event)
-        #print('result: ', result)
-
-        #if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
-        #    print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
-            # msg = result['flowOutputEvent']['content']['document']
-            
-        #    msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
-        #    print('msg: ', msg)
-        ##else:
-        #    print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+                msg += chunk.get('bytes').decode()
+                print('event: ', chunk.get('bytes').decode())
+                
+                result = {
+                    'request_id': requestId,
+                    'msg': msg,
+                    'status': 'proceeding'
+                }
+                #print('result: ', json.dumps(result))
+                sendMessage(connectionId, result)
+                                
     except Exception as e:
         raise Exception("unexpected event.",e)
-
-    msg = ""
+        
     return msg
 
 def run_prompt_flow(text, connectionId, requestId):    

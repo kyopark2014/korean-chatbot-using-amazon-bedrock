@@ -723,9 +723,13 @@ new_vectorstore = OpenSearchVectorSearch(
 response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 ```
 
-## Prompt Flow를 이용하여 No code로 Chatbot 구현하기
+### Prompt Flow를 이용하여 No code로 Chatbot 구현하기
 
 Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbot을 만들 수 있습니다. [prompt-flow.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/prompt-flow.md)에서는 Anthropic의 Claude Sonnet를 이용하여, "AWS"라는 이름을 가진 chatbot을 prompt flow로 생성한 후에, 애플리케이션에서 활용하는 방법을 설명합니다.
+
+### Bedrock Agent로 Chatbot 구현하기
+
+[Bedrock Agent로 Chatbot 구현하기](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/bedrock-agent.md)에서는 Bedrock Agent를 이용하여 HR Agent를 활용하는 방법에 대해 설명합니다.
 
 
 ### AWS CDK로 인프라 구현하기

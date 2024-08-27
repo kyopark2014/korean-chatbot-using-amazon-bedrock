@@ -4,7 +4,7 @@ Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbo
 
 ## Prompt Flow 작성하기
 
-아래와 같이 매우 간단하지만 이름을 가진 prompt flow를 생성합니다. 
+Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbot에 통합할 수 있습니다. 여기에서는 prompt flow의 동작 방식을 설명하기 위하여, "AWS"라는 이름을 가지는 간단한 chatbot을 구현하는 것을 설명합니다.
 
 1) [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에 접속하여 [Create prompt flow] 선택하고 아래와 같이 입력 후에 [Create]를 선택합니다.
 
@@ -39,13 +39,13 @@ Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbo
 
 ![noname](https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37)
 
-   
+
 
 ## 애플리케이션에서 Prompt Flow 활용하기
 
 [프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다. 상세한 코드는 [lambda_function.py](./lambda-chat-ws/lambda_function.py)을 참조합니다.
 
-### 각종 Paramter
+### 각종 Parameter
 
 - [URI Request Parameters](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeFlow.html#API_agent-runtime_InvokeFlow_RequestSyntax)와 같이  flowAliasIdentifier와 flowIdentifier는 arn입니다. 
 

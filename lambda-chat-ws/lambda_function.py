@@ -2673,6 +2673,19 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
                     
     return reference
 
+def run_bedrock_agent(text, connectionId, requestId):
+    client = boto3.client(service_name='bedrock-agent')   
+    response =  client.invoke_agent(
+                 agentAliasId='CEXQFZT1EL',
+                 agentId='2SI1ONTVMW',
+                 inputText=text,
+                 sessionId='session-01',
+         )
+    print('response of invoke_agent(): ', response)
+    
+    msg = ""
+    return msg
+
 def run_prompt_flow(text, connectionId, requestId):    
     print('flow_id: ', flow_id)
     print('flow_alias: ', flow_alias)
@@ -4525,6 +4538,9 @@ def getResponse(connectionId, jsonBody):
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)                    
                     msg = run_prompt_flow(revised_question, connectionId, requestId)
+                
+                elif conv_type == "bedrock-agent":
+                    msg = run_bedrock_agent(text, connectionId, requestId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

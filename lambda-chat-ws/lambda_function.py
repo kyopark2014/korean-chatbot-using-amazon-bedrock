@@ -2225,11 +2225,8 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 print('page: ', page)
                 doc_info = {
                     "rag_type": 'opensearch-vector',
-                    #"api_type": api_type,
                     "confidence": confidence,
                     "metadata": {
-                        #"type": query_result_type,
-                        #"document_id": document_id,
                         "source": uri,
                         "title": name,
                         "excerpt": excerpt,
@@ -2240,18 +2237,13 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                         "parent_doc_id": parent_doc_id,
                         "doc_level": doc_level                        
                     },
-                    #"query_id": query_id,
-                    #"feedback_token": feedback_token
                     "assessed_score": assessed_score,
                 }
             else:
                 doc_info = {
                     "rag_type": 'opensearch-vector',
-                    #"api_type": api_type,
                     "confidence": confidence,
                     "metadata": {
-                        #"type": query_result_type,
-                        #"document_id": document_id,
                         "source": uri,
                         "title": name,
                         "excerpt": excerpt,
@@ -2259,8 +2251,6 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                         "parent_doc_id": parent_doc_id,
                         "doc_level": doc_level
                     },
-                    #"query_id": query_id,
-                    #"feedback_token": feedback_token
                     "assessed_score": assessed_score,
                 }
             rel_docs_vector_search.append(doc_info)
@@ -2335,11 +2325,8 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                     print('page: ', page)
                     doc_info = {
                         "rag_type": 'opensearch-keyword',
-                        #"api_type": api_type,
                         "confidence": confidence,
                         "metadata": {
-                            #"type": query_result_type,
-                            #"document_id": document_id,
                             "source": uri,
                             "title": name,
                             "excerpt": excerpt,
@@ -2350,18 +2337,13 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                             "parent_doc_id": parent_doc_id,
                             "doc_level": doc_level
                         },
-                        #"query_id": query_id,
-                        #"feedback_token": feedback_token
                         "assessed_score": assessed_score,
                     }
                 else: 
                     doc_info = {
                         "rag_type": 'opensearch-keyword',
-                        #"api_type": api_type,
                         "confidence": confidence,
                         "metadata": {
-                            #"type": query_result_type,
-                            #"document_id": document_id,
                             "source": uri,
                             "title": name,
                             "excerpt": excerpt,
@@ -2369,8 +2351,6 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                             "parent_doc_id": parent_doc_id,
                             "doc_level": doc_level
                         },
-                        #"query_id": query_id,
-                        #"feedback_token": feedback_token
                         "assessed_score": assessed_score,
                     }
                 rel_docs_lexical_search.append(doc_info)
@@ -2518,11 +2498,8 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
                         print('page: ', page)
                         doc_info = {
                             "rag_type": 'opensearch-keyward',
-                            #"api_type": api_type,
                             "confidence": confidence,
                             "metadata": {
-                                #"type": query_result_type,
-                                #"document_id": document_id,
                                 "source": uri,
                                 "title": name,
                                 "excerpt": excerpt,
@@ -2532,26 +2509,19 @@ def retrieve_codes_from_vectorstore(vectorstore_opensearch, index_name, query, t
                                 "code": code,
                                 "function_name": function_name
                             },
-                            #"query_id": query_id,
-                            #"feedback_token": feedback_token
                             "assessed_score": assessed_score,
                         }
                     else: 
                         doc_info = {
                             "rag_type": 'opensearch-keyward',
-                            #"api_type": api_type,
                             "confidence": confidence,
                             "metadata": {
-                                #"type": query_result_type,
-                                #"document_id": document_id,
                                 "source": uri,
                                 "title": name,
                                 "excerpt": excerpt,
                                 "code": code,
                                 "function_name": function_name
                             },
-                            #"query_id": query_id,
-                            #"feedback_token": feedback_token
                             "assessed_score": assessed_score,
                         }
                     
@@ -3037,20 +3007,12 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                             "api_type": api_type,
                             "confidence": confidence,
                             "metadata": {
-                                #"type": query_result_type,
-                                # "document_id": document_id,
                                 "source": uri,
                                 "title": title,
                                 "excerpt": excerpt,
                                 "translated_excerpt": "",
-                                #"document_attributes": {
-                                #    "_excerpt_page_number": page
-                                #}
                             },
-                            #"query_id": query_id,
-                            #"feedback_token": feedback_token
                             "assessed_score": assessed_score,
-                            #"result_id": result_id
                         }
                         relevant_docs.append(doc_info)                
             except Exception:
@@ -3688,78 +3650,6 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
 
     return relevant_documents
 
-"""
-from langchain.schema import BaseRetriever
-from langchain.callbacks.manager import CallbackManagerForRetrieverRun
-
-# https://github.com/aws-samples/aws-ai-ml-workshop-kr/blob/master/genai/aws-gen-ai-kr/utils/rag.py
-class OpenSearchLexicalSearchRetriever(BaseRetriever):
-
-    os_client: Any
-    index_name: str
-    k = 3
-    minimum_should_match = 0
-    filter = []
-
-    def normalize_search_results(self, search_results):
-        hits = (search_results["hits"]["hits"])
-        max_score = float(search_results["hits"]["max_score"])
-        
-        for hit in hits:
-            hit["_score"] = float(hit["_score"]) / max_score
-        
-        search_results["hits"]["max_score"] = hits[0]["_score"]
-        search_results["hits"]["hits"] = hits
-        
-        return search_results
-
-    def update_search_params(self, **kwargs):
-        self.k = kwargs.get("k", 3)
-        self.minimum_should_match = kwargs.get("minimum_should_match", 0)
-        self.filter = kwargs.get("filter", [])
-        self.index_name = kwargs.get("index_name", self.index_name)
-
-    def _reset_search_params(self, ):
-        self.k = 3
-        self.minimum_should_match = 0
-        self.filter = []
-
-    def _get_relevant_documents(
-        self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
-
-        query = opensearch_utils.get_query(
-            query=query,
-            minimum_should_match=self.minimum_should_match,
-            filter=self.filter
-        )
-        query["size"] = self.k
-
-        print ("lexical search query: ", query)
-
-        search_results = opensearch_utils.search_document(
-            os_client=self.os_client,
-            query=query,
-            index_name=self.index_name
-        )
-
-        results = []
-        if search_results["hits"]["hits"]:
-            search_results = self.normalize_search_results(search_results)
-            for res in search_results["hits"]["hits"]:
-
-                metadata = res["_source"]["metadata"]
-                metadata["id"] = res["_id"]
-
-                doc = Document(
-                    page_content=res["_source"]["text"],
-                    metadata=metadata
-                )
-                results.append((doc))
-
-        self._reset_search_params()
-
-        return results[:self.k]
-"""    
 def lexical_search_for_tool(query, top_k):
     # lexical search (keyword)
     min_match = 0

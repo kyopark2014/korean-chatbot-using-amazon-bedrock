@@ -1,4 +1,4 @@
-# Chunking
+# Chunking Strategy
 
 LLM의 context window를 고려하여 문서는 적절한 크기의 chunk로 잘라서 사용합니다.
 

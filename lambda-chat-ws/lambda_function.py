@@ -2690,7 +2690,7 @@ def run_bedrock_agent(text, connectionId, requestId):
         for event in response_stream:
             chunk = event.get('chunk')
             if chunk:
-                print(json.loads(chunk.get('bytes').decode()))
+                print(chunk.get('bytes').decode())
             #result.update(event)
         #print('result: ', result)
 

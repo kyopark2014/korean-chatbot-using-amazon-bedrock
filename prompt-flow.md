@@ -151,7 +151,7 @@ def run_prompt_flow(text, connectionId, requestId):
 
 ### Knowdge Base로 RAG 구현
 
-[knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 Amazon Bedrock에서는 완전관리형 RAG를 쉽게 구현할 수 있습니다. 
+[knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 "aws-rag"라는 이름을 가지는 Knowledge Base를 이용한 Knowledge store를 구현합니다.
 
 ### Prompt Flow를 이용해 No Code로 RAG 활용하기
 

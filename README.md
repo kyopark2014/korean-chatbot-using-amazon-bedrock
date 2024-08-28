@@ -67,7 +67,7 @@ RAG(Retrieval-Augmented Generation)를 활용하면, LLM(Large Language Model)�
 
 <img width="629" alt="image" src="https://github.com/user-attachments/assets/39fb0b48-a72e-4092-8c65-d66951ebf07b">
 
-## 향상된 RAG 구현하기
+## RAG 구현
 
 ### Multi-RAG
 

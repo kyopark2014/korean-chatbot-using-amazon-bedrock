@@ -24,5 +24,15 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
    
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/a6376701-a342-455c-a32d-65f4ef6e2d79">
 
+6) 설정된 값을 확인후에 [Create knowledge base]을 선택하여 Knowledge Base를 생성합니다.
 
-   
+## Knowledge Base의 S3 동기화
+
+아래와 같이 Knowledge Base ID를 확인할 수 있습니다.
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/8633f3e9-4f4a-4971-8a51-979ba15c97cd">
+
+아래로 스크롤하여 [Data source]에서 생성한 Data souce를 지정한 후에 [Sync]를 선택합니다. 
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/9a238419-599e-41d0-9753-500905627b92">
+

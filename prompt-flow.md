@@ -40,7 +40,8 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
 
-![noname](https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37)
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37">
+
 
 
 

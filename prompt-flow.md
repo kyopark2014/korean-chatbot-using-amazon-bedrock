@@ -1,8 +1,11 @@
-# Prompt Flow로 Chatbot 만들기
+# Prompt Flow 활용하기
 
-Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbot을 만들 수 있습니다. 여기에서는 Anthropic의 Claude Sonnet를 이용하여, "AWS"라는 이름을 가진 chatbot을 prompt flow로 생성한 후에, 애플리케이션에서 활용하는 방법을 설명합니다.
+Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbot을 만들 수 있습니다. 여기에서는 Anthropic의 Claude Sonnet를 이용하여 아래와 같은 chatbot을 구현하고, 애플리케이션에서 활용하는 방법을 설명합니다. 
 
-## Prompt Flow 작성하기
+1) 이름을 가진 chatbot 구현하기: "AWS"라는 이름을 가지는 chatbot을 구현하여 prompt flow의 동작을 이해합니다.
+2) RAG를 활용하는 Chatbot 구현하기: No code로 RAG를 구현하기 위하여 [Knowledge Base](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)를 활용합니다. 
+
+## Prompt Flow로 이름을 가지는 Chatbot 구현하기
 
 Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbot에 통합할 수 있습니다. 여기에서는 prompt flow의 동작 방식을 설명하기 위하여, "AWS"라는 이름을 가지는 간단한 chatbot을 구현하는 것을 설명합니다.
 
@@ -137,6 +140,45 @@ def run_prompt_flow(text, connectionId, requestId):
 애플리케이션을 실행하고 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. Prompt flow를 이용하여 "AWS"라는 이름의 chatbot을 생성할 수 있었습니다.
 
 ![image](https://github.com/user-attachments/assets/38f38b74-5bcc-46e9-8019-7e8581e40465)
+
+
+## RAG를 활용하는 Chatbot 구현하기
+
+### Knowdge Base로 RAG 구현
+
+[knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 Amazon Bedrock에서는 완전관리형 RAG를 쉽게 구현할 수 있습니다. 
+
+### Prompt Flow를 이용해 No Code로 RAG 활용하기
+
+1) [Prompt Flow Console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 [Create prompt flow]를 선택한 후에 아래와 같이 이름을 지정합니다.
+
+![noname](https://github.com/user-attachments/assets/e9715f2f-7596-4a85-98f3-8ae084f00cee)
+
+2) 생성된 Prompt Flow에 선택한 후에 [Edit in prompt flow builder]을 선택합니다.
+
+3) Node에서 "Knowledge Base"를 드레그인 하여 아래와 같이 배치합니다.
+
+<img width="730" alt="image" src="https://github.com/user-attachments/assets/74f4ed1b-131a-462e-95f0-a9f366f81210">
+
+4) Knowledge Base를 아래와 같이 설정합니다.
+   
+![noname](https://github.com/user-attachments/assets/569fea43-3c28-427a-a3a6-0701def85b50)
+
+5) RAG 동작을 아래와 같이 확인할 수 있습니다.
+
+<img width="334" alt="image" src="https://github.com/user-attachments/assets/60be179f-a5f3-4574-a49e-fb851597aad3">
+
+### 애플리케이션에서 RAG 활용하기 
+
+[lambda_function.py](./lambda-chat-ws/lambda_function.py)의 run_RAG_prompt_flow()와 같이 rag_flow_id와 rag_flow_alias를 이용해 생성한 prompt flow를 활용할 수 있습니다.
+
+이때의 실행 결과는 아래와 같습니다.
+
+<img width="785" alt="image" src="https://github.com/user-attachments/assets/9e4421ab-0862-47bc-9ad9-90325d7e2d91">
+
+
+
+
 
 
 

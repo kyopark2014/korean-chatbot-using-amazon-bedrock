@@ -2,14 +2,22 @@
 
 ## Knowledge Base 구성하기
 
+[knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)을 참조하여 Knowledge Base를 생성합니다. 생성후 Knowledge Base ID를 복사합니다. 
+
 ## Knowledge Base로 Retriever 구성하기
 
+애플리케이션에서 Knowledge Base를 통해 질문과 관련된 문서를 추출할 때에는 아래와 같이 Knowledge Base ID를 활용합니다. 또한 여기에서는 관련된 문서의 숫자(numberOfResults)는 4로 지정하였습니다. Knowledge Base를 활용하기 위하여 여기서는 LangChain의 [AmazonKnowledgeBasesRetriever](https://python.langchain.com/v0.2/docs/integrations/retrievers/bedrock/)을 이용하고 있습니다. Knowledge Base에서 관련된 문서뿐 아니라 참고문헌(reference)도 추출하여 활용할 수 있습니다.
+
 ```python
+from langchain_aws import AmazonKnowledgeBasesRetriever
+
+knowledge_base_id = [Knowledge Base ID]
+
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
     revised_question = text # use original question for test
     
     retriever = AmazonKnowledgeBasesRetriever(
-        knowledge_base_id="CFVYNN0NQN", 
+        knowledge_base_id=knowledge_base_id, 
         retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
     )
     

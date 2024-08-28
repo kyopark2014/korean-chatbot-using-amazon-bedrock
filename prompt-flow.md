@@ -39,7 +39,7 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 이후 아래와 같이 "Alias name"으로 "aws"라고 입력한 후에 [Create Alias]를 선택합니다. 
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe">
 
 
 6) 아래와 같이 [Prompt flow ARN]을 복사합니다.

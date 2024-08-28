@@ -15,7 +15,7 @@
 
 [How Amazon Bedrock Agents works](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-how.html)와 같이 
 
-![image](https://github.com/user-attachments/assets/42d19975-5ccc-4f8b-b928-f917a54241f9)
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/42d19975-5ccc-4f8b-b928-f917a54241f9">
 
 
 [boto3-invoke_agent](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_agent.html)에 따라 Agent를 호출하여 사용할 수 있습니다.

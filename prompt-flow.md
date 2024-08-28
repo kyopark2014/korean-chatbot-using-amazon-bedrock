@@ -152,7 +152,8 @@ def run_prompt_flow(text, connectionId, requestId):
 
 1) [Prompt Flow Console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 [Create prompt flow]를 선택한 후에 아래와 같이 이름을 지정합니다.
 
-![noname](https://github.com/user-attachments/assets/e9715f2f-7596-4a85-98f3-8ae084f00cee)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/e9715f2f-7596-4a85-98f3-8ae084f00cee">
+
 
 2) 생성된 Prompt Flow에 선택한 후에 [Edit in prompt flow builder]을 선택합니다.
 

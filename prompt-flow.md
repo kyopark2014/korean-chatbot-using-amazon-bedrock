@@ -162,8 +162,8 @@ def run_prompt_flow(text, connectionId, requestId):
 <img width="730" alt="image" src="https://github.com/user-attachments/assets/74f4ed1b-131a-462e-95f0-a9f366f81210">
 
 4) Knowledge Base를 아래와 같이 설정합니다.
-   
-![noname](https://github.com/user-attachments/assets/569fea43-3c28-427a-a3a6-0701def85b50)
+
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/569fea43-3c28-427a-a3a6-0701def85b50">
 
 5) RAG 동작을 아래와 같이 확인할 수 있습니다.
 

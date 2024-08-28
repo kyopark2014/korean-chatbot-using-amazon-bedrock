@@ -8,5 +8,13 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 ![noname](https://github.com/user-attachments/assets/8dd3f6a4-5c82-4ceb-a42b-4e0d1e8db843)
 
+2) data source의 이름을 지정합니다.
 
-3) 
+![noname](https://github.com/user-attachments/assets/8cc00f9b-a8fa-4c4b-a8f4-18c2fb5831c2)
+
+3) 아래로 스크롤하여 [Chunking and parsing configurations]에서 "Custom"을 선택하고, [Chunking strategy]으로 "Hierarchical chunking"을 선택합니다. 
+
+![noname](https://github.com/user-attachments/assets/91bea97e-6a04-4ffa-be07-01379c9c3366)
+
+
+4) 

@@ -449,20 +449,21 @@ try:
 
 RAG에 저장된 기존 코드를 이용하여 새로운 코드를 생성합니다. [rag-code-generation](https://github.com/kyopark2014/rag-code-generation)는 Code를 한국어로 요약하여 RAG에 저장하고 검색하는 방법을 설명했습니다. 여기에서는 일반 문서와 Code reference를 하나의 RAG에 저장하고 활용합니다. 
 
-### Parent Document Retrieval
 
-RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Parent/Child Chunking을 이용할 수 있습니다. [Parent Document Retrieval](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/parent-document-retrieval.md)에서는 parent/child로 chunking 전략을 달리하는 방법에 대해 설명합니다. 
+
+## 문서의 정보 추출
 
 ### S3 Event
 
 S3에 문서를 업로드할때 발생하는 Event를 이용하여 자동으로 RAG 등록을 할 수 있습니다. 이때 필요한 event에 대해 [RAG-s3-event.md](./RAG-s3-event.md)에서 설명합니다.
 
-
-## 문서의 정보 추출
-
 ### Chunking Strategy
 
 [Chunking Strategy](./chunking-strategy.md)에서는 문서를 분할하여 chunk를 만드는 방법에 대해 설명합니다. 
+
+### Parent Document Retrieval
+
+RAG의 검색정확도를 향상시키기 위한 여러가지 방법중에 Parent/Child Chunking을 이용할 수 있습니다. [Parent Document Retrieval](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/parent-document-retrieval.md)에서는 parent/child로 chunking 전략을 달리하는 방법에 대해 설명합니다. 
 
 ### 문서의 이미지 활용
 

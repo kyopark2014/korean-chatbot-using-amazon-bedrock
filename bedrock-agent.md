@@ -6,12 +6,12 @@
 
 - Action groups: 최대 20개의 API에 대한 orchestration을 수행할 수 있습니다.
 - Knowledge bases: Agent는 Knowledge bases를 통해 필요한 문서를 조회할 수 있습니다.
-- Prompt templates 
+- Prompt templates ([How Amazon Bedrock Agents works](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-how.html))
     - Pre-processing
     - Orchestration
     - Knowledge base response generation
     - Post-processing (disabled by default)
-[How Amazon Bedrock Agents works](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-how.html)
+
 
 
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/42d19975-5ccc-4f8b-b928-f917a54241f9">

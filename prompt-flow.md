@@ -11,11 +11,12 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 1) [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에 접속하여 [Create prompt flow] 선택하고 아래와 같이 입력 후에 [Create]를 선택합니다.
 
-![noname](https://github.com/user-attachments/assets/9af83873-06d2-4ba8-b52d-e70c4fa72eac)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/9af83873-06d2-4ba8-b52d-e70c4fa72eac">
 
 2) 왼쪽의 [Nodes]에서 [Prompts[를 선택한 후, 아래와 같이 "Flow input", "Flow output" 노드와 연결해 줍니다.
 
-![image](https://github.com/user-attachments/assets/b279580e-3272-4633-93f6-32f74adf8a19)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/b279580e-3272-4633-93f6-32f74adf8a19">
+
 
 3) Prompts 노드는 아래와 같이 입력합니다. 여기서는 [Node name]로 "aws_chatbot", [Define in node]을 선택하고, Model은 "Claude 3 Sonnet"을 지정하였으며, Prompt에는 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다. 다음의 {{input}}에 대해 구체적인 세부 정보를 충분히 제공합니다."라고 입력하였습니다. [Save] 버튼을 선택하여 작업한 내용을 저장합니다. 
 
@@ -26,21 +27,24 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 ![image](https://github.com/user-attachments/assets/0544b16a-f142-425c-97db-0f8bc971c17a)
 
+
 5) 다시 [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 생성한 "aws_bot"을 선택한 후에 아래와 같이 [Publish version]을 선택하면 "Version 1"이 생성됩니다.
    
-![noname](https://github.com/user-attachments/assets/26c5824e-a5d8-4693-b9d6-6243e03c570b)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/26c5824e-a5d8-4693-b9d6-6243e03c570b">
+
 
 6) 아래로 스크롤하여 [Create alias]를 선택합니다.
 
-![noname](https://github.com/user-attachments/assets/f1300dda-ae80-480a-b835-9dfc6c168e71)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/f1300dda-ae80-480a-b835-9dfc6c168e71">
 
 이후 아래와 같이 "Alias name"으로 "aws"라고 입력한 후에 [Create Alias]를 선택합니다. 
 
-![noname](https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe">
+
 
 6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37">
 
 
 

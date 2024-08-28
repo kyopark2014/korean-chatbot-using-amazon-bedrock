@@ -487,10 +487,6 @@ const enableImageExtraction = 'false';
 [PDF에서 텍스트, 이미지, 테이블 정보를 추출하기](./rag-pdf.md)에서는 S3의 PDF 문서에서 텍스트, 이미지, 테이블을 추출하는 방법에 대해 설명합니다. 
 
 
-## Agent 정의 및 활용
-
-[LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.
-
 
 ### 결과 읽어주기
 
@@ -723,6 +719,13 @@ new_vectorstore = OpenSearchVectorSearch(
 response = new_vectorstore.add_documents(docs, bulk_size = 10000)
 ```
 
+## 향상된 RAG를 구성하기 
+
+### Agent 정의 및 활용
+
+[LLM Agent](https://github.com/kyopark2014/llm-agent)와 같이, 다양한 API를 이용하기 위하여 Agent를 이용할 수 있습니다. 메뉴에서 ReAct나 ReAct chat을 이용해 기능을 확인할 수 있습니다.
+
+
 ### Prompt Flow를 이용하여 No code로 Chatbot 구현하기
 
 Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbot을 만들 수 있습니다. [prompt-flow.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/prompt-flow.md)에서는 Anthropic의 Claude Sonnet를 이용하여, "AWS"라는 이름을 가진 chatbot을 prompt flow로 생성한 후에, 애플리케이션에서 활용하는 방법을 설명합니다.
@@ -731,10 +734,18 @@ Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbo
 
 [Bedrock Agent로 Chatbot 구현하기](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/bedrock-agent.md)에서는 Bedrock Agent를 이용하여 HR Agent를 활용하는 방법에 대해 설명합니다.
 
+### Knowledge Base로 RAG 구성하기
+
+Amazon Bedrock의 Knowledge Base는 완전관리형 RAG 서비스로 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 손쉽게 RAG를 위한 knowledge store를 구성할 수 있습니다. 애플리케이션에서는 [rag-knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/rag-knowledge-base.md)와 같이 Knowledge Base를 이용해 질문과 관련된 문서를 검색하여 활용합니다. 
+
 
 ### AWS CDK로 인프라 구현하기
 
 [CDK 구현 코드](./cdk-korean-chatbot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다.
+
+
+
+
 
 ## 직접 실습 해보기
 
@@ -743,6 +754,7 @@ Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbo
 이 솔루션을 사용하기 위해서는 사전에 아래와 같은 준비가 되어야 합니다.
 
 - [AWS Account 생성](https://repost.aws/ko/knowledge-center/create-and-activate-aws-account)
+
 
 
 ### CDK를 이용한 인프라 설치

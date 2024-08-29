@@ -32,7 +32,7 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/8633f3e9-4f4a-4971-8a51-979ba15c97cd">
 
-아래로 스크롤하여 [Data source]에서 생성한 Data souce를 지정한 후에 [Sync]를 선택합니다. 
+아래로 스크롤하여 [Data source]에서 생성한 Data source를 지정한 후에 [Sync]를 선택합니다. 
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/9a238419-599e-41d0-9753-500905627b92">
 

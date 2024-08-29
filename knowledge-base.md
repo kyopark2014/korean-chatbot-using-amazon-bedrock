@@ -41,3 +41,39 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 Knowledge Base는 RAG를 테스트할 수 있는 환경을 제공합니다. 아래와 같이 질문을 입력하면 검색된 문서를 기반으로 답변을 확인할 수 있습니다.
 
 <img width="350" alt="image" src="https://github.com/user-attachments/assets/906956a8-d9f1-4d3c-a147-16d8e007a8e9">
+
+
+## Knowledge Base에서 이미지/표 인식하기
+
+Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 위한 절차는 아래와 같습니다.
+
+1) Knowledge Base 생성시 아래와 같이 [Chunking and parsing configurations]에서 "Custom"을 선택합니다.
+2) Parsing strategy에서 "Use foundation model for parsing"을 enable 합니다.
+3) 이미지, 표를 처리할때 사용할 LLM을 지정합니다. 여기서는 "Claude 3 Sonnet"을 선택하였습니다.
+4) [Instructions for the parser]에서 관련된 prompt를 변경할수 있습니다. 
+
+![noname](https://github.com/user-attachments/assets/a04a1030-f245-43a2-8874-609ed896d992)
+
+이때 기본 Prompt의 내용중 이미지와 표에 대한 내용은 아래와 같습니다.
+
+```text
+4. If the element is a visualization
+    - Provide a detailed description in natural language
+    - Do not transcribe text in the visualization after providing the description
+
+5. If the element is a table
+    - Create a markdown table, ensuring every row has the same number of columns
+    - Maintain cell alignment as closely as possible
+    - Do not split a table into multiple tables
+    - If a merged cell spans multiple rows or columns, place the text in the top-left cell and output ' ' for other
+    - Use | for column separators, |-|-| for header row separators
+    - If a cell has multiple items, list them in separate rows
+    - If the table contains sub-headers, separate the sub-headers from the headers in another row
+```
+
+<img width="518" alt="image" src="https://github.com/user-attachments/assets/4db9fe1f-35b0-4678-ada9-9c5b9049ae14">
+
+참조된 데이터는 아래와 같습니다.
+
+![noname](https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b)
+

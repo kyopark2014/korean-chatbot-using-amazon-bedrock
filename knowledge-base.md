@@ -71,9 +71,11 @@ Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 �
     - If the table contains sub-headers, separate the sub-headers from the headers in another row
 ```
 
+아래와 같이 Knowledge Base에서 질문하여 이미지 정보를 활용하였는지 확인합니다. 
+
 <img width="518" alt="image" src="https://github.com/user-attachments/assets/4db9fe1f-35b0-4678-ada9-9c5b9049ae14">
 
-참조된 데이터는 아래와 같습니다.
+아래와 같이 참조된 데이터에는 그림이 포함되어 있는것을 알 수 있습니다.
 
 ![noname](https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b)
 

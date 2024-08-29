@@ -79,3 +79,6 @@ Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 �
 
 ![noname](https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b)
 
+현재(2024.08) Data source의 크기는 104857600 byte(100MB)까지 허용하고 있습니다.
+
+<img width="805" alt="image" src="https://github.com/user-attachments/assets/3e552153-19d2-4a3a-8d0b-646395930b33">

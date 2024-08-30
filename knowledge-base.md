@@ -20,6 +20,22 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/a156fd9f-786b-4b22-9a7b-2a634b3bb88d">
 
+참고로 기본 Prompt의 내용중 이미지와 표에 대한 내용은 아래와 같습니다.
+
+```text
+4. If the element is a visualization
+    - Provide a detailed description in natural language
+    - Do not transcribe text in the visualization after providing the description
+
+5. If the element is a table
+    - Create a markdown table, ensuring every row has the same number of columns
+    - Maintain cell alignment as closely as possible
+    - Do not split a table into multiple tables
+    - If a merged cell spans multiple rows or columns, place the text in the top-left cell and output ' ' for other
+    - Use | for column separators, |-|-| for header row separators
+    - If a cell has multiple items, list them in separate rows
+    - If the table contains sub-headers, separate the sub-headers from the headers in another row
+```
    
 5) [Chunking strategy]으로 "Hierarchical chunking"을 선택하고 [Next]를 선택합니다. 여기서, [Max parent token size]와 [Max child token size]의 기본값은 각각 1500과 300입니다. Hierarchical chunking을 사용하면 검색은 child chunk를 활용하고, context는 parent chunk을 사용하게 됩니다. 따라서, 검색의 정확도를 높이면서 관련된 문서(relevant document)에 대한 충분한 context를 제공할 수 있습니다.
 
@@ -66,22 +82,7 @@ Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 �
 
 ![noname](https://github.com/user-attachments/assets/a04a1030-f245-43a2-8874-609ed896d992)
 
-이때 기본 Prompt의 내용중 이미지와 표에 대한 내용은 아래와 같습니다.
 
-```text
-4. If the element is a visualization
-    - Provide a detailed description in natural language
-    - Do not transcribe text in the visualization after providing the description
-
-5. If the element is a table
-    - Create a markdown table, ensuring every row has the same number of columns
-    - Maintain cell alignment as closely as possible
-    - Do not split a table into multiple tables
-    - If a merged cell spans multiple rows or columns, place the text in the top-left cell and output ' ' for other
-    - Use | for column separators, |-|-| for header row separators
-    - If a cell has multiple items, list them in separate rows
-    - If the table contains sub-headers, separate the sub-headers from the headers in another row
-```
 
 아래와 같이 Knowledge Base에서 질문하여 이미지 정보를 활용하였는지 확인합니다. 
 

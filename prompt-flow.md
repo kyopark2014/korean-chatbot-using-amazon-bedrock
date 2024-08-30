@@ -151,6 +151,12 @@ def run_prompt_flow(text, connectionId, requestId):
 
 ### Knowdge Base로 RAG 구현
 
+Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니다. 
+
+- Generate responses based on retrieved results: Knowledge Base에 질문을 하면, 기본 Prompt를 이용하여 문자열(string)으로 된 답변을 제공하여 편리하게 활용할 수 있습니다.
+
+- Return retrieved results: Knowledge Base에 질문을 하면, 조회된 관련된 문서를 array로 전달합니다. 여기에는 문서뿐 아니라 context, 관련문서(reference)의 URI를 제공합니다. 
+
 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 "aws-rag"라는 이름을 가지는 Knowledge Base를 이용한 Knowledge store를 구현합니다.
 
 ### Prompt Flow를 이용해 No Code로 RAG 활용하기
@@ -184,6 +190,29 @@ def run_prompt_flow(text, connectionId, requestId):
 
 
 
+### RAG에서 Prompt 사용하기
+
+Prompt flow에서 Knowledge base를 이용할때에 "Generate responses based on retrieved results"을 사용하면 미리 지정된 Prompt를 활용하여 문자열로 된 결과를 얻을 수 있어서 편리합니다. 하지만, 챗봇의 이름등 프롬프트를 수정하여 사용할 경우에는 "Return retrieved results"을 사용하여 관련된 문서를 얻고, 아래와 같이 Prompt를 추가하여 활용할 수 있습니다. 
+
+<img width="738" alt="image" src="https://github.com/user-attachments/assets/e49a6d44-e700-4af1-be2e-5bec67989695">
+
+이때 사용한 prompt는 아래와 같습니다. 
+
+```python
+너의 이름은 "AWS"입니다. 다음의 <context> tag안의 참고자료를 이용하여 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+
+<context>
+{{context}}
+</context>
+
+<question>
+{{input}}
+</question>
+```
+
+이때의 결과는 아래와 같습니다.
+
+<img width="287" alt="image" src="https://github.com/user-attachments/assets/5c5aef54-1145-4d63-b732-cf8792ca8ebb">
 
 
 

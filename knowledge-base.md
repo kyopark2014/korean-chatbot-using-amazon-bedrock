@@ -4,7 +4,7 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 ## Knowledge Base의 구성
 
-1) [S3 console[(https://ap-northeast-2.console.aws.amazon.com/s3/home?region=ap-northeast-2#)에 접속해서 [Create bucket]을 선택합니다. Bucket name을 지정합니다. 기존에 사용하던 Bucket이 있다면 아래는 skip 합니다.
+1) [S3 console[(https://ap-northeast-2.console.aws.amazon.com/s3/home?region=ap-northeast-2#)에 접속해서 [Create bucket]을 선택합니다. Bucket name을 지정하고 [Create bucket]을 선택합니다. 기존에 사용하던 Bucket이 있다면 아래는 skip 합니다.
 
 ![noname](https://github.com/user-attachments/assets/414f7d32-9aea-4350-aa52-fcc64cde1260)
 

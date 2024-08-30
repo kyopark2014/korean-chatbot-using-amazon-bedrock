@@ -267,7 +267,8 @@ def summary_image(chat, img_base64):
 
 문서에서 추출된 이미지는 아래와 같습니다.
 
-![image](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/assets/52392004/54a6532b-dc65-47ca-8c2e-8273a5c1d541)
+<img width="613" alt="image" src="https://github.com/user-attachments/assets/bd6c8227-5146-4180-a827-7e9338aba901">
+
 
 이미지를 요약한 결과는 아래와 같습니다. 
 

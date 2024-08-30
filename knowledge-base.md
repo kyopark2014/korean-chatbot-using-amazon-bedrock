@@ -103,11 +103,11 @@ Knowledge Base는 RAG를 테스트할 수 있는 환경을 제공합니다. 아�
 
 아래와 같이 참조된 데이터에는 그림이 포함되어 있는것을 알 수 있습니다.
 
-![noname](https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b)
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b">
 
 
 ### Advanced parsing의 제한 사항
 
 Data source의 크기는 104857600 byte(100MB)까지 허용하고 있습니다. 관련된 Quota는 [Advanced parsing total data size](https://docs.aws.amazon.com/bedrock/latest/userguide/quotas.html)입니다. 그밖에 파일의 최대 크기는 50MB이고, 최대 100개까지만 허용합니다.
 
-<img width="805" alt="image" src="https://github.com/user-attachments/assets/3e552153-19d2-4a3a-8d0b-646395930b33">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/3e552153-19d2-4a3a-8d0b-646395930b33">

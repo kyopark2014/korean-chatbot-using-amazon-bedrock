@@ -91,22 +91,10 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 ## Knowledge Base의 동작 확인
 
+
 Knowledge Base는 RAG를 테스트할 수 있는 환경을 제공합니다. 아래와 같이 질문을 입력하면 검색된 문서를 기반으로 답변을 확인할 수 있습니다.
 
 <img width="350" alt="image" src="https://github.com/user-attachments/assets/906956a8-d9f1-4d3c-a147-16d8e007a8e9">
-
-
-## Knowledge Base에서 이미지/표 인식하기
-
-Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 위한 절차는 아래와 같습니다.
-
-1) Knowledge Base 생성시 아래와 같이 [Chunking and parsing configurations]에서 "Custom"을 선택합니다.
-2) Parsing strategy에서 "Use foundation model for parsing"을 enable 합니다.
-3) 이미지, 표를 처리할때 사용할 LLM을 지정합니다. 여기서는 "Claude 3 Sonnet"을 선택하였습니다.
-4) [Instructions for the parser]에서 관련된 prompt를 변경할수 있습니다. 
-
-![noname](https://github.com/user-attachments/assets/a04a1030-f245-43a2-8874-609ed896d992)
-
 
 
 아래와 같이 Knowledge Base에서 질문하여 이미지 정보를 활용하였는지 확인합니다. 
@@ -116,6 +104,7 @@ Knowledge Base에서 Multimodal을 이용하여 이미지/표를 인식하기 �
 아래와 같이 참조된 데이터에는 그림이 포함되어 있는것을 알 수 있습니다.
 
 ![noname](https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b)
+
 
 ### Advanced parsing의 제한 사항
 

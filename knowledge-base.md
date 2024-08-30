@@ -85,8 +85,7 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 "Web Crawler"가 데이터를 가져올 수 있도록 아래와 같이 Web Crawler"를 선택한 후에 [Sync]를 선택합니다.
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/d491601b-670c-4b34-b8c8-497f6e2cd9b5">
-
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/31ad777c-d445-40ea-860c-222164976a55">
 
 
 ## Knowledge Base의 동작 확인

@@ -60,7 +60,7 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 [Knowledge base console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/knowledge-bases)에 접속하여 생성한 "aws-rag"에 접속합니다. 아래와 같이 Knowledge Base ID를 확인할 수 있습니다.
 
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/8633f3e9-4f4a-4971-8a51-979ba15c97cd">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/cb4ad217-f587-44d3-a707-edc039668860">
 
 아래로 스크롤하여 [Data source]에서 생성한 Data source를 지정한 후에 [Sync]를 선택합니다. 
 

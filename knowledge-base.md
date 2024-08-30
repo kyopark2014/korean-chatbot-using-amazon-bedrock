@@ -21,9 +21,10 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/a156fd9f-786b-4b22-9a7b-2a634b3bb88d">
 
    
-4) 아래로 스크롤하여 [Chunking and parsing configurations]에서 "Custom"을 선택하고, [Chunking strategy]으로 "Hierarchical chunking"을 선택합니다. [Max parent token size]와 [Max child token size]의 기본값은 각각 1500과 300입니다. Hierarchical chunking을 사용하면 검색은 child chunk를 활용하고, context는 parent chunk을 사용하게 됩니다. 따라서, 검색의 정확도를 높이면서 관련된 문서(relevant document)에 대한 충분한 context를 제공할 수 있습니다.
+5) [Chunking strategy]으로 "Hierarchical chunking"을 선택하고 [Next]를 선택합니다. 여기서, [Max parent token size]와 [Max child token size]의 기본값은 각각 1500과 300입니다. Hierarchical chunking을 사용하면 검색은 child chunk를 활용하고, context는 parent chunk을 사용하게 됩니다. 따라서, 검색의 정확도를 높이면서 관련된 문서(relevant document)에 대한 충분한 context를 제공할 수 있습니다.
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/91bea97e-6a04-4ffa-be07-01379c9c3366">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/28b97138-87cd-4cb8-9c4d-a0aa5a127262">
+
 
 5) Embedding model로 "Tital Text Embeddings v2"를 선택합니다. Vector dimesions으로는 기본값인 1024를 선택합니다.
 

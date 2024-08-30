@@ -83,6 +83,9 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/dd189162-053e-4e2f-93ff-6e679f5e69ad">
 
+"Web Crawler"가 데이터를 가져올 수 있도록 아래와 같이 Web Crawler"를 선택한 후에 [Sync]를 선택합니다.
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/d491601b-670c-4b34-b8c8-497f6e2cd9b5">
 
 
 

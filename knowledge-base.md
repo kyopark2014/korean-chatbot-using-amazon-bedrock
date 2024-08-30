@@ -13,9 +13,14 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/8dd3f6a4-5c82-4ceb-a42b-4e0d1e8db843">
 
 3) data source의 이름을 지정하고 [Browse S3]를 선택해 적절한 S3를 선택합니다.
-   
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/08d3f294-b8ff-4216-82af-ece338debf26">
 
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/9dfc106c-217d-497f-8d6d-9eeb6c6ec81b">
+
+4) 아래와 같이 [Parsing strategy]에서 [Use foundation model for parsing]을 선택하고 "Claude 3 Sonnet v1"을 선택합니다. 이를 선택하면 PDF 파일에서 이미지와 텍스트의 정보를 추출하여 RAG에서 활용합니다. 추출에 사용되는 prompt는 [Instructions for the parser - optional]에서 확인할 수 있습니다. 여기서는 기본 prompt를 그대로 활용합니다. 
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/a156fd9f-786b-4b22-9a7b-2a634b3bb88d">
+
+   
 4) 아래로 스크롤하여 [Chunking and parsing configurations]에서 "Custom"을 선택하고, [Chunking strategy]으로 "Hierarchical chunking"을 선택합니다. [Max parent token size]와 [Max child token size]의 기본값은 각각 1500과 300입니다. Hierarchical chunking을 사용하면 검색은 child chunk를 활용하고, context는 parent chunk을 사용하게 됩니다. 따라서, 검색의 정확도를 높이면서 관련된 문서(relevant document)에 대한 충분한 context를 제공할 수 있습니다.
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/91bea97e-6a04-4ffa-be07-01379c9c3366">

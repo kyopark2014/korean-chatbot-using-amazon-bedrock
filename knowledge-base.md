@@ -56,13 +56,35 @@ Amazon Bedrock의 [Knowledge Base](https://docs.aws.amazon.com/bedrock/latest/us
 
 ## Knowledge Base의 S3 동기화
 
-아래와 같이 Knowledge Base ID를 확인할 수 있습니다.
+[Amazon S3 console](https://us-west-2.console.aws.amazon.com/s3/buckets?region=us-west-2)에 접속해서, Knowledge base에서 지정한 bucket에 사용할 문서들을 등록합니다. 
+
+[Knowledge base console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/knowledge-bases)에 접속하여 생성한 "aws-rag"에 접속합니다. 아래와 같이 Knowledge Base ID를 확인할 수 있습니다.
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/8633f3e9-4f4a-4971-8a51-979ba15c97cd">
 
 아래로 스크롤하여 [Data source]에서 생성한 Data source를 지정한 후에 [Sync]를 선택합니다. 
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/9a238419-599e-41d0-9753-500905627b92">
+
+## Knowledge Base에 Web Crawler 추가하기
+
+[Data source]에서 [Add]를 선택한 후에 "Web Crawler"를 선택한 후에 [Next]를 선택합니다. 
+
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/0f097867-c4c1-4455-9e64-33cbfee3a68d">
+
+[Configure data source]의 [Name and description]을 입력하고 [Source URLs]에 "https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html"을 입력합니다. 
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/9b26bb16-e61d-4957-b9d6-1fb6815a7b25">
+
+아래의 메뉴에서 [Sync scope]는 기본값인 "Default"를 그대로 유지합니다. 이때, 동일한 호스트와 동일한 초기 URL 경로에 속하는 웹 페이지를 크롤링하게 됩니다. 
+
+아래로 스크롤하여 [Content chunking and parsing]을 S3 data source와 동일하게 아래처럼 설정합니다. 이후 [Next]를 선택하여 Review 한 다음에 [Add data sources]로 선택합니다.  
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/dd189162-053e-4e2f-93ff-6e679f5e69ad">
+
+
+
 
 ## Knowledge Base의 동작 확인
 

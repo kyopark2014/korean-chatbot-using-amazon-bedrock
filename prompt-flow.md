@@ -161,16 +161,16 @@ Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니�
 
 ### Prompt Flow를 이용해 No Code로 RAG 활용하기
 
-1) [Prompt Flow Console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 [Create prompt flow]를 선택한 후에 아래와 같이 이름을 지정합니다.
+1) [Prompt Flow Console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 [Create prompt flow]를 선택한 후에 아래와 같이 이름을 지정합니다. 여기에서는 "rag-prompt-flow"로 지정하였습니다.
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/e9715f2f-7596-4a85-98f3-8ae084f00cee">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/bd1f3e88-4262-4b46-8f14-8af75b251db1">
 
 
 2) 생성된 Prompt Flow에 선택한 후에 [Edit in prompt flow builder]을 선택합니다.
 
 3) Node에서 "Knowledge Base"를 드레그인 하여 아래와 같이 배치합니다.
 
-<img width="730" alt="image" src="https://github.com/user-attachments/assets/74f4ed1b-131a-462e-95f0-a9f366f81210">
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/74f4ed1b-131a-462e-95f0-a9f366f81210">
 
 4) Knowledge Base를 아래와 같이 설정합니다.
 

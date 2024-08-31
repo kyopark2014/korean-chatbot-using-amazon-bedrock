@@ -2664,8 +2664,9 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
                 print('agent_id: ', agent_id)
                 break
     
-    if not agent_alias_id:
+    if not agent_alias_id and agent_id:
         response_agent_alias = client.list_agent_aliases(
+            agentId = agent_id,
             maxResults=10
         )
         print('response of list_agent_aliases(): ', response_agent_alias)   

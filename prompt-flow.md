@@ -147,7 +147,7 @@ def run_prompt_flow(text, connectionId, requestId):
 
 ### 실행결과
 
-애플리케이션을 실행하고 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. Prompt flow를 이용하여 "AWS"라는 이름의 chatbot을 생성할 수 있었습니다.
+애플리케이션을 실행하고 메뉴에서 "Prompt Flow"을 선택한 후에 아래와 같이 "안녕"이라고 입력하고 결과를 확인합니다. Prompt flow를 이용하여 "AWS"라는 이름의 chatbot을 생성할 수 있었습니다.
 
 ![image](https://github.com/user-attachments/assets/38f38b74-5bcc-46e9-8019-7e8581e40465)
 
@@ -187,9 +187,7 @@ Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니�
 
 ### 애플리케이션에서 RAG 활용하기 
 
-[lambda_function.py](./lambda-chat-ws/lambda_function.py)의 run_RAG_prompt_flow()와 같이 rag_flow_id와 rag_flow_alias를 이용해 생성한 prompt flow를 활용할 수 있습니다.
-
-이때의 실행 결과는 아래와 같습니다.
+애플리케이션을 실행하고 메뉴에서 "Prompt Flow (RAG)"을 선택한 후에, 아래와 같이 "Amazon bedrock agent에 대해 설명해주세요"라고 입력합니다. 
 
 <img width="785" alt="image" src="https://github.com/user-attachments/assets/9e4421ab-0862-47bc-9ad9-90325d7e2d91">
 

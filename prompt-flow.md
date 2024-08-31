@@ -80,54 +80,67 @@ Content-type: application/json
 아래와 같이 flow_id로 "Prompt flow ARN"을 붙여넣기하고, flow_alias는 생성할 때에 사용한 "aws"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
 
 ```python
-flow_id = [Prompt flow ARN]
-flow_alias = "aws"
+prompt_flow_name = "aws-bot"
 
 def run_prompt_flow(text, connectionId, requestId):    
     client = boto3.client(service_name='bedrock-agent')   
     
-    # get flow alias arn
-    response_flow_aliases = client.list_flow_aliases(
-        flowIdentifier=flow_id
-    )
-    print('response_flow_aliases: ', response_flow_aliases)
-    flowAliasIdentifier = ""
-    flowAlias = response_flow_aliases["flowAliasSummaries"]
-    for alias in flowAlias:
-        print('alias: ', alias)
-        if alias['name'] == flow_alias:
-            flowAliasIdentifier = alias['arn']
-            print('flowAliasIdentifier: ', flowAliasIdentifier)
-            break
-    
-    client_runtime = boto3.client('bedrock-agent-runtime')
-    response = client_runtime.invoke_flow(
-        flowIdentifier=flow_id,
-        flowAliasIdentifier=flowAliasIdentifier,
-        inputs=[
-            {
-                "content": {
-                    "document": text,
-                },
-                "nodeName": "FlowInputNode",
-                "nodeOutputName": "document"
-            }
-        ]
-    )
-    
-    response_stream = response['responseStream']
-    try:
-        result = {}
-        for event in response_stream:
-            print('event: ', event)
-            result.update(event)
+    if not flow_arn:
+        response = client.list_flows(
+            maxResults=10
+        )
+        
+        for flow in response["flowSummaries"]:
+            if flow["name"] == prompt_flow_name:
+                flow_arn = flow["arn"]
+                break
 
-        if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
-            msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
-        else:
-            print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
-    except Exception as e:
-        raise Exception("unexpected event.",e)
+    msg = ""
+    if flow_arn:
+        # get flow alias arn
+        response_flow_aliases = client.list_flow_aliases(
+            flowIdentifier=flow_arn
+        )
+        flowAliasIdentifier = ""
+        flowAlias = response_flow_aliases["flowAliasSummaries"]
+        for alias in flowAlias:
+            if alias['name'] == "latest_verison":  # the name of prompt flow alias
+                flowAliasIdentifier = alias['arn']
+                break
+        
+        # invoke_flow
+        client_runtime = boto3.client('bedrock-agent-runtime')
+        response = client_runtime.invoke_flow(
+            flowIdentifier=flow_arn,
+            flowAliasIdentifier=flowAliasIdentifier,
+            inputs=[
+                {
+                    "content": {
+                        "document": text,
+                    },
+                    "nodeName": "FlowInputNode",
+                    "nodeOutputName": "document"
+                }
+            ]
+        )
+        
+        response_stream = response['responseStream']
+        try:
+            result = {}
+            for event in response_stream:
+                print('event: ', event)
+                result.update(event)
+            print('result: ', result)
+
+            if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':
+                print("Prompt flow invocation was successful! The output of the prompt flow is as follows:\n")
+                # msg = result['flowOutputEvent']['content']['document']
+                
+                msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
+            else:
+                print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
+        except Exception as e:
+            raise Exception("unexpected event.",e)
 
     return msg
 ```

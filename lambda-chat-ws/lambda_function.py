@@ -2646,37 +2646,64 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
                     
     return reference
 
+agent_alias_id = None
+agent_id = None
 def run_bedrock_agent(text, connectionId, requestId):
-    client_runtime = boto3.client('bedrock-agent-runtime')
-    response =  client_runtime.invoke_agent(
-        agentAliasId='CEXQFZT1EL',
-        agentId='2SI1ONTVMW',
-        inputText=text,
-        sessionId='session-01',
-        # memoryId='memory-01'
+    client = boto3.client(service_name='bedrock-agent')  
+    
+    response_agent = client.list_agents(
+        maxResults=10
     )
-    print('response of invoke_agent(): ', response)
+    print('response of list_agents(): ', response_agent)
     
-    response_stream = response['completion']
+    for summary in response_agent["agentSummaries"]:
+        if summary["agentName"] == "tool-executor":
+            agent_id = summary["agentId"]
+            print('agent_id: ', agent_id)
+            break
+     
+    response_agent_alias = client.list_agents(
+        maxResults=10
+    )
+    print('response of list_agent_aliases(): ', response_agent_alias)   
     
-    msg = ""
-    try:
-        for event in response_stream:
-            chunk = event.get('chunk')
-            if chunk:
-                msg += chunk.get('bytes').decode()
-                print('event: ', chunk.get('bytes').decode())
-                
-                result = {
-                    'request_id': requestId,
-                    'msg': msg,
-                    'status': 'proceeding'
-                }
-                #print('result: ', json.dumps(result))
-                sendMessage(connectionId, result)
-                                
-    except Exception as e:
-        raise Exception("unexpected event.",e)
+    for summary in response_agent_alias["agentAliasSummaries"]:
+        if summary["agentAliasName"] == "latest_version":
+            agent_alias_id = summary["agentAliasId"]
+            print('agent_alias_id: ', agent_alias_id)
+            break
+    
+    msg = ""    
+    if agent_alias_id and agent_id:
+        client_runtime = boto3.client('bedrock-agent-runtime')
+        try:
+            response =  client_runtime.invoke_agent(
+                agentAliasId='CEXQFZT1EL',
+                agentId='2SI1ONTVMW',
+                inputText=text,
+                sessionId='session-01',
+                # memoryId='memory-01'
+            )
+            print('response of invoke_agent(): ', response)
+            
+            response_stream = response['completion']
+            
+            for event in response_stream:
+                chunk = event.get('chunk')
+                if chunk:
+                    msg += chunk.get('bytes').decode()
+                    print('event: ', chunk.get('bytes').decode())
+                        
+                    result = {
+                        'request_id': requestId,
+                        'msg': msg,
+                        'status': 'proceeding'
+                    }
+                    #print('result: ', json.dumps(result))
+                    sendMessage(connectionId, result)
+                                    
+        except Exception as e:
+            raise Exception("unexpected event.",e)
         
     return msg
 
@@ -4541,9 +4568,9 @@ def getResponse(connectionId, jsonBody):
                         reference = get_references_for_agent(reference_docs)      
                         
                 elif conv_type == 'agent-executor-chat':
-                    #revised_question = revise_question(connectionId, requestId, chat, text)     
-                    #print('revised_question: ', revised_question)  
-                    msg = run_agent_executor(connectionId, requestId, text)  
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)  
+                    msg = run_agent_executor(connectionId, requestId, revised_question)  
                     if reference_docs:
                         reference = get_references_for_agent(reference_docs)      
                                                       

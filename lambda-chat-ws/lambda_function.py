@@ -181,7 +181,7 @@ HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
 
 map_chain = dict() 
-
+MSG_LENGTH = 100
 # Multi-LLM
 def get_chat():
     global selected_chat
@@ -258,7 +258,9 @@ def get_multi_region_chat(models, selected):
 
 def get_multimodal():
     global selected_multimodal
-    
+    print('LLM_for_chat: ', LLM_for_chat)
+    print('selected_multimodal: ', selected_multimodal)
+        
     profile = LLM_for_multimodal[selected_multimodal]
     bedrock_region =  profile['bedrock_region']
     modelId = profile['model_id']
@@ -3417,13 +3419,14 @@ def get_current_time(format: str=f"%Y-%m-%d %H:%M:%S")->str:
 @tool
 def get_weather_info(city: str) -> str:
     """
-    Search weather information by city name and then return weather statement.
-    city: the english name of city to search
+    retrieve weather information by city name and then return weather statement.
+    city: the name of city to retrieve
     return: weather statement
     """    
     
     city = city.replace('\n','')
     city = city.replace('\'','')
+    city = city.replace('\"','')
     
     chat = get_chat()
                 
@@ -3642,8 +3645,8 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
         #print('doc: ', doc[0])
         #print('doc content: ', doc[0].page_content)
         
-        if len(doc[0].page_content)>=30:
-            text = doc[0].page_content[:30]
+        if len(doc[0].page_content)>=100:
+            text = doc[0].page_content[:100]
         else:
             text = doc[0].page_content            
         print(f"--> vector search doc[{i}]: {text}, metadata:{doc[0].metadata}")        
@@ -3714,8 +3717,8 @@ def lexical_search_for_tool(query, top_k):
         #print('doc: ', doc)
         #print('doc content: ', doc.page_content)
         
-        if len(doc.page_content)>=30:
-            text = doc.page_content[:30]
+        if len(doc.page_content)>=100:
+            text = doc.page_content[:100]
         else:
             text = doc.page_content            
         print(f"--> lexical search doc[{i}]: {text}, metadata:{doc.metadata}")   
@@ -3806,8 +3809,14 @@ def grade_documents(question, documents):
         chat = get_chat()
         retrieval_grader = get_retrieval_grader(chat)
         for doc in documents:
+            # print('doc: ', doc)
+            print_doc(doc)
+            
             score = retrieval_grader.invoke({"question": question, "document": doc.page_content})
+            print("score: ", score)
+            
             grade = score.binary_score
+            print("grade: ", grade)
             # Document relevant
             if grade.lower() == "yes":
                 print("---GRADE: DOCUMENT RELEVANT---")
@@ -3854,7 +3863,7 @@ def get_references_for_agent(docs):
         #else:
         #    excerpt = ""+doc.page_content
         excerpt = ""+doc.page_content
-        print('excerpt: ', excerpt)
+        # print('excerpt: ', excerpt)
         
         # for some of unusual case 
         #excerpt = excerpt.replace('"', '')        
@@ -3955,6 +3964,11 @@ def enhanced_search(query):
 
     return message.content[message.content.find('<result>')+8:len(message.content)-9]
 
+class GradeDocuments(BaseModel):
+    """Binary score for relevance check on retrieved documents."""
+
+    binary_score: str = Field(description="Documents are relevant to the question, 'yes' or 'no'")
+
 ####################### LangGraph #######################
 # Chat Agent Executor
 #########################################################
@@ -3990,12 +4004,17 @@ def run_agent_executor(connectionId, requestId, query):
                 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다."
                 "모르는 질문을 받으면 솔직히 모른다고 말합니다."
                 "최종 답변에는 조사한 내용을 반드시 포함합니다."
+                # "최종 답변에는 조사한 내용을 반드시 포함하여야 하고, <result> tag를 붙여주세요." 
             )
         else: 
             system = (            
                 "You are a conversational AI designed to answer in a friendly way to a question."
                 "If you don't know the answer, just say that you don't know, don't try to make up an answer."
-                "You will be acting as a thoughtful advisor."                
+                "You will be acting as a thoughtful advisor."    
+                #"Put it in <result> tags."
+                # "Answer friendly for the newest question using the following conversation"
+                #"You should always answer in jokes."
+                #"You should always answer in rhymes."            
             )
             
         prompt = ChatPromptTemplate.from_messages(
@@ -4053,7 +4072,8 @@ def run_reflection_agent(connectionId, requestId, query):
         # messages: Annotated[Sequence[BaseMessage], operator.add]
         messages: Annotated[list, add_messages]
 
-    def generation(state: State):    
+    def generation_node(state: State):    
+        print("###### generation ######")        
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -4073,7 +4093,8 @@ def run_reflection_agent(connectionId, requestId, query):
         response = chain.invoke(state["messages"])
         return {"messages": [response]}
 
-    def reflection(state: State):
+    def reflection_node(state: State):
+        print("###### reflection ######")
         messages = state["messages"]
         
         reflection_prompt = ChatPromptTemplate.from_messages(
@@ -4103,6 +4124,7 @@ def run_reflection_agent(connectionId, requestId, query):
         return {"messages": [response]}
 
     def should_continue(state: State) -> Literal["continue", "end"]:
+        print("###### should_continue ######")
         messages = state["messages"]
         
         if len(messages) >= 6:   # End after 3 iterations        
@@ -4112,8 +4134,8 @@ def run_reflection_agent(connectionId, requestId, query):
 
     def buildReflectionAgent():
         workflow = StateGraph(State)
-        workflow.add_node("generate", generation)
-        workflow.add_node("reflect", reflection)
+        workflow.add_node("generate", generation_node)
+        workflow.add_node("reflect", reflection_node)
         workflow.set_entry_point("generate")
         workflow.add_conditional_edges(
             "generate",
@@ -4252,7 +4274,8 @@ You should use the previous critique to add important information to your answer
             for q in state["search_queries"]:
                 response = search.invoke(q)     
                 for r in response:
-                    content.append(r['content'])     
+                    if 'content' in r:
+                        content.append(r['content'])     
 
         chat = get_chat()
         reflect = reflection_prompt | chat
@@ -4497,9 +4520,9 @@ def getResponse(connectionId, jsonBody):
                     print(f'rag_type: {rag_type}')
                     msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
                     
-                elif conv_type == "qa-kb":
+                elif conv_type == "rag-knowledge-base":
                     msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                
-                elif conv_type == "qa-kb-chat":
+                elif conv_type == "rag-knowledge-base":
                     revised_question = revise_question(connectionId, requestId, chat, text)     
                     print('revised_question: ', revised_question)      
                     msg, reference = get_answer_using_knowledge_base(chat, revised_question, connectionId, requestId)                
@@ -4631,8 +4654,10 @@ def getResponse(connectionId, jsonBody):
                 img.save(buffer, format="PNG")
                 img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
                 
-                command  = jsonBody['command']
-                print('command: ', command)
+                command = ""        
+                if 'command' in jsonBody:
+                    command  = jsonBody['command']
+                    print('command: ', command)
                 
                 # verify the image
                 msg = use_multimodal(img_base64, command)       
@@ -4695,7 +4720,7 @@ def getResponse(connectionId, jsonBody):
         except Exception:
             err_msg = traceback.format_exc()
             print('error message: ', err_msg)
-            raise Exception ("Not able to write into dynamodb")        
+            # raise Exception ("Not able to write into dynamodb")         
         #print('resp, ', resp)
 
     if speech_uri:

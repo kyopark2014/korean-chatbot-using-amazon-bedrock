@@ -27,7 +27,7 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 ![image](https://github.com/user-attachments/assets/0544b16a-f142-425c-97db-0f8bc971c17a)
 
 
-5) 다시 [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 생성한 "aws_bot"을 선택한 후에 아래와 같이 [Publish version]을 선택하면 "Version 1"이 생성됩니다.
+5) 다시 [Prompt flow console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/prompt-flows)에서 생성한 "aws-bot"을 선택한 후에 아래와 같이 [Publish version]을 선택하면 "Version 1"이 생성됩니다.
    
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/26c5824e-a5d8-4693-b9d6-6243e03c570b">
 
@@ -36,7 +36,7 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/f1300dda-ae80-480a-b835-9dfc6c168e71">
 
-이후 아래와 같이 "Alias name"으로 "aws"라고 입력한 후에 [Create Alias]를 선택합니다. 
+이후 아래와 같이 "Alias name"으로 "latest_verison"라고 입력한 후에 [Create Alias]를 선택합니다. 
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe">
 

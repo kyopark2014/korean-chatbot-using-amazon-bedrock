@@ -2646,6 +2646,10 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
                     
     return reference
 
+####################### Bedrock Agent #######################
+# Bedrock Agent
+#############################################################
+
 agent_alias_id = None
 agent_id = None
 def run_bedrock_agent(text, connectionId, requestId, userId):
@@ -4607,6 +4611,10 @@ def getResponse(connectionId, jsonBody):
                 
                 elif conv_type == "bedrock-agent":
                     msg = run_bedrock_agent(text, connectionId, requestId, userId)
+                elif conv_type == "bedrock-agent-chat":
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)    
+                    msg = run_bedrock_agent(revised_question, connectionId, requestId, userId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

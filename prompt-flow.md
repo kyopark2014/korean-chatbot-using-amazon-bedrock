@@ -193,7 +193,8 @@ Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니�
 
 <img width="785" alt="image" src="https://github.com/user-attachments/assets/9e4421ab-0862-47bc-9ad9-90325d7e2d91">
 
-![image](https://github.com/user-attachments/assets/dfc5bd14-8b3c-44bc-a360-7559c50af3ba)
+
+![image](https://github.com/user-attachments/assets/213c49b9-8baa-4264-90fb-18a37901c946)
 
 
 ### RAG에서 Prompt 사용하기

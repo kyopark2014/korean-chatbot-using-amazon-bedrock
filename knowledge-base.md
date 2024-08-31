@@ -104,6 +104,12 @@ Knowledge Base는 RAG를 테스트할 수 있는 환경을 제공합니다. 아�
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/a3353f5a-c73f-4f76-bf54-ee3f9f19f36b">
 
+애플리케이션에 knowledge base를 호출하는 것을 시험하기 위하여 메뉴에서 "Knowledge Base (RAG)"을 선택합니다.
+
+이후 아래와 같이 입력하면 애플리케이션에 knowledge base를 통해 얻은 결과를 확인할 수 있습니다.
+
+![image](https://github.com/user-attachments/assets/dfc5bd14-8b3c-44bc-a360-7559c50af3ba)
+
 
 ### Advanced parsing의 제한 사항
 

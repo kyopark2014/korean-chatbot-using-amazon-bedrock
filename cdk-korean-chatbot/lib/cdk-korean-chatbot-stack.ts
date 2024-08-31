@@ -46,13 +46,10 @@ const enableHybridSearch = 'true';
 const enableParallelSummary = 'true';
 const enalbeParentDocumentRetrival = 'true';
 const speech_generation = 'false';
-// const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/TQE3MT9IQO'
-// const flow_alias = 'BasicPromptFlow'
-const flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/72JCN8U0J4'
-const flow_alias = 'aws'
 
-const rag_flow_id = 'arn:aws:bedrock:us-west-2:677146750822:flow/HCFRD6999O'
-const rag_flow_alias = 'rag_kb'
+const prompt_flow_name = 'aws-bot'
+const rag_prompt_flow_name = 'rag-prompt-flow'
+const knowledge_base_name = 'aws-rag'
 
 const claude3_5_sonnet = [
   {
@@ -797,10 +794,9 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         separated_chat_history: separated_chat_history,
         enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
         speech_generation: speech_generation,
-        flow_id: flow_id,
-        flow_alias: flow_alias,
-        rag_flow_id: rag_flow_id,
-        rag_flow_alias: rag_flow_alias
+        prompt_flow_name: prompt_flow_name,
+        rag_prompt_flow_name: rag_prompt_flow_name,
+        knowledge_base_name: knowledge_base_name
       }
     });     
     lambdaChatWebsocket.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  

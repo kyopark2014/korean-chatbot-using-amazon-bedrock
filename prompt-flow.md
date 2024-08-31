@@ -41,13 +41,6 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/d3149151-38dd-43c3-a878-ccec17b7684d">
 
 
-
-6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
-
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37">
-
-
-
 ## 애플리케이션에서 Prompt Flow 활용하기
 
 [프롬프트 플로우 실행 코드 샘플](https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/flows-code-ex.html)를 참조하여 구현합니다. 상세한 코드는 [lambda_function.py](./lambda-chat-ws/lambda_function.py)을 참조합니다.

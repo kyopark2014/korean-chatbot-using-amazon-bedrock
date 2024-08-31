@@ -187,10 +187,7 @@ Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니�
 
 ### 애플리케이션에서 RAG 활용하기 
 
-애플리케이션을 실행하고 메뉴에서 "Prompt Flow (RAG)"을 선택한 후에, 아래와 같이 "Amazon bedrock agent에 대해 설명해주세요"라고 입력합니다. 
-
-<img width="785" alt="image" src="https://github.com/user-attachments/assets/9e4421ab-0862-47bc-9ad9-90325d7e2d91">
-
+애플리케이션을 실행하고 메뉴에서 "Prompt Flow (RAG)"을 선택한 후에, 아래와 같이 "Amazon bedrock agent에 대해 설명해줘"라고 입력합니다. 
 
 ![image](https://github.com/user-attachments/assets/213c49b9-8baa-4264-90fb-18a37901c946)
 

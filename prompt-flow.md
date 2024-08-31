@@ -38,7 +38,7 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 이후 아래와 같이 "Alias name"으로 "latest_version"라고 입력한 후에 [Create Alias]를 선택합니다. 
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/d3149151-38dd-43c3-a878-ccec17b7684d">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/d20c456c-de40-4499-a094-04e89950d36b">
 
 
 ## 애플리케이션에서 Prompt Flow 활용하기

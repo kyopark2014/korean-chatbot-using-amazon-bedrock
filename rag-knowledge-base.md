@@ -8,40 +8,47 @@
 
 애플리케이션에서 Knowledge Base를 통해 질문과 관련된 문서를 추출할 때에는 아래와 같이 Knowledge Base ID를 활용합니다. 또한 여기에서는 관련된 문서의 숫자(numberOfResults)는 4로 지정하였습니다. Knowledge Base를 활용하기 위하여 여기서는 LangChain의 [AmazonKnowledgeBasesRetriever](https://python.langchain.com/v0.2/docs/integrations/retrievers/bedrock/)을 이용하고 있습니다. Knowledge Base에서 관련된 문서뿐 아니라 참고문헌(reference)도 추출하여 활용할 수 있습니다.
 
+Knowledge base의 생성후에 knowledge_base_id를 알수 있습니다. 여기서는 편의상 knowledge_base_name을 이용하여 knowledge_base_id를 검색해서 사용하고 있습니다.
+
 ```python
 from langchain_aws import AmazonKnowledgeBasesRetriever
 
-knowledge_base_id = [Knowledge Base ID]
-
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
     revised_question = text # use original question for test
-    
-    retriever = AmazonKnowledgeBasesRetriever(
-        knowledge_base_id=knowledge_base_id, 
-        retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
-    )
-    
-    relevant_docs = retriever.invoke(revised_question)
-    print(relevant_docs)
-    
-    relevant_context = ""
-    for i, document in enumerate(relevant_docs):
-        print(f"{i}: {document}")
-        if document.page_content:
-            content = document.page_content
-        print('score:', document.metadata["score"])
-        
-        uri = document.metadata["location"]["s3Location"]["uri"] if document.metadata["location"]["s3Location"]["uri"] is not None else ""
-        print('uri:', uri)
-        
-        relevant_context = relevant_context + content + "\n\n"
-    
-    print('relevant_context: ', relevant_context)
 
-    msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
-
-    reference = get_reference_of_knoweledge_base(relevant_docs, path, doc_prefix)  
+    if not knowledge_base_id:        
+        client = boto3.client('bedrock-agent')         
+        response = client.list_knowledge_bases(
+            maxResults=10
+        )
+                
+        if "knowledgeBaseSummaries" in response:
+            summaries = response["knowledgeBaseSummaries"]
+            for summary in summaries:
+                if summary["name"] == knowledge_base_name:
+                    knowledge_base_id = summary["knowledgeBaseId"]
+                    break
     
+    msg = reference = ""
+    if knowledge_base_id:    
+        retriever = AmazonKnowledgeBasesRetriever(
+            knowledge_base_id=knowledge_base_id, 
+            retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
+        )
+        
+        relevant_docs = retriever.invoke(revised_question)
+        
+        relevant_context = ""
+        for i, document in enumerate(relevant_docs):
+            print(f"{i}: {document}")
+            if document.page_content:
+                content = document.page_content
+            
+            relevant_context = relevant_context + content + "\n\n"
+        
+        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+        reference = get_reference_of_knoweledge_base(relevant_docs, path, doc_prefix)  
+        
     return msg, reference
 
 def query_using_RAG_context(connectionId, requestId, chat, context, revised_question):    

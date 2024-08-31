@@ -36,15 +36,15 @@ Prompt flow를 이용하면 별도 코딩없이 Prompt, RAG, Lambda등을 chatbo
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/f1300dda-ae80-480a-b835-9dfc6c168e71">
 
-이후 아래와 같이 "Alias name"으로 "latest_verison"라고 입력한 후에 [Create Alias]를 선택합니다. 
+이후 아래와 같이 "Alias name"으로 "latest_verison"라고 입력한 후에 [Create Alias]를 선택합니다. 
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/eb786b75-83bc-4e80-a5ee-e198732c7abe">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/d3149151-38dd-43c3-a878-ccec17b7684d">
+
 
 
 6) 아래와 같이 [Prompt flow ARN]을 복사합니다.
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/8fb43e61-5259-444c-bd1c-d17b82580e37">
-
 
 
 

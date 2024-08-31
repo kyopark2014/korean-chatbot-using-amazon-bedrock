@@ -2648,40 +2648,43 @@ def get_reference_of_knoweledge_base(docs, path, doc_prefix):
 
 agent_alias_id = None
 agent_id = None
-def run_bedrock_agent(text, connectionId, requestId):
+def run_bedrock_agent(text, connectionId, requestId, userId):
+    global agent_id, agent_alias_id
+    
     client = boto3.client(service_name='bedrock-agent')  
+    if not agent_id:
+        response_agent = client.list_agents(
+            maxResults=10
+        )
+        print('response of list_agents(): ', response_agent)
+        
+        for summary in response_agent["agentSummaries"]:
+            if summary["agentName"] == "tool-executor":
+                agent_id = summary["agentId"]
+                print('agent_id: ', agent_id)
+                break
     
-    response_agent = client.list_agents(
-        maxResults=10
-    )
-    print('response of list_agents(): ', response_agent)
-    
-    for summary in response_agent["agentSummaries"]:
-        if summary["agentName"] == "tool-executor":
-            agent_id = summary["agentId"]
-            print('agent_id: ', agent_id)
-            break
-     
-    response_agent_alias = client.list_agents(
-        maxResults=10
-    )
-    print('response of list_agent_aliases(): ', response_agent_alias)   
-    
-    for summary in response_agent_alias["agentAliasSummaries"]:
-        if summary["agentAliasName"] == "latest_version":
-            agent_alias_id = summary["agentAliasId"]
-            print('agent_alias_id: ', agent_alias_id)
-            break
+    if not agent_alias_id:
+        response_agent_alias = client.list_agents(
+            maxResults=10
+        )
+        print('response of list_agent_aliases(): ', response_agent_alias)   
+        
+        for summary in response_agent_alias["agentAliasSummaries"]:
+            if summary["agentAliasName"] == "latest_version":
+                agent_alias_id = summary["agentAliasId"]
+                print('agent_alias_id: ', agent_alias_id)
+                break
     
     msg = ""    
     if agent_alias_id and agent_id:
         client_runtime = boto3.client('bedrock-agent-runtime')
         try:
             response =  client_runtime.invoke_agent(
-                agentAliasId='CEXQFZT1EL',
-                agentId='2SI1ONTVMW',
+                agentAliasId=agent_alias_id,
+                agentId=agent_id,
                 inputText=text,
-                sessionId='session-01',
+                sessionId='session-'+userId,
                 # memoryId='memory-01'
             )
             print('response of invoke_agent(): ', response)
@@ -4602,7 +4605,7 @@ def getResponse(connectionId, jsonBody):
                     msg = run_RAG_prompt_flow(text, connectionId, requestId)
                 
                 elif conv_type == "bedrock-agent":
-                    msg = run_bedrock_agent(text, connectionId, requestId)
+                    msg = run_bedrock_agent(text, connectionId, requestId, userId)
                 
                 elif conv_type == "translation":
                     msg = translate_text(chat, text) 

@@ -2727,7 +2727,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
         response = client.list_flows(
             maxResults=10
         )
-        print('response: ', response)
+        print('response: ', response) 
         
         for flow in response["flowSummaries"]:
             if flow["name"] == rag_prompt_flow_name:

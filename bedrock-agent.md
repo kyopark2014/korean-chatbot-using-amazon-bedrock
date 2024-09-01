@@ -89,3 +89,10 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
 
 <img width="785" alt="image" src="https://github.com/user-attachments/assets/4d58d2f7-7d95-4477-806f-309be24735e9">
 
+
+
+## Code Interpreter
+
+"Plot of graph of an cosign to show iteration of waves."로 입력했을때의 결과입니다.
+
+![noname](https://github.com/user-attachments/assets/533cd2b6-72d3-481b-bb8f-5a91982dca71)

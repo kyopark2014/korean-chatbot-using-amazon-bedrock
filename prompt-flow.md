@@ -80,39 +80,49 @@ Content-type: application/json
 아래와 같이 flow_id로 "Prompt flow ARN"을 붙여넣기하고, flow_alias는 생성할 때에 사용한 "aws"을 입력합니다. "flowAliasIdentifier"는 아래와 같이 list_flow_aliases()에서 alias를 검색하여 확인합니다. invoke_flow()을 이용하여 prompt flow에 입력문을 전달후 결과를 얻습니다. 
 
 ```python
-prompt_flow_name = "aws-bot"
-
+flow_arn = None
+flow_alias_identifier = None
 def run_prompt_flow(text, connectionId, requestId):    
     client = boto3.client(service_name='bedrock-agent')   
     
+    global flow_arn, flow_alias_identifier    
     if not flow_arn:
         response = client.list_flows(
             maxResults=10
         )
+        print('response: ', response)
         
         for flow in response["flowSummaries"]:
+            print('flow: ', flow)
             if flow["name"] == prompt_flow_name:
                 flow_arn = flow["arn"]
+                print('flow_arn: ', flow_arn)
                 break
 
     msg = ""
     if flow_arn:
-        # get flow alias arn
-        response_flow_aliases = client.list_flow_aliases(
-            flowIdentifier=flow_arn
-        )
-        flowAliasIdentifier = ""
-        flowAlias = response_flow_aliases["flowAliasSummaries"]
-        for alias in flowAlias:
-            if alias['name'] == "latest_version":  # the name of prompt flow alias
-                flowAliasIdentifier = alias['arn']
-                break
+        if not flow_alias_identifier:
+            # get flow alias arn
+            response_flow_aliases = client.list_flow_aliases(
+                flowIdentifier=flow_arn
+            )
+            print('response_flow_aliases: ', response_flow_aliases)
+            
+            flowAlias = response_flow_aliases["flowAliasSummaries"]
+            for alias in flowAlias:
+                print('alias: ', alias)
+                if alias['name'] == "latest_version":  # the name of prompt flow alias
+                    flow_alias_identifier = alias['arn']
+                    print('flowAliasIdentifier: ', flow_alias_identifier)
+                    break
         
         # invoke_flow
+        isTyping(connectionId, requestId)  
+        
         client_runtime = boto3.client('bedrock-agent-runtime')
         response = client_runtime.invoke_flow(
             flowIdentifier=flow_arn,
-            flowAliasIdentifier=flowAliasIdentifier,
+            flowAliasIdentifier=flow_alias_identifier,
             inputs=[
                 {
                     "content": {
@@ -123,6 +133,7 @@ def run_prompt_flow(text, connectionId, requestId):
                 }
             ]
         )
+        print('response of invoke_flow(): ', response)
         
         response_stream = response['responseStream']
         try:
@@ -137,6 +148,7 @@ def run_prompt_flow(text, connectionId, requestId):
                 # msg = result['flowOutputEvent']['content']['document']
                 
                 msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
+                print('msg: ', msg)
             else:
                 print("The prompt flow invocation completed because of the following reason:", result['flowCompletionEvent']['completionReason'])
         except Exception as e:
@@ -191,6 +203,69 @@ Prompt flow의 Knowledge Base 노드에서는 두 가지 옵션을 제공합니�
 
 ![image](https://github.com/user-attachments/assets/213c49b9-8baa-4264-90fb-18a37901c946)
 
+client에서는 boto3의 invoke_flow을 이용해 RAG가 포함된 prompt flow결과를 얻어옵니다.
+
+```python
+rag_flow_arn = None
+rag_flow_alias_identifier = None
+def run_RAG_prompt_flow(text, connectionId, requestId):
+    global rag_flow_arn, rag_flow_alias_identifier
+    
+    client = boto3.client(service_name='bedrock-agent')       
+    if not rag_flow_arn:
+        response = client.list_flows(
+            maxResults=10
+        )
+         
+        for flow in response["flowSummaries"]:
+            if flow["name"] == rag_prompt_flow_name:
+                rag_flow_arn = flow["arn"]
+                break
+    
+    if not rag_flow_alias_identifier and rag_flow_arn:
+        # get flow alias arn
+        response_flow_aliases = client.list_flow_aliases(
+            flowIdentifier=rag_flow_arn
+        )
+        rag_flow_alias_identifier = ""
+        flowAlias = response_flow_aliases["flowAliasSummaries"]
+        for alias in flowAlias:
+            if alias['name'] == "latest_version":  # the name of prompt flow alias
+                rag_flow_alias_identifier = alias['arn']
+                break
+    
+    # invoke_flow
+    isTyping(connectionId, requestId)  
+    
+    client_runtime = boto3.client('bedrock-agent-runtime')
+    response = client_runtime.invoke_flow(
+        flowIdentifier=rag_flow_arn,
+        flowAliasIdentifier=rag_flow_alias_identifier,
+        inputs=[
+            {
+                "content": {
+                    "document": text,
+                },
+                "nodeName": "FlowInputNode",
+                "nodeOutputName": "document"
+            }
+        ]
+    )
+    
+    response_stream = response['responseStream']
+    try:
+        result = {}
+        for event in response_stream:
+            result.update(event)
+
+        if result['flowCompletionEvent']['completionReason'] == 'SUCCESS':            
+            msg = readStreamMsg(connectionId, requestId, result['flowOutputEvent']['content']['document'])
+
+    except Exception as e:
+        raise Exception("unexpected event.",e)
+
+    return msg
+```
 
 ### RAG에서 Prompt 사용하기
 

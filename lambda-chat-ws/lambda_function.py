@@ -2727,6 +2727,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
         response = client.list_flows(
             maxResults=10
         )
+        print('response: ', response)
         
         for flow in response["flowSummaries"]:
             if flow["name"] == rag_prompt_flow_name:
@@ -2734,7 +2735,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
                 print('rag_flow_arn: ', rag_flow_arn)
                 break
     
-    if not rag_flow_alias_identifier:
+    if not rag_flow_alias_identifier and rag_flow_arn:
         # get flow alias arn
         response_flow_aliases = client.list_flow_aliases(
             flowIdentifier=rag_flow_arn
@@ -2882,6 +2883,7 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
         response = client.list_knowledge_bases(
             maxResults=10
         )
+        print('response: ', response)
                 
         if "knowledgeBaseSummaries" in response:
             summaries = response["knowledgeBaseSummaries"]
@@ -2892,6 +2894,7 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
                     break
     
     msg = reference = ""
+    relevant_docs = []
     if knowledge_base_id:    
         retriever = AmazonKnowledgeBasesRetriever(
             knowledge_base_id=knowledge_base_id, 
@@ -2907,17 +2910,19 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
         #    selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
         #    print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
         
-        relevant_context = ""
-        for i, document in enumerate(relevant_docs):
-            print(f"{i}: {document}")
-            if document.page_content:
-                content = document.page_content
+    relevant_context = ""
+    for i, document in enumerate(relevant_docs):
+        print(f"{i}: {document}")
+        if document.page_content:
+            content = document.page_content
             
-            relevant_context = relevant_context + content + "\n\n"
+        relevant_context = relevant_context + content + "\n\n"
         
-        print('relevant_context: ', relevant_context)
+    print('relevant_context: ', relevant_context)
 
-        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+    msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+    
+    if len(relevant_docs):
         reference = get_reference_of_knoweledge_base(relevant_docs, path, doc_prefix)  
         
     return msg, reference

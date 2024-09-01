@@ -93,6 +93,6 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
 
 ## Code Interpreter
 
-"Plot of graph of an cosign to show iteration of waves."로 입력했을때의 결과입니다.
+"반복적으로 동작하는 cosine 그래프를 그려주세요."로 입력했을때의 결과입니다.
 
-![noname](https://github.com/user-attachments/assets/533cd2b6-72d3-481b-bb8f-5a91982dca71)
+![image](https://github.com/user-attachments/assets/d88bdbe4-cf14-40fb-b3a6-ffbd9649a663)

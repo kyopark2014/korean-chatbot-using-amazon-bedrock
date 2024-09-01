@@ -2763,7 +2763,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
                     "document": text,
                 },
                 "nodeName": "FlowInputNode",
-                "nodeOutputName": "document"
+                "nodeOutputName": "document"  
             }
         ]
     )

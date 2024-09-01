@@ -2722,7 +2722,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
     
     client = boto3.client(service_name='bedrock-agent')   
     
-    global rag_flow_arn, rag_flow_alias_identifier
+    global rag_flow_arn, rag_flow_alias_identifier 
     if not rag_flow_arn:
         response = client.list_flows(
             maxResults=10

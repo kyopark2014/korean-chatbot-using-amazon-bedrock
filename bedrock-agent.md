@@ -27,9 +27,10 @@
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
 
-[Agent builder]에서 "Antropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 모르는 질문을 받으면 솔직히 모른다고 말합니다."라고 입력합니다. 
+[Agent builder]에서 "Antropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다."라고 입력합니다. 
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/97cc36d8-747b-43a2-92b7-ca98cd180c9b">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/82483836-ef82-4eeb-8a7f-71b13b0b6120">
+
 
 [Additional settings]에서 [Code Interpreter]를 "Enabled"로 설정합니다. 
 

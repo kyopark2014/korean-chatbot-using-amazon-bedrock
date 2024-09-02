@@ -57,6 +57,17 @@ Knowledge base에서 정상적으로 관련된 문서를 가져오는 것을 확
 
 <img width="283" alt="image" src="https://github.com/user-attachments/assets/e0014841-8e2a-4a08-a0ae-38e92d35d762">
 
+상단의 [Agent builder: tool-executor]에서 [Save and exit]를 선택합니다.
+
+하단으로 스크롤하여 아래와 같이 [Aliases]에서 [Create]를 선택합니다. 
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/9f104d12-4bd8-4710-af2d-ed5017b91cf3">
+
+아래와 같이 [Alias name]을 "latest_version"을 입력하고 [Create alias]를 선택합니다. 
+
+![noname](https://github.com/user-attachments/assets/f9b62833-3409-4116-852f-d84f68ff0443)
+
+
 
 ## 애플리케이션에서 생성한 Agent 호출하기
 
@@ -123,11 +134,9 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
 
 ## 실행 결과
 
-메뉴에서 "Bedrock Agent"를 선택하고 아래와 같이 테스트해 볼 수 있습니다.
+메뉴에서 "Bedrock Agent"를 선택하고 "Advanced RAG에 대해 설명해주세요."와 같이 입력후 결과를 확인합니다. 
 
-<img width="785" alt="image" src="https://github.com/user-attachments/assets/4d58d2f7-7d95-4477-806f-309be24735e9">
-
-
+<img width="768" alt="image" src="https://github.com/user-attachments/assets/5f5e8ccb-7533-4098-98b9-16f2dcb1132e">
 
 ## Code Interpreter
 

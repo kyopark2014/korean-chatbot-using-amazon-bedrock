@@ -102,3 +102,9 @@ Bedrock agent는 python code로된 tool을 실행하여 질문에 대한 분석�
 ![image](https://github.com/user-attachments/assets/d88bdbe4-cf14-40fb-b3a6-ffbd9649a663)
 
 [AI Running Its Own Code: Agentic Code Interpreter](https://www.youtube.com/watch?v=zC_qLlm2se0)에서는 code interpreter에 대해 설명하고 있고 관련된 코드는 [Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)을 참고합니다.
+
+
+## Memory
+
+[Solving LLM Amnesia: Cross Session Memory](https://www.youtube.com/watch?v=ZY5WXDDp9g8)와 [Setting up and Testing an Agent for Amazon Bedrock with Long Term Memory
+](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-long-memory.ipynb)을 참조합니다.

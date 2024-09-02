@@ -1,6 +1,6 @@
 # Bedrock Agent로 Chatbot 구현하기
 
-여기에서는 Bedrock Agent를 애플리케이션에서 호출하는 방법에 대해 설명합니다.
+여기에서는 Bedrock Agent를 애플리케이션에서 호출하는 방법에 대해 설명하고, code interpreter를 이용해 그래프를 그리고 longterm memory를 이용해 agent에서 이전 대화 이력을 활용하는 방법에 대해 설명합니다. 
 
 ## Bedrock Agent의 동작
 

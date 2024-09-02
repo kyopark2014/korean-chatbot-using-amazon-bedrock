@@ -19,12 +19,25 @@
 
 [boto3-invoke_agent](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_agent.html)에 따라 agent를 호출하여 사용할 수 있습니다.
 
+
+
 ## Bedrock Agent의 생성
 
 [Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/agents)에 접속하여 [Create Agent]을 선택한 후 "tool-executor"라고 입력 후에 [Create]를 선택합니다.
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
 
+[Agent builder]에서 "Antropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 모르는 질문을 받으면 솔직히 모른다고 말합니다."라고 입력합니다. 
+
+<img width="648" alt="image" src="https://github.com/user-attachments/assets/97cc36d8-747b-43a2-92b7-ca98cd180c9b">
+
+[Additional settings]에서 [Code Interpreter]를 "Enabled"로 설정합니다. 
+
+<img width="616" alt="image" src="https://github.com/user-attachments/assets/5640bd3b-4d35-483d-a44d-e17950ac366a">
+
+기본적으로 agent는 단일 대화 내에서만 정보를 기억합니다. 아래와 같이 메모리 기능을 활성화하면 에이전트가 최대 30일 동안 여러 세션에 걸쳐 정보를 기억할 수 있습니다. [Memory]에서 [Enable memory]를 "Enabled"로 설정합니다. 
+
+![noname](https://github.com/user-attachments/assets/cddbdd68-60f2-46ba-9e4e-a64bc72b595f)
 
 ## 구현 코드
 

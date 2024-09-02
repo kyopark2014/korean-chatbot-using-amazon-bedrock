@@ -58,14 +58,12 @@ Knowledge base에서 정상적으로 관련된 문서를 가져오는 것을 확
 <img width="283" alt="image" src="https://github.com/user-attachments/assets/e0014841-8e2a-4a08-a0ae-38e92d35d762">
 
 
-## 구현 코드
+## 애플리케이션에서 생성한 Agent 호출하기
 
 아래와 같이 'bedrock-agent-runtime'을 이용하여 client를 정의하고 invoke_agent()로 응답을 가져올 수 있습니다. 
 
-
 ```python
-agent_alias_id = None
-agent_id = None
+agent_alias_id = agent_id = None
 def run_bedrock_agent(text, connectionId, requestId, userId):
     global agent_id, agent_alias_id
     

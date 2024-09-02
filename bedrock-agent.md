@@ -23,6 +23,7 @@
 
 아래와 같이 'bedrock-agent-runtime'을 이용하여 client를 정의하고 invoke_agent()로 응답을 가져올 수 있습니다. 
 
+
 ```python
 agent_alias_id = None
 agent_id = None
@@ -108,3 +109,7 @@ Bedrock agent는 python code로된 tool을 실행하여 질문에 대한 분석�
 
 [Solving LLM Amnesia: Cross Session Memory](https://www.youtube.com/watch?v=ZY5WXDDp9g8)와 [Setting up and Testing an Agent for Amazon Bedrock with Long Term Memory
 ](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-long-memory.ipynb)을 참조합니다.
+
+대화 history는 아래와 같이 저장되어 활용됩니다.
+
+<img width="675" alt="image" src="https://github.com/user-attachments/assets/99a4a416-a918-4b9f-bd66-ced5b82f90f8">

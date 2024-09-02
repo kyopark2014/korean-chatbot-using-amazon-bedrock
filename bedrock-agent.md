@@ -25,19 +25,38 @@
 
 [Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/agents)에 접속하여 [Create Agent]을 선택한 후 "tool-executor"라고 입력 후에 [Create]를 선택합니다.
 
-<img width="550" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
 
 [Agent builder]에서 "Antropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 모르는 질문을 받으면 솔직히 모른다고 말합니다."라고 입력합니다. 
 
-<img width="550" alt="image" src="https://github.com/user-attachments/assets/97cc36d8-747b-43a2-92b7-ca98cd180c9b">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/97cc36d8-747b-43a2-92b7-ca98cd180c9b">
 
 [Additional settings]에서 [Code Interpreter]를 "Enabled"로 설정합니다. 
 
-<img width="550" alt="image" src="https://github.com/user-attachments/assets/5640bd3b-4d35-483d-a44d-e17950ac366a">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/5640bd3b-4d35-483d-a44d-e17950ac366a">
 
-기본적으로 agent는 단일 대화 내에서만 정보를 기억합니다. 아래와 같이 메모리 기능을 활성화하면 에이전트가 최대 30일 동안 여러 세션에 걸쳐 정보를 기억할 수 있습니다. [Memory]에서 [Enable memory]를 "Enabled"로 설정합니다. 
+기본적으로 agent는 단일 대화 내에서만 정보를 기억합니다. 아래와 같이 메모리 기능을 활성화하면 에이전트가 최대 30일 동안 여러 세션에 걸쳐 정보를 기억할 수 있습니다. [Memory]에서 [Enable memory]를 "Enabled"로 설정합니다. 이후 [Save and exit]를 선택합니다. 
 
-<img width="550" alt="image" src="https://github.com/user-attachments/assets/cddbdd68-60f2-46ba-9e4e-a64bc72b595f">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/cddbdd68-60f2-46ba-9e4e-a64bc72b595f">
+
+생성된 "tool-executor"는 Status가 "NOT_PREPARED"이므로, 아래의 오른쪽 Test에서 [Prepare]를 선택합니다. 
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/7313d738-78b4-4ac5-ae7d-6d92bfd07790">
+
+[Edit in Agent Builder]를 선택한 후에 아래로 스크롤하여 [Knowledge bases]에서 [Add]를 선택합니다. 
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/63c69450-b480-4140-91ba-aaee0ca48fc9">
+
+[Select knowledge base]에서 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)에서 생성한 "aws-rag"을 선택합니다. 이후 [Add]를 선택합니다. 
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/13c26f08-536e-4757-a0e7-8fed08cb849b">
+
+상단의 [Agent builder: tool-executor]에서 [Save]와 [Prepare]를 선택합니다.
+
+Knowledge base에서 정상적으로 관련된 문서를 가져오는 것을 확인하기 위하여 [Test Agent]에서 "Advanced RAG에 대해 설명해주세요."라고 입력 후에 결과를 확인합니다. 
+
+<img width="283" alt="image" src="https://github.com/user-attachments/assets/e0014841-8e2a-4a08-a0ae-38e92d35d762">
+
 
 ## 구현 코드
 

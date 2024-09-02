@@ -19,6 +19,13 @@
 
 [boto3-invoke_agent](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agent-runtime/client/invoke_agent.html)에 따라 agent를 호출하여 사용할 수 있습니다.
 
+## Bedrock Agent의 생성
+
+[Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/agents)에 접속하여 [Create Agent]을 선택한 후 "tool-executor"라고 입력 후에 [Create]를 선택합니다.
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
+
+
 ## 구현 코드
 
 아래와 같이 'bedrock-agent-runtime'을 이용하여 client를 정의하고 invoke_agent()로 응답을 가져올 수 있습니다. 

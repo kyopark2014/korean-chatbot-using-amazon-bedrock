@@ -96,14 +96,22 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
 
 Bedrock agent는 python code로된 tool을 실행하여 질문에 대한 분석을 수행하고 결과를 이미지로 제공할 수 있습니다. Code interpreter는 agent에게 python을 실행하는 sandbox 환경을 연결을 제공합니다. 
 
+[AI Running Its Own Code: Agentic Code Interpreter](https://www.youtube.com/watch?v=zC_qLlm2se0)에서는 code interpreter에 대해 설명하고 있고 관련된 코드는 [Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)을 참고합니다.
 
 
-"반복적으로 동작하는 cosine 그래프를 그려주세요."로 입력했을때의 결과입니다.
+"반복적으로 동작하는 cosine 그래프를 그려주세요."로 입력했을 때의 결과입니다.
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/c1201c0c-0457-43b8-9b28-83225609151e">
 
+"가장 최근 그래프의 값을 JSON 포맷으로 저장하세요."을 입력하면 아래와 같이 그래프의 데이터를 얻을 수 있습니다.
 
-[AI Running Its Own Code: Agentic Code Interpreter](https://www.youtube.com/watch?v=zC_qLlm2se0)에서는 code interpreter에 대해 설명하고 있고 관련된 코드는 [Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)을 참고합니다.
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/9be2eb0b-134a-4d8c-b381-933374c5cc80">
+
+json 파일을 선택하여 내용을 확인합니다.
+
+<img width="832" alt="image" src="https://github.com/user-attachments/assets/e3f5bb42-8594-46a5-9113-71ce71158b54">
+
+
 
 
 ## Memory

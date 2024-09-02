@@ -139,9 +139,7 @@ def run_bedrock_agent(text, connectionId, requestId, userId):
 
 ## Code Interpreter
 
-Bedrock agent는 python code로된 tool을 실행하여 질문에 대한 분석을 수행하고 결과를 이미지로 제공할 수 있습니다. Code interpreter는 agent에게 python을 실행하는 sandbox 환경을 연결을 제공합니다. 
-
-[AI Running Its Own Code: Agentic Code Interpreter](https://www.youtube.com/watch?v=zC_qLlm2se0)에서는 code interpreter에 대해 설명하고 있고 관련된 코드는 [Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)을 참고합니다.
+Bedrock agent는 python code로된 tool을 실행하여 질문에 대한 분석을 수행하고 결과를 이미지로 제공할 수 있습니다. Code interpreter는 agent에게 python을 실행하는 sandbox 환경을 연결을 제공합니다. [AI Running Its Own Code: Agentic Code Interpreter](https://www.youtube.com/watch?v=zC_qLlm2se0)에서는 code interpreter에 대해 설명하고 있고 관련된 코드는 [Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)을 참고합니다.
 
 
 "반복적으로 동작하는 cosine 그래프를 그려주세요."로 입력했을 때의 결과입니다.

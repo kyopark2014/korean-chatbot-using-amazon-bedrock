@@ -65,8 +65,7 @@ Knowledge base에서 정상적으로 관련된 문서를 가져오는 것을 확
 
 아래와 같이 [Alias name]을 "latest_version"을 입력하고 [Create alias]를 선택합니다. 
 
-![noname](https://github.com/user-attachments/assets/f9b62833-3409-4116-852f-d84f68ff0443)
-
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/f9b62833-3409-4116-852f-d84f68ff0443">
 
 
 ## 애플리케이션에서 생성한 Agent 호출하기

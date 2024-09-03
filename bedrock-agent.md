@@ -27,7 +27,7 @@
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/b0087a23-6f96-4252-af60-432c4be32f10">
 
-[Agent builder]에서 "Antropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다."라고 입력합니다. 
+[Agent builder]에서 "Anthropic Claude 3 Sonnet"을 선택한 후에 "Instructions for the Agent"에 "너의 이름은 AWS이고 질문에 답변을 하는 AI Assistant입니다."라고 입력합니다. 
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/82483836-ef82-4eeb-8a7f-71b13b0b6120">
 

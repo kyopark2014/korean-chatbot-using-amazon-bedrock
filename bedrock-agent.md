@@ -208,7 +208,7 @@ json 파일을 선택하여 내용을 확인합니다.
 
 
 
-[stock_prices.csv](agents-for-bedrock/use-case-examples/ai-powered-assistant-for-investment-research/files/stock_prices.csv)을 Code Interpreter로 읽어서 처리할 경우에 아래와 같은 결과를 얻을 수 있습니다.
+[stock_prices.csv](./contents/stock_prices.csv)을 Code Interpreter로 읽어서 처리할 경우에 아래와 같은 결과를 얻을 수 있습니다.
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/5e8f286d-69f8-4fb7-b263-25f03f808dcd">
 

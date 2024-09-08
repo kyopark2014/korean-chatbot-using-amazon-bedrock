@@ -223,3 +223,7 @@ Agent는 대화 history를 아래와 같이 저장되어 활용됩니다. 최대
 <img width="675" alt="image" src="https://github.com/user-attachments/assets/99a4a416-a918-4b9f-bd66-ced5b82f90f8">
 
 
+## Reference
+
+[Agents Tools & Function Calling with Amazon Bedrock (How-to)](https://www.youtube.com/watch?v=2L_XE6g3atI)
+

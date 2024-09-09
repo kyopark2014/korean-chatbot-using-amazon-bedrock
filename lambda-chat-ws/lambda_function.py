@@ -12,6 +12,7 @@ import base64
 import datetime
 import requests
 import docx
+import uuid
 
 from urllib import parse
 from botocore.config import Config

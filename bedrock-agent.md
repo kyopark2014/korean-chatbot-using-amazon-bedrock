@@ -48,7 +48,7 @@
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/63c69450-b480-4140-91ba-aaee0ca48fc9">
 
-[Select knowledge base]에서 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)에서 생성한 "aws-rag"을 선택합니다. 이후 [Add]를 선택합니다. 
+[Select knowledge base]에서 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)에서 생성한 "aws-rag"을 선택하고, "상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 모르는 질문을 받으면 솔직히 모른다고 말합니다."라고 입력합니다. 이후 [Add]를 선택합니다. 
 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/13c26f08-536e-4757-a0e7-8fed08cb849b">
 

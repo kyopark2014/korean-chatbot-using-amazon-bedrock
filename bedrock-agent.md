@@ -208,10 +208,14 @@ json 파일을 선택하여 내용을 확인합니다.
 
 
 
+
 [stock_prices.csv](./contents/stock_prices.csv)을 Code Interpreter로 읽어서 처리할 경우에 아래와 같은 결과를 얻을 수 있습니다.
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/5e8f286d-69f8-4fb7-b263-25f03f808dcd">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/24251e81-f978-49aa-8b9c-cc6f4b1ee389">
 
+이후 아래와 같이 "가장 변동량이 큰 주식의 마지막 1년간의 데이터를 그래프로 그려줘."라고 입력후에 결과를 확인합니다. 
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/6e6c666e-e923-4caf-b408-41f1533178e7">
 
 ## Memory
 

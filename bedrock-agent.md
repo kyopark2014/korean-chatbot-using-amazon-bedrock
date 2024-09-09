@@ -226,6 +226,44 @@ Agent는 대화 history를 아래와 같이 저장되어 활용됩니다. 최대
 
 <img width="675" alt="image" src="https://github.com/user-attachments/assets/99a4a416-a918-4b9f-bd66-ced5b82f90f8">
 
+"마지막 그래프의 Date 대 price의 변화를 JSON 포맷의 파일로 저장해줘."라고 입력합니다. 
+
+![image](https://github.com/user-attachments/assets/5d8fda03-56f4-4cb3-b71e-038816d93de4)
+
+이때의 JSON 결과([date_price.json](./contents/date_price.json)는 아래와 같습니다.
+
+```java
+[
+  {
+    "Date": "2023-01-01",
+    "Price": 95
+  },
+  {
+    "Date": "2023-01-02",
+    "Price": 102
+  },
+  {
+    "Date": "2023-01-03",
+    "Price": 97
+  },
+  {
+    "Date": "2023-01-04",
+    "Price": 104
+  },
+  {
+    "Date": "2023-01-05",
+    "Price": 99
+  },
+  {
+    "Date": "2023-01-06",
+    "Price": 106
+  },
+  {
+    "Date": "2023-01-07",
+    "Price": 101
+  },
+```
+
 
 ## Reference
 

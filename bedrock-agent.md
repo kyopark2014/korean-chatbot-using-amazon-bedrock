@@ -233,3 +233,4 @@ Agent는 대화 history를 아래와 같이 저장되어 활용됩니다. 최대
 
 [Agents Tools & Function Calling with Amazon Bedrock (How-to)](https://www.youtube.com/watch?v=2L_XE6g3atI)
 
+[Setting up and Testing an Agent for Amazon Bedrock with Code Interpreter](https://github.com/build-on-aws/agents-for-amazon-bedrock-sample-feature-notebooks/blob/main/notebooks/preview-agent-code-interpreter.ipynb)

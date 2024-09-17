@@ -6,6 +6,8 @@
 
 ## Parent Child Retrieval
 
+[Parent Child Retrieval 로 RAG 성능 향상 시키는 방법](https://github.com/kyopark2014/writing-agent/blob/main/contents/%EC%A7%80%EC%8B%9D_%EC%A6%9D%EA%B0%95_%EC%83%9D%EC%84%B1_%EB%AA%A8%EB%8D%B8_%EC%84%B1%EB%8A%A5_%ED%96%A5%EC%83%81.md)에서 상세한 내용을 확인합니다.
+
 ![image](https://github.com/user-attachments/assets/b5342b6b-5185-424d-b012-e64f6f1d1a3f)
 
 ## Sentence Window Retrieval

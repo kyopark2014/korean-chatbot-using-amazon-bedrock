@@ -39,7 +39,7 @@
 
 ## StepBack-prompt
 
-[LLM에서 StepBack prompt은 무엇인가요?](https://github.com/kyopark2014/writing-agent/blob/main/contents/StepBack_prompt%EC%9D%98_%EC%A3%BC%EC%A0%9C_%EC%96%B8%EC%96%B4%EB%AA%A8%EB%8D%B8_%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8_%EA%B8%B0%EB%B2%95.md)
+[StepBack prompt은 무엇인가요?](https://github.com/kyopark2014/writing-agent/blob/main/contents/StepBack_prompt%EC%9D%98_%EC%A3%BC%EC%A0%9C_%EC%96%B8%EC%96%B4%EB%AA%A8%EB%8D%B8_%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8_%EA%B8%B0%EB%B2%95.md)
 
 - encourages the language model to think beyond specific examples and focus on broader concepts and principles.\
 

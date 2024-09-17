@@ -739,13 +739,13 @@ Prompt Flow를 이용하면 prompt flow builder를 이용하여 손쉽게 chatbo
 
 Amazon Bedrock의 Knowledge Base는 완전관리형 RAG 서비스로 [knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/knowledge-base.md)와 같이 손쉽게 RAG를 위한 knowledge store를 구성할 수 있습니다. 애플리케이션에서는 [rag-knowledge-base.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/rag-knowledge-base.md)와 같이 Knowledge Base를 이용해 질문과 관련된 문서를 검색하여 활용합니다. 
 
+### Advanced RAG  
+
+[Advanced RAG](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/advanced-rag.md)에서는 RAG를 향상시키는 여러가지 기법에 대해 설명합니다.
 
 ### AWS CDK로 인프라 구현하기
 
 [CDK 구현 코드](./cdk-korean-chatbot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다.
-
-
-
 
 
 ## 직접 실습 해보기

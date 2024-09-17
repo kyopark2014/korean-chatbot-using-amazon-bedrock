@@ -12,11 +12,16 @@
 
 ## Sentence Window Retrieval
 
+[RAG의 Sentence Window Retrieval 의 장단점](https://github.com/kyopark2014/writing-agent/blob/main/contents/RAG%EC%9D%98_Sentence_Window_Retrieval_%EB%B0%A9%EB%B2%95.md)을 참조합니다.
+ 
+
 ![image](https://github.com/user-attachments/assets/4cf26adb-2a3d-4e5a-ad35-2935c52f4d6b)
 
 ## Query Rewriting
 
 사용자의 질문을 적절하게 수정 (rephrase the user’s query and give it another shot)
+
+[RAG의 성능향상 기법중 Query Rewriting는 무엇인가요? 상세한 구현 방법에 대해 알려주세요.](https://github.com/kyopark2014/writing-agent/blob/main/contents/%EC%A7%88%EB%AC%B8%EC%9D%98_%EC%A3%BC%EC%A0%9C_Query_Rewriting_%EA%B8%B0%EB%B2%95_%EC%84%A4%EB%AA%85.md)
 
 ## MultiQuery Retrievers
 

@@ -31,13 +31,15 @@
 
 ## Hyde
 
-query를 rewrite하여 최적화
+[RAG기법중에 Hyde의 특징 및 구현방법](https://github.com/kyopark2014/writing-agent/blob/main/contents/RAG_%EA%B8%B0%EB%B2%95_%EC%A4%91_Hyde%EC%9D%98_%ED%8A%B9%EC%A7%95%EA%B3%BC_%EA%B5%AC%ED%98%84.md)을 참조합니다.
 
 ![image](https://github.com/user-attachments/assets/01d72378-5bfb-441b-8966-87f4791506fc)
 
 ![image](https://github.com/user-attachments/assets/fe0f4056-a74d-4c18-9dc7-efce42a74065)
 
 ## StepBack-prompt
+
+[LLM에서 StepBack prompt은 무엇인가요?](https://github.com/kyopark2014/writing-agent/blob/main/contents/StepBack_prompt%EC%9D%98_%EC%A3%BC%EC%A0%9C_%EC%96%B8%EC%96%B4%EB%AA%A8%EB%8D%B8_%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8_%EA%B8%B0%EB%B2%95.md)
 
 - encourages the language model to think beyond specific examples and focus on broader concepts and principles.\
 

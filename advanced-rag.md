@@ -46,4 +46,7 @@
 ![image](https://github.com/user-attachments/assets/918829ff-c511-4209-b8ac-5bfebd20d900)
 
 
+## Reference
+
+[Advanced RAG Techniques: Elevating Your Retrieval-Augmented Generation Systems](https://github.com/NirDiamant/RAG_Techniques)
 

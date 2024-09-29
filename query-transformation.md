@@ -1,6 +1,6 @@
 # Query Transformation
 
-## 관련 참고문서
+## Qery Transformation
 
 [Query Transformations for Improved Retrieval in RAG Systems](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/query_transformations.ipynb)에서는 query를 개선하여 RAG의 성능을 향상시키는 방법으로 Query Rewriting, Step-back Prompting, Sub-query Decomposition을 설명하고 있습니다.
 

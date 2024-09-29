@@ -450,6 +450,9 @@ try:
 RAG에 저장된 기존 코드를 이용하여 새로운 코드를 생성합니다. [rag-code-generation](https://github.com/kyopark2014/rag-code-generation)는 Code를 한국어로 요약하여 RAG에 저장하고 검색하는 방법을 설명했습니다. 여기에서는 일반 문서와 Code reference를 하나의 RAG에 저장하고 활용합니다. 
 
 
+## Query Transformation
+
+[query-transformation.md](https://github.com/kyopark2014/korean-chatbot-using-amazon-bedrock/blob/main/query-transformation.md)에서는 질문을 향상시켜서 RAG의 성능을 강화하는 방법에 대해 설명합니다.
 
 ## 문서의 정보 추출
 

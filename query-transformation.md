@@ -67,12 +67,9 @@ Step-back query:"""
 ```
   
 
-## 쿼리 재작성 (Query Rewriting)
+## Query Rewriting
 
-- 초기 쿼리를 개선하여 검색 프로세스를 향상시키기 위해 LLM을 사용합니다.
-- LangChain과 LlamaIndex 모두 이 전략을 구현하지만 접근 방식에는 차이가 있습니다. 특히 LlamaIndex는 검색 효율성을 크게 향상시키는 강력한 구현으로 주목받고 있습니다. (확인 필요)
-
-- [langchain/cookbook/rewrite.ipynb](https://github.com/langchain-ai/langchain/blob/master/cookbook/rewrite.ipynb?ref=blog.langchain.dev)와 [langchain-ai/rewrite](https://smith.langchain.com/hub/langchain-ai/rewrite?tab=0)의 경우에 아래와 같이 query rewrite를 수행합니다.
+초기 쿼리를 개선하여 검색 프로세스를 향상시키기 위해 LLM을 사용합니다. [langchain/cookbook/rewrite.ipynb](https://github.com/langchain-ai/langchain/blob/master/cookbook/rewrite.ipynb?ref=blog.langchain.dev)와 [langchain-ai/rewrite](https://smith.langchain.com/hub/langchain-ai/rewrite?tab=0)의 경우에 아래와 같이 query rewrite를 수행합니다.
 
 ```python
 template = (

@@ -69,17 +69,6 @@ Step-back query:"""
 
 ## Query Rewriting
 
-초기 쿼리를 개선하여 검색 프로세스를 향상시키기 위해 LLM을 사용합니다. [langchain/cookbook/rewrite.ipynb](https://github.com/langchain-ai/langchain/blob/master/cookbook/rewrite.ipynb?ref=blog.langchain.dev)와 [langchain-ai/rewrite](https://smith.langchain.com/hub/langchain-ai/rewrite?tab=0)의 경우에 아래와 같이 query rewrite를 수행합니다.
-
-```python
-template = (
-  "Provide a better search query for web search engine to answer the given question,"
-  "end the queries with ’**’."
-  "Question: {x} Answer:"
-)
-rewrite_prompt = ChatPromptTemplate.from_template(template)
-```
-
 [query_transformations.ipynb](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/query_transformations.ipynb)의 rewrite는 아래와 같습니다.
 
 ```python
@@ -92,6 +81,20 @@ and likely to retrieve relevant information.
 Original query: {original_query}
 Rewritten query:"""
 ```
+
+
+초기 쿼리를 개선하여 검색 프로세스를 향상시키기 위해 LLM을 사용합니다. [langchain/cookbook/rewrite.ipynb](https://github.com/langchain-ai/langchain/blob/master/cookbook/rewrite.ipynb?ref=blog.langchain.dev)와 [langchain-ai/rewrite](https://smith.langchain.com/hub/langchain-ai/rewrite?tab=0)의 경우에 아래와 같이 query rewrite를 수행합니다.
+
+```python
+template = (
+  "Provide a better search query for web search engine to answer the given question,"
+  "end the queries with ’**’."
+  "Question: {x} Answer:"
+)
+rewrite_prompt = ChatPromptTemplate.from_template(template)
+```
+
+
 
 [langgraph의 rewrite](https://github.com/kyopark2014/langgraph-agent)에서는 아래와 같은 함수를 정의해서 사용중입니다.
 

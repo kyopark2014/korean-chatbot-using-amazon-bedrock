@@ -17,3 +17,5 @@ text = page.get_text(clip=clip)
 ## Reference 
 
 [python - read pdf ignoring header and footer](https://stackoverflow.com/questions/68082761/python-read-pdf-ignoring-header-and-footer)
+
+[Extracting Text from within a Rectangle](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/textbox-extraction#2-pageget_textboxrect)

@@ -378,6 +378,10 @@ def priority_search(query, relevant_docs, bedrock_embeddings):
     return docs
 ```
 
+### LLM으로 RAG Grading 활용하기
+
+LLM의 관련된 문서의 숫자와 길이가 적다면 문서의 순서가 크게 영향을 주지 않습니다. 이럴때에는 LLM으로 간단히 grading함으로써 RAG의 성능을 향상시킬 수 있습니다. [LLM으로 RAG Grading 활용하기](./RAG-grading.md)에서는 prompt와 structured output을 이용하는 방법을 설명하고 있습니다.
+
 ### 한영 동시 검색
 
 한영 검색을 위해 먼저 한국어로 RAG를 조회하고, 영어로 번역한 후에 각각의 관련된 문서들(Relevant Documents)를 번역합니다. 관련된 문서들에 대해 질문에 따라 관련성을 비교하여 관련도가 높은 문서순서로 Context를 만들어서 활용합니다. 상세한 내용은 관련된 Blog인 [

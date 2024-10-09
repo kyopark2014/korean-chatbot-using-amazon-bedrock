@@ -30,10 +30,10 @@ def get_retrieval_grader(chat):
 관련된 문서은 top_k만큼이 얻어지므로 아래와 같이 병렬처리를 통해 지연시간은 단축할 수 있습니다.
 
 ```python
-def parallel_grader(state: State):
+from multiprocessing import Process, Pipe
+
+def parallel_grader(query, relevant_docs):
     print("###### parallel_grader ######")
-    query = state['query']
-    relevant_docs = state['relevant_docs']
     
     global selected_chat    
     filtered_docs = []    

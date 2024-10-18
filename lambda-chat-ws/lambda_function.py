@@ -48,7 +48,7 @@ from langgraph.graph import START, END, StateGraph
 from langgraph.prebuilt import ToolNode
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import tools_condition
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 from typing import Literal
 from langchain_aws import AmazonKnowledgeBasesRetriever
 
@@ -2170,7 +2170,8 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
             result = vectorstore_opensearch.similarity_search_with_score(
                 query = query,
                 k = top_k*2,  # use double
-                pre_filter={"doc_level": {"$eq": "child"}}
+                search_type="script_scoring",
+                pre_filter={"term": {"metadata.doc_level": "child"}}
             )
             print('result of opensearch: ', result)
                     
@@ -3621,7 +3622,7 @@ def search_by_tavily(keyword: str) -> str:
     if tavily_api_key:
         keyword = keyword.replace('\'','')
         
-        search = TavilySearchResults(k=3)
+        search = TavilySearchResults(max_results=3)
                     
         output = search.invoke(keyword)
         print('tavily output: ', output)
@@ -3753,7 +3754,8 @@ def get_documents_from_opensearch(vectorstore_opensearch, query, top_k):
     result = vectorstore_opensearch.similarity_search_with_score(
         query = query,
         k = top_k*2,  
-        pre_filter={"doc_level": {"$eq": "child"}}
+        search_type="script_scoring",
+        pre_filter={"term": {"metadata.doc_level": "child"}}
     )
     # print('result: ', result)
                 
@@ -4405,7 +4407,7 @@ You should use the previous critique to add important information to your answer
                 print(f'q: {q}, response: {response}')
                 content.append(response)                   
         else:
-            search = TavilySearchResults(k=2)
+            search = TavilySearchResults(max_results=2)
             for q in state["search_queries"]:
                 response = search.invoke(q)     
                 for r in response:

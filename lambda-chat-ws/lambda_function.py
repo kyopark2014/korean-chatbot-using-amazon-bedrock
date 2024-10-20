@@ -4604,6 +4604,9 @@ def getResponse(connectionId, jsonBody):
         code_type = 'py'
     elif function_type == 'code-generation-nodejs':
         code_type = 'js'
+    else:
+        enableReference = 'false'
+        code_type = 'none'
 
     # Multi-LLM
     profile = LLM_for_chat[selected_chat]

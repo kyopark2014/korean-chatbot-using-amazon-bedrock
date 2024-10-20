@@ -1609,19 +1609,20 @@ def readStreamMsg(connectionId, requestId, stream):
     # print('msg: ', msg)
     return msg
 
-kendraRetriever = AmazonKendraRetriever(
-    index_id=kendraIndex, 
-    top_k=top_k, 
-    region_name=kendra_region,
-    attribute_filter = {
-        "EqualsTo": {      
-            "Key": "_language_code",
-            "Value": {
-                "StringValue": "ko"
-            }
-        },
-    },
-)
+if "kendra" in capabilities:
+    kendraRetriever = AmazonKendraRetriever(
+        index_id=kendraIndex, 
+        top_k=top_k, 
+        region_name=kendra_region,
+        attribute_filter = {
+            "EqualsTo": {      
+                "Key": "_language_code",
+                "Value": {
+                    "StringValue": "ko"
+                }
+            },
+        }
+    )
 
 def retrieve_from_kendra(query, top_k):
     if kendra_method == 'kendra_retriever':

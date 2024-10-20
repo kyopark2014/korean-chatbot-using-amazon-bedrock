@@ -440,10 +440,10 @@ def general_conversation(connectionId, requestId, chat, query):
     human = "{input}"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     history = memory_chain.load_memory_variables({})["chat_history"]
-    print('memory_chain: ', history)
+    # print('memory_chain: ', history)
                 
     chain = prompt | chat    
     try: 
@@ -531,7 +531,7 @@ def translate_text(chat, text):
     human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     if isKorean(text)==False :
         input_language = "English"
@@ -581,7 +581,7 @@ def check_grammer(chat, text):
     human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -635,7 +635,7 @@ def extract_sentiment(chat, text):
     human = "<review>{text}</review>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -667,7 +667,7 @@ def extract_information(chat, text):
     human = "<text>{text}</text>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -701,7 +701,7 @@ def remove_pii(chat, text):
     human = "<text>{text}</text>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -742,7 +742,7 @@ def do_step_by_step(chat, text):
     human = "<text>{text}</text>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -789,7 +789,7 @@ def extract_timestamp(chat, text):
     human = "<text>{text}</text>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -1306,7 +1306,7 @@ def get_summary(chat, docs):
     human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -1348,7 +1348,7 @@ def generate_code(connectionId, requestId, chat, text, context, mode):
     human = "<context>{text}</context>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -1388,7 +1388,7 @@ def summary_of_code(chat, code, mode):
     human = "<article>{code}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -1433,7 +1433,7 @@ def revise_question(connectionId, requestId, chat, query):
         </question>"""
             
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     history = memory_chain.load_memory_variables({})["chat_history"]
     print('memory_chain: ', history)
@@ -1500,7 +1500,7 @@ def query_using_RAG_context(connectionId, requestId, chat, context, revised_ques
     human = "{input}"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
                    
     chain = prompt | chat
     
@@ -3358,7 +3358,7 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
 
     rag_type = 'opensearch'
     PROMPT = get_code_prompt_template(code_type)
-    print('PROMPT: ', PROMPT)        
+    # print('PROMPT: ', PROMPT)        
 
     relevant_codes = [] 
     print('start RAG for question')
@@ -3453,7 +3453,7 @@ def traslation_to_korean(chat, text):
     human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -3484,7 +3484,7 @@ def traslation_to_english(chat, text):
     human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 
@@ -3522,7 +3522,7 @@ def summary_of_code(chat, code, mode):
     human = "<article>{code}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
+    # print('prompt: ', prompt)
     
     chain = prompt | chat    
     try: 

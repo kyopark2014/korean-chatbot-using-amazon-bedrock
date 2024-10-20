@@ -424,7 +424,7 @@ def isKorean(text):
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
-    
+        
     if debugMessageMode == 'true':  
         start_time_for_inference = time.time()
     
@@ -1326,6 +1326,8 @@ def get_summary(chat, docs):
     return summary
 
 def generate_code(connectionId, requestId, chat, text, context, mode):
+    isTyping(connectionId, requestId, "generating...")
+    
     if mode == 'py':    
         system = (
             """다음의 <context> tag안에는 질문과 관련된 python code가 있습니다. 주어진 예제를 참조하여 질문과 관련된 python 코드를 생성합니다. Assistant의 이름은 서연입니다. 결과는 <result> tag를 붙여주세요.
@@ -1350,7 +1352,7 @@ def generate_code(connectionId, requestId, chat, text, context, mode):
     
     chain = prompt | chat    
     try: 
-        isTyping(connectionId, requestId, "") 
+        isTyping(connectionId, requestId, "generating...")
         stream = chain.invoke(
             {
                 "context": context,
@@ -1408,6 +1410,8 @@ def summary_of_code(chat, code, mode):
 def revise_question(connectionId, requestId, chat, query):    
     global history_length, token_counter_history    
     history_length = token_counter_history = 0
+    
+    isTyping(connectionId, requestId, "revising question...")
         
     if isKorean(query)==True :      
         system = (
@@ -1501,7 +1505,7 @@ def query_using_RAG_context(connectionId, requestId, chat, context, revised_ques
     chain = prompt | chat
     
     try: 
-        isTyping(connectionId, requestId, "") 
+        isTyping(connectionId, requestId, "generating...")
         stream = chain.invoke(
             {
                 "context": context,
@@ -2694,7 +2698,7 @@ def run_bedrock_agent(text, connectionId, requestId, userId, sessionState):
         sessionId[userId] = str(uuid.uuid4())
         
     msg = msg_contents = ""
-    isTyping(connectionId, requestId, "") 
+    isTyping(connectionId, requestId, "thinking...") 
     if agent_alias_id and agent_id:
         client_runtime = boto3.client('bedrock-agent-runtime')
         try:            
@@ -2938,6 +2942,8 @@ def run_prompt_flow(text, connectionId, requestId):
 
 knowledge_base_id = None
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
+    isTyping(connectionId, requestId, "retrieving...")
+    
     revised_question = text # use original question for test
  
     global knowledge_base_id
@@ -2972,7 +2978,7 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
         #    print('start priority search')
         #    selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
         #    print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
-        
+
     relevant_context = ""
     for i, document in enumerate(relevant_docs):
         print(f"{i}: {document}")
@@ -2982,7 +2988,7 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
         relevant_context = relevant_context + content + "\n\n"
         
     print('relevant_context: ', relevant_context)
-
+    
     msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
     
     if len(relevant_docs):
@@ -3025,6 +3031,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         relevant_docs = [] 
         if useParallelRAG == 'true':  # parallel processing
             print('start RAG for revised question')
+            
+            isTyping(connectionId, requestId, "retrieving...")
             relevant_docs = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=revised_question, top_k=top_k)
 
             end_time_for_rag_inference = time.time()
@@ -3033,6 +3041,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
 
             if allowDualSearch=='true' and isKorean(text)==True:
                 print('start RAG for translated revised question')
+                
+                isTyping(connectionId, requestId, "translating...")
                 translated_revised_question = traslation_to_english(chat=chat, text=revised_question)
                 print('translated_revised_question: ', translated_revised_question)
 
@@ -3044,6 +3054,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                 print('processing time for RAG (Question Translation): ', time_for_rag_question_translation)
 
                 if allowDualSearchWithMulipleProcessing == True:
+                    isTyping(connectionId, requestId, "retrieving...")
                     relevant_docs_using_translated_question = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=translated_revised_question, top_k=4)
 
                     end_time_for_rag_2nd_inference = time.time()
@@ -3052,6 +3063,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                     
                     docs_translation_required = []
                     if len(relevant_docs_using_translated_question)>=1:
+                        isTyping(connectionId, requestId, "translating...")
                         for i, doc in enumerate(relevant_docs_using_translated_question):
                             if isKorean(doc)==False:
                                 docs_translation_required.append(doc)
@@ -3071,6 +3083,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
 
                 else:
                     relevant_docs_using_translated_question = []
+                    
+                    isTyping(connectionId, requestId, "retrieving...")
                     for reg in capabilities:
                         if reg == 'kendra':
                             rel_docs = retrieve_from_kendra(query=translated_revised_question, top_k=top_k)
@@ -3086,6 +3100,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                     if len(relevant_docs_using_translated_question)>=1:
                         for i, doc in enumerate(relevant_docs_using_translated_question):
                             if isKorean(doc)==False:
+                                isTyping(connectionId, requestId, "translating...")
                                 translated_excerpt = traslation_to_korean(chat=chat, text=doc['metadata']['excerpt'])
                                 print(f"#### {i} (ENG): {doc['metadata']['excerpt']}")
                                 print(f"#### {i} (KOR): {translated_excerpt}")
@@ -3098,6 +3113,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                                 relevant_docs.append(doc)
         else: # sequencial processing
             print('start the sequencial processing for multiple RAG')
+            
+            isTyping(connectionId, requestId, "retrieving...")
             for reg in capabilities:            
                 if reg == 'kendra':
                     rel_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)      
@@ -3120,6 +3137,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
 
         selected_relevant_docs = []
         if len(relevant_docs)>=1:
+            isTyping(connectionId, requestId, "grading...")
+            
             print('start priority search')
             selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
             print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
@@ -3131,6 +3150,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             
             relevant_docs = []
             try: 
+                isTyping(connectionId, requestId, "web searching...")
                 service = build("customsearch", "v1", developerKey=api_key)
                 result = service.cse().list(q=revised_question, cx=cse_id).execute()
                 # print('google search result: ', result)
@@ -3225,6 +3245,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         time_for_revise = end_time_for_revise - start_time_for_revise
         print('processing time for revised question: ', time_for_revise)
 
+        isTyping(connectionId, requestId, "retrieving...")
         if rag_type == 'kendra':
             relevant_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)            
         else:
@@ -3342,6 +3363,7 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
     relevant_codes = [] 
     print('start RAG for question')
     
+    isTyping(connectionId, requestId, "retrieving...")
     relevant_codes = retrieve_codes_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, index_name=index_name, query=text, top_k=top_k, rag_type=rag_type)
     print(f'relevant_codes ({rag_type}): '+json.dumps(relevant_codes))
     
@@ -3350,6 +3372,7 @@ def get_code_using_RAG(chat, text, code_type, connectionId, requestId, bedrock_e
     print('processing time for RAG: ', time_for_rag)
 
     selected_relevant_codes = []
+    isTyping(connectionId, requestId, "grading...")
     if len(relevant_codes)>=1:
         selected_relevant_codes = priority_search(text, relevant_codes, minCodeSimilarity)
         print('selected_relevant_codes: ', json.dumps(selected_relevant_codes))

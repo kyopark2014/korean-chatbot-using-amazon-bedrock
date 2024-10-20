@@ -1613,6 +1613,7 @@ if "kendra" in capabilities:
     kendraRetriever = AmazonKendraRetriever(
         index_id=kendraIndex, 
         top_k=top_k, 
+        min_score_confidence=0.8,
         region_name=kendra_region,
         attribute_filter = {
             "EqualsTo": {      

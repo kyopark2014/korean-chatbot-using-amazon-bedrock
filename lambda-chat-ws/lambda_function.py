@@ -4017,6 +4017,15 @@ def get_references_for_agent(docs):
 # define tools
 tools = [get_current_time, get_book_list, get_weather_info, search_by_tavily, search_by_opensearch]        
 
+def update_state_message(msg:str, config):
+    print(msg)
+    print('config: ', config)
+    
+    requestId = config.get("configurable", {}).get("requestId", "")
+    connection = config.get("configurable", {}).get("connectionId", "")
+    
+    isTyping(connection, requestId, msg)
+    
 def init_enhanced_search():
     chat = get_chat() 
 
@@ -4037,9 +4046,11 @@ def init_enhanced_search():
         else:                
             return "continue"
 
-    def call_model(state: State):
+    def call_model(state: State, config):
         question = state["messages"]
         print('question: ', question)
+        
+        update_state_message("thinking...", config)
             
         if isKorean(question[0].content)==True:
             system = (
@@ -4065,7 +4076,15 @@ def init_enhanced_search():
         chain = prompt | model
                 
         response = chain.invoke(question)
-        return {"messages": [response]}
+        
+        # state messag
+        if response.tool_calls:
+            toolinfo = response.tool_calls[-1]            
+            if toolinfo['type'] == 'tool_call':
+                print('tool name: ', toolinfo['name'])                    
+                update_state_message(f"calling... {toolinfo['name']}", config)
+                
+        return {"messages": [response]}    
 
     def buildChatAgent():
         workflow = StateGraph(State)
@@ -4089,9 +4108,8 @@ def init_enhanced_search():
 
 app_enhanced_search = init_enhanced_search()
 
-def enhanced_search(query):
+def enhanced_search(query, config):
     inputs = [HumanMessage(content=query)]
-    config = {"recursion_limit": 50}
         
     result = app_enhanced_search.invoke({"messages": inputs}, config)   
     print('result: ', result)
@@ -4131,9 +4149,11 @@ def run_agent_executor(connectionId, requestId, query):
         else:                
             return "continue"
 
-    def call_model(state: State):
+    def call_model(state: State, config):
         print("###### call_model ######")
         print('state: ', state["messages"])
+        
+        update_state_message("thinking...", config)
         
         if isKorean(state["messages"][0].content)==True:
             system = (
@@ -4163,6 +4183,14 @@ def run_agent_executor(connectionId, requestId, query):
         chain = prompt | model
             
         response = chain.invoke(state["messages"])
+        
+        # state messag
+        if response.tool_calls:
+            toolinfo = response.tool_calls[-1]            
+            if toolinfo['type'] == 'tool_call':
+                print('tool name: ', toolinfo['name'])                    
+                update_state_message(f"calling... {toolinfo['name']}", config)
+                
         return {"messages": [response]}
 
     def buildChatAgent():
@@ -4188,7 +4216,11 @@ def run_agent_executor(connectionId, requestId, query):
     isTyping(connectionId, requestId)
     
     inputs = [HumanMessage(content=query)]
-    config = {"recursion_limit": 50}
+    config = {
+        "recursion_limit": 50,
+        "requestId": requestId,
+        "connectionId": connectionId
+    }
     
     message = ""
     for event in app.stream({"messages": inputs}, config, stream_mode="values"):   
@@ -4209,8 +4241,11 @@ def run_reflection_agent(connectionId, requestId, query):
         # messages: Annotated[Sequence[BaseMessage], operator.add]
         messages: Annotated[list, add_messages]
 
-    def generation_node(state: State):    
-        print("###### generation ######")        
+    def generation_node(state: State, config):    
+        print("###### generation ######") 
+        
+        update_state_message("generating...", config)
+               
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -4291,7 +4326,11 @@ def run_reflection_agent(connectionId, requestId, query):
     isTyping(connectionId, requestId)
     
     inputs = [HumanMessage(content=query)]
-    config = {"recursion_limit": 50}
+    config = {
+        "recursion_limit": 50,
+        "requestId": requestId,
+        "connectionId": connectionId
+    }
     
     msg = ""
     
@@ -4326,12 +4365,12 @@ def run_knowledge_guru(connectionId, requestId, query):
         reflection: list
         search_queries: list
             
-    def generate(state: State):    
+    def generate(state: State, config):    
         print("###### generate ######")
         print('state: ', state["messages"])
         print('task: ', state['messages'][0].content)
         
-        draft = enhanced_search(state['messages'][0].content)  
+        draft = enhanced_search(state['messages'][0].content, config)  
         print('draft: ', draft)
         
         return {
@@ -4351,10 +4390,12 @@ def run_knowledge_guru(connectionId, requestId, query):
             description="1-3 search queries for researching improvements to address the critique of your current answer."
         )
     
-    def reflect(state: State):
+    def reflect(state: State, config):
         print("###### reflect ######")
         print('state: ', state["messages"])    
         print('draft: ', state["messages"][-1].content)
+        
+        update_state_message("reflecting...", config)
     
         reflection = []
         search_queries = []
@@ -4381,8 +4422,11 @@ def run_knowledge_guru(connectionId, requestId, query):
             "search_queries": search_queries
         }
 
-    def revise_answer(state: State):   
+    def revise_answer(state: State, config):   
         print("###### revise_answer ######")
+        
+        update_state_message("revising...", config)
+        
         system = """Revise your previous answer using the new information. 
 You should use the previous critique to add important information to your answer. provide the final answer with <result> tag. 
 <critique>
@@ -4403,7 +4447,7 @@ You should use the previous critique to add important information to your answer
         content = []        
         if useEnhancedSearch:
             for q in state["search_queries"]:
-                response = enhanced_search(q)     
+                response = enhanced_search(q, config)     
                 print(f'q: {q}, response: {response}')
                 content.append(response)                   
         else:
@@ -4481,7 +4525,9 @@ You should use the previous critique to add important information to your answer
     inputs = [HumanMessage(content=query)]
     config = {
         "recursion_limit": 50,
-        "max_revisions": MAX_REVISIONS
+        "max_revisions": MAX_REVISIONS,
+        "requestId": requestId,
+        "connectionId": connectionId
     }
     
     for output in app.stream({"messages": inputs}, config):   

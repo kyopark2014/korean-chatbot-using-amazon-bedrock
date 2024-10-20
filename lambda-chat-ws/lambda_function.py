@@ -447,7 +447,7 @@ def general_conversation(connectionId, requestId, chat, query):
                 
     chain = prompt | chat    
     try: 
-        isTyping(connectionId, requestId)  
+        isTyping(connectionId, requestId, "") 
         stream = chain.invoke(
             {
                 "history": history,
@@ -1350,7 +1350,7 @@ def generate_code(connectionId, requestId, chat, text, context, mode):
     
     chain = prompt | chat    
     try: 
-        isTyping(connectionId, requestId)  
+        isTyping(connectionId, requestId, "") 
         stream = chain.invoke(
             {
                 "context": context,
@@ -1501,7 +1501,7 @@ def query_using_RAG_context(connectionId, requestId, chat, context, revised_ques
     chain = prompt | chat
     
     try: 
-        isTyping(connectionId, requestId)  
+        isTyping(connectionId, requestId, "") 
         stream = chain.invoke(
             {
                 "context": context,
@@ -1583,10 +1583,12 @@ def getAllowTime():
 
     return timeStr
 
-def isTyping(connectionId, requestId):    
+def isTyping(connectionId, requestId, msg):    
+    if not msg:
+        msg = "typing a message..."
     msg_proceeding = {
         'request_id': requestId,
-        'msg': 'Proceeding...',
+        'msg': msg,
         'status': 'istyping'
     }
     #print('result: ', json.dumps(result))
@@ -2692,7 +2694,7 @@ def run_bedrock_agent(text, connectionId, requestId, userId, sessionState):
         sessionId[userId] = str(uuid.uuid4())
         
     msg = msg_contents = ""
-    isTyping(connectionId, requestId)  
+    isTyping(connectionId, requestId, "") 
     if agent_alias_id and agent_id:
         client_runtime = boto3.client('bedrock-agent-runtime')
         try:            
@@ -2812,7 +2814,7 @@ def run_RAG_prompt_flow(text, connectionId, requestId):
                 break
     
     # invoke_flow
-    isTyping(connectionId, requestId)  
+    isTyping(connectionId, requestId, "") 
     
     client_runtime = boto3.client('bedrock-agent-runtime')
     response = client_runtime.invoke_flow(
@@ -2895,7 +2897,7 @@ def run_prompt_flow(text, connectionId, requestId):
                     break
         
         # invoke_flow
-        isTyping(connectionId, requestId)  
+        isTyping(connectionId, requestId, "") 
         
         client_runtime = boto3.client('bedrock-agent-runtime')
         response = client_runtime.invoke_flow(
@@ -4215,7 +4217,7 @@ def run_agent_executor(connectionId, requestId, query):
 
     app = buildChatAgent()
         
-    isTyping(connectionId, requestId)
+    isTyping(connectionId, requestId, "")
     
     inputs = [HumanMessage(content=query)]
     config = {
@@ -4325,7 +4327,7 @@ def run_reflection_agent(connectionId, requestId, query):
 
     app = buildReflectionAgent()
 
-    isTyping(connectionId, requestId)
+    isTyping(connectionId, requestId, "")
     
     inputs = [HumanMessage(content=query)]
     config = {
@@ -4523,7 +4525,7 @@ You should use the previous critique to add important information to your answer
     
     app = buildKnowledgeGuru()
         
-    isTyping(connectionId, requestId)    
+    isTyping(connectionId, requestId, "")   
     inputs = [HumanMessage(content=query)]
     config = {
         "recursion_limit": 50,
@@ -4761,7 +4763,7 @@ def getResponse(connectionId, jsonBody):
                 print(f"token_counter: question: {token_counter_input}, answer: {token_counter_output}")
                 
         elif type == 'document':
-            isTyping(connectionId, requestId)
+            isTyping(connectionId, requestId, "")
             
             object = body
             file_type = object[object.rfind('.')+1:len(object)]            

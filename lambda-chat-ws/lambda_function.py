@@ -4710,6 +4710,19 @@ def getResponse(connectionId, jsonBody):
             else:                       
                 if conv_type == 'normal' or conv_type == 'funny':      # normal
                     msg = general_conversation(connectionId, requestId, chat, text)        
+                
+                elif conv_type == 'qa':   # RAG
+                    print(f'rag_type: {rag_type}')
+                    msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
+                    if reference_docs:
+                        reference = get_references_for_agent(reference_docs)      
+                        
+                elif conv_type == "rag-knowledge-base":
+                    msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                
+                elif conv_type == "rag-knowledge-base":
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)      
+                    msg, reference = get_answer_using_knowledge_base(chat, revised_question, connectionId, requestId)                
                               
                 elif conv_type == 'agent-executor':                    
                     msg = run_agent_executor(connectionId, requestId, text)
@@ -4729,16 +4742,7 @@ def getResponse(connectionId, jsonBody):
                 elif conv_type == 'agent-knowledge-guru':  # knowledge guru
                     msg = run_knowledge_guru(connectionId, requestId, text)      
                 
-                elif conv_type == 'qa':   # RAG
-                    print(f'rag_type: {rag_type}')
-                    msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
                     
-                elif conv_type == "rag-knowledge-base":
-                    msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                
-                elif conv_type == "rag-knowledge-base":
-                    revised_question = revise_question(connectionId, requestId, chat, text)     
-                    print('revised_question: ', revised_question)      
-                    msg, reference = get_answer_using_knowledge_base(chat, revised_question, connectionId, requestId)                
                 
                 elif conv_type == "prompt-flow":
                     msg = run_prompt_flow(text, connectionId, requestId)

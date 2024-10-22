@@ -885,6 +885,10 @@ attachFile.addEventListener('click', function(){
                                 conv_type = 'qa',
                                 rag_type = 'all'
                             }
+                            if(conversationType=='qa-all-chat') {
+                                conv_type = 'qa-all-chat',
+                                rag_type = 'all'
+                            }
                             else if(conversationType=='qa-kendra') {
                                 conv_type = 'qa',
                                 rag_type = 'kendra'

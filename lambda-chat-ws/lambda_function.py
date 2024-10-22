@@ -2946,8 +2946,6 @@ knowledge_base_id = None
 def get_answer_using_knowledge_base(chat, text, connectionId, requestId):    
     isTyping(connectionId, requestId, "retrieving...")
     
-    revised_question = text # use original question for test
- 
     global knowledge_base_id
     if not knowledge_base_id:        
         client = boto3.client('bedrock-agent')         
@@ -2972,13 +2970,13 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
             retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
         )
         
-        relevant_docs = retriever.invoke(revised_question)
+        relevant_docs = retriever.invoke(text)
         print(relevant_docs)
         
         #selected_relevant_docs = []
         #if len(relevant_docs)>=1:
         #    print('start priority search')
-        #    selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+        #    selected_relevant_docs = priority_search(text, relevant_docs, minDocSimilarity)
         #    print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
 
     relevant_context = ""
@@ -2991,7 +2989,7 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
         
     print('relevant_context: ', relevant_context)
     
-    msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+    msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, text)
     
     if len(relevant_docs):
         reference = get_reference_of_knoweledge_base(relevant_docs, path, doc_prefix)  
@@ -2999,12 +2997,6 @@ def get_answer_using_knowledge_base(chat, text, connectionId, requestId):
     return msg, reference
 
 def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type):
-    global time_for_revise, time_for_rag, time_for_inference, time_for_priority_search, number_of_relevant_docs  # for debug
-    time_for_revise = time_for_rag = time_for_inference = time_for_priority_search = number_of_relevant_docs = 0
-
-    global time_for_rag_inference, time_for_rag_question_translation, time_for_rag_2nd_inference, time_for_rag_translation
-    time_for_rag_inference = time_for_rag_question_translation = time_for_rag_2nd_inference = time_for_rag_translation = 0
-    
     vectorstore_opensearch = OpenSearchVectorSearch(
         index_name = "idx-*", # all
         #index_name=f"idx-{userId}',
@@ -3018,51 +3010,28 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
     ) 
     
     reference = ""
-    if rag_type == 'all': # kendra, opensearch
-        start_time_for_revise = time.time()
-
-        # revise question
-        revised_question = revise_question(connectionId, requestId, chat, text)     
-        print('revised_question: ', revised_question)  
-        revised_question = revised_question.replace('\n', '')
-        
-        end_time_for_revise = time.time()
-        time_for_revise = end_time_for_revise - start_time_for_revise
-        print('processing time for revised question: ', time_for_revise)
-
+    if rag_type == 'all': # kendra, opensearch        
         relevant_docs = [] 
         if useParallelRAG == 'true':  # parallel processing
-            print('start RAG for revised question')
+            print('start RAG search...')
             
             isTyping(connectionId, requestId, "retrieving...")
-            relevant_docs = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=revised_question, top_k=top_k)
-
-            end_time_for_rag_inference = time.time()
-            time_for_rag_inference = end_time_for_rag_inference - end_time_for_revise
-            print('processing time for RAG (Inference): ', time_for_rag_inference)
+            relevant_docs = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=text, top_k=top_k)
 
             if allowDualSearch=='true' and isKorean(text)==True:
                 print('start RAG for translated revised question')
                 
                 isTyping(connectionId, requestId, "translating...")
-                translated_revised_question = traslation_to_english(chat=chat, text=revised_question)
-                print('translated_revised_question: ', translated_revised_question)
+                translated_question = traslation_to_english(chat=chat, text=text)
+                print('translated_question: ', translated_question)
 
                 if debugMessageMode=='true':
-                    sendDebugMessage(connectionId, requestId, f"새로운 질문: {revised_question}\n번역된 새로운 질문: {translated_revised_question}")
-
-                end_time_for_rag_question_translation = time.time()
-                time_for_rag_question_translation = end_time_for_rag_question_translation - end_time_for_rag_inference
-                print('processing time for RAG (Question Translation): ', time_for_rag_question_translation)
+                    sendDebugMessage(connectionId, requestId, f"질문: {text}\n번역된 새로운 질문: {translated_question}")
 
                 if allowDualSearchWithMulipleProcessing == True:
                     isTyping(connectionId, requestId, "retrieving...")
-                    relevant_docs_using_translated_question = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=translated_revised_question, top_k=4)
+                    relevant_docs_using_translated_question = get_relevant_documents_using_parallel_processing(vectorstore_opensearch=vectorstore_opensearch, question=translated_question, top_k=4)
 
-                    end_time_for_rag_2nd_inference = time.time()
-                    time_for_rag_2nd_inference = end_time_for_rag_2nd_inference - end_time_for_rag_question_translation
-                    print('processing time for RAG (2nd Inference): ', time_for_rag_2nd_inference)
-                    
                     docs_translation_required = []
                     if len(relevant_docs_using_translated_question)>=1:
                         isTyping(connectionId, requestId, "translating...")
@@ -3078,10 +3047,6 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                             print(f"#### {i} (ENG): {doc['metadata']['excerpt']}")
                             print(f"#### {i} (KOR): {doc['metadata']['translated_excerpt']}")
                             relevant_docs.append(doc)
-                        
-                        end_time_for_rag_translation = time.time()
-                        time_for_rag_translation = end_time_for_rag_translation - end_time_for_rag_2nd_inference
-                        print('processing time for RAG (translation): ', time_for_rag_translation)
 
                 else:
                     relevant_docs_using_translated_question = []
@@ -3089,10 +3054,10 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                     isTyping(connectionId, requestId, "retrieving...")
                     for reg in capabilities:
                         if reg == 'kendra':
-                            rel_docs = retrieve_from_kendra(query=translated_revised_question, top_k=top_k)
+                            rel_docs = retrieve_from_kendra(query=translated_question, top_k=top_k)
                             print('rel_docs (kendra): '+json.dumps(rel_docs))
                         else:
-                            rel_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=translated_revised_question, top_k=top_k, rag_type=reg)
+                            rel_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=translated_question, top_k=top_k, rag_type=reg)
                             print(f'rel_docs ({reg}): '+json.dumps(rel_docs))
                     
                         if(len(rel_docs)>=1):
@@ -3119,10 +3084,10 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             isTyping(connectionId, requestId, "retrieving...")
             for reg in capabilities:            
                 if reg == 'kendra':
-                    rel_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)      
+                    rel_docs = retrieve_from_kendra(query=text, top_k=top_k)      
                     print('rel_docs (kendra): '+json.dumps(rel_docs))
                 else:
-                    rel_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=revised_question, top_k=top_k, rag_type=reg)
+                    rel_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=text, top_k=top_k, rag_type=reg)
                     print(f'rel_docs ({reg}): '+json.dumps(rel_docs))
                 
                 if(len(rel_docs)>=1):
@@ -3133,16 +3098,12 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             for i, doc in enumerate(relevant_docs):
                 print(f"#### relevant_docs ({i}): {json.dumps(doc)}")
 
-        end_time_for_rag = time.time()
-        time_for_rag = end_time_for_rag - end_time_for_revise
-        print('processing time for RAG: ', time_for_rag)
-
         selected_relevant_docs = []
         if len(relevant_docs)>=1:
             isTyping(connectionId, requestId, "grading...")
             
             print('start priority search')
-            selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+            selected_relevant_docs = priority_search(text, relevant_docs, minDocSimilarity)
             print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
 
         if len(selected_relevant_docs)==0:
@@ -3154,7 +3115,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
             try: 
                 isTyping(connectionId, requestId, "web searching...")
                 service = build("customsearch", "v1", developerKey=api_key)
-                result = service.cse().list(q=revised_question, cx=cse_id).execute()
+                result = service.cse().list(q=text, cx=cse_id).execute()
                 # print('google search result: ', result)
 
                 if "items" in result:
@@ -3188,7 +3149,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                 #raise Exception ("Not able to search using google api") 
             
             if len(relevant_docs)>=1:
-                selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+                selected_relevant_docs = priority_search(text, relevant_docs, minDocSimilarity)
                 print('selected_relevant_docs: ', json.dumps(selected_relevant_docs))
             # print('selected_relevant_docs (google): ', selected_relevant_docs)
             
@@ -3210,11 +3171,6 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         
         print('update_docs:', json.dumps(update_docs))
 
-        end_time_for_priority_search = time.time() 
-        time_for_priority_search = end_time_for_priority_search - end_time_for_rag
-        print('processing time for priority search: ', time_for_priority_search)
-        number_of_relevant_docs = len(update_docs)
-
         relevant_context = ""
         for document in update_docs:
             if document['metadata']['translated_excerpt']:
@@ -3226,7 +3182,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         # print('relevant_context: ', relevant_context)
 
         # query using RAG context
-        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, text)
 
         reference = ""
         
@@ -3235,32 +3191,18 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         
         if len(update_docs)>=1 and enableReference=='true':
             reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)  
-            
-        end_time_for_inference = time.time()
-        time_for_inference = end_time_for_inference - end_time_for_priority_search
-        print('processing time for inference: ', time_for_inference)
         
     else:        
-        start_time_for_revise = time.time()
-
-        # revise question
-        revised_question = revise_question(connectionId, requestId, chat, text)     
-        print('revised_question: ', revised_question) 
-            
-        end_time_for_revise = time.time()
-        time_for_revise = end_time_for_revise - start_time_for_revise
-        print('processing time for revised question: ', time_for_revise)
-
         isTyping(connectionId, requestId, "retrieving...")
         
         if rag_type == 'kendra':
-            relevant_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)            
+            relevant_docs = retrieve_from_kendra(query=text, top_k=top_k)            
         else:
-            relevant_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=revised_question, top_k=top_k, rag_type=rag_type)
+            relevant_docs = retrieve_docs_from_vectorstore(vectorstore_opensearch=vectorstore_opensearch, query=text, top_k=top_k, rag_type=rag_type)
         print('relevant_docs: ', json.dumps(relevant_docs))
         
         if len(relevant_docs) >= 1:
-            selected_relevant_docs = priority_search(revised_question, relevant_docs, minDocSimilarity)
+            selected_relevant_docs = priority_search(text, relevant_docs, minDocSimilarity)
 
         # update doc using parent
         contentList = []
@@ -3280,11 +3222,6 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         
         print('update_docs:', json.dumps(update_docs))
 
-        end_time_for_rag = time.time()
-        time_for_rag = end_time_for_rag - end_time_for_revise
-        print('processing time for RAG: ', time_for_rag)
-        number_of_relevant_docs = len(update_docs)
-
         relevant_context = ""
         for document in update_docs:
             if document['metadata']['translated_excerpt']:
@@ -3296,15 +3233,11 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         # print('relevant_context: ', relevant_context)
 
         # query using RAG context
-        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
+        msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, text)
 
         if len(update_docs)>=1 and enableReference=='true':
             reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)
             
-        end_time_for_inference = time.time()
-        time_for_inference = end_time_for_inference - end_time_for_rag
-        print('processing time for inference: ', time_for_inference)
-
     global relevant_length, token_counter_relevant_docs
     
     if debugMessageMode=='true':   # extract chat history for debug
@@ -4694,8 +4627,14 @@ def getResponse(connectionId, jsonBody):
                     msg = general_conversation(connectionId, requestId, chat, text)        
                 
                 elif conv_type == 'qa':   # RAG
-                    print(f'rag_type: {rag_type}')
+                    print('revised_question: ', revised_question)   
                     msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
+                
+                elif conv_type == 'qa-all-chat':   # RAG
+                    print(f'rag_type: {rag_type}')
+                    revised_question = revise_question(connectionId, requestId, chat, text)     
+                    print('revised_question: ', revised_question)      
+                    msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)                    
                         
                 elif conv_type == "rag-knowledge-base":
                     msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                

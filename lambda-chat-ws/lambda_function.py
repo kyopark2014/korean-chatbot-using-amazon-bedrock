@@ -3246,6 +3246,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         print('processing time for revised question: ', time_for_revise)
 
         isTyping(connectionId, requestId, "retrieving...")
+        
         if rag_type == 'kendra':
             relevant_docs = retrieve_from_kendra(query=revised_question, top_k=top_k)            
         else:
@@ -4741,8 +4742,6 @@ def getResponse(connectionId, jsonBody):
                     
                 elif conv_type == 'agent-knowledge-guru':  # knowledge guru
                     msg = run_knowledge_guru(connectionId, requestId, text)      
-                
-                    
                 
                 elif conv_type == "prompt-flow":
                     msg = run_prompt_flow(text, connectionId, requestId)

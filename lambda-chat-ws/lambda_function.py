@@ -1436,7 +1436,7 @@ def revise_question(connectionId, requestId, chat, query):
     # print('prompt: ', prompt)
     
     history = memory_chain.load_memory_variables({})["chat_history"]
-    print('memory_chain: ', history)
+    # print('memory_chain: ', history)
                 
     chain = prompt | chat    
     try: 
@@ -2006,6 +2006,8 @@ def extract_relevant_doc_for_kendra(query_id, api_type, query_result):
     return doc_info
 
 def get_reference(docs, rag_method, rag_type, path, doc_prefix):
+    print(f"references: {len(docs)}")
+    
     if rag_method == 'RetrievalQA' or rag_method == 'ConversationalRetrievalChain':
         if rag_type == 'kendra':
             reference = "\n\nFrom\n"
@@ -3227,8 +3229,13 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)
 
         reference = ""
+        
+        print('update_docs: ', json.dumps(update_docs))
+        
         if len(update_docs)>=1 and enableReference=='true':
             reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)  
+            
+        print('reference: ', reference)    
 
         end_time_for_inference = time.time()
         time_for_inference = end_time_for_inference - end_time_for_priority_search

@@ -3223,7 +3223,7 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
                 content = document['metadata']['excerpt']
         
             relevant_context = relevant_context + content + "\n\n"
-        print('relevant_context: ', relevant_context)
+        # print('relevant_context: ', relevant_context)
 
         # query using RAG context
         msg = query_using_RAG_context(connectionId, requestId, chat, relevant_context, revised_question)

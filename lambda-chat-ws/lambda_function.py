@@ -3231,6 +3231,8 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
         reference = ""
         
         print('update_docs: ', json.dumps(update_docs))
+        print('length of update_docs: ', len(update_docs))
+        print('enableReference: ', enableReference)
         
         if len(update_docs)>=1 and enableReference=='true':
             reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)  

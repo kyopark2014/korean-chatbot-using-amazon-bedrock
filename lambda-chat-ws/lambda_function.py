@@ -3230,15 +3230,12 @@ def get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock
 
         reference = ""
         
-        print('update_docs: ', json.dumps(update_docs))
         print('length of update_docs: ', len(update_docs))
         print('enableReference: ', enableReference)
         
         if len(update_docs)>=1 and enableReference=='true':
             reference = get_reference(update_docs, rag_method, rag_type, path, doc_prefix)  
             
-        print('reference: ', reference)    
-
         end_time_for_inference = time.time()
         time_for_inference = end_time_for_inference - end_time_for_priority_search
         print('processing time for inference: ', time_for_inference)
@@ -4605,7 +4602,7 @@ def getResponse(connectionId, jsonBody):
             rag_type = jsonBody['rag_type']  # RAG type
             print('rag_type: ', rag_type)
 
-    global enableReference, code_type
+    global code_type
     global map_chain, memory_chain, debugMessageMode, allowDualSearch
     
     if function_type == 'dual-search':
@@ -4615,7 +4612,7 @@ def getResponse(connectionId, jsonBody):
     elif function_type == 'code-generation-nodejs':
         code_type = 'js'
     else:
-        enableReference = 'false'
+        allowDualSearch = 'false'
         code_type = 'none'
 
     # Multi-LLM
@@ -4678,23 +4675,7 @@ def getResponse(connectionId, jsonBody):
         print(f"query size: {querySize}, words: {textCount}")
         
         if type == 'text':
-            if text == 'enableReference':
-                enableReference = 'true'
-                isControlMsg = True
-                msg  = "Referece is enabled"
-            elif text == 'disableReference':
-                enableReference = 'false'
-                isControlMsg = True
-                msg  = "Reference is disabled"
-            elif text == 'useOpenSearch':
-                rag_type = 'opensearch'
-                isControlMsg = True
-                msg  = "OpenSearch is selected for Knowledge Database"
-            elif text == 'useKendra':
-                isControlMsg = True
-                rag_type = 'kendra'
-                msg  = "Kendra is selected for Knowledge Database"
-            elif text == 'enableDebug':
+            if text == 'enableDebug':
                 isControlMsg = True
                 debugMessageMode = 'true'
                 msg  = "Debug messages will be delivered to the client."
@@ -4702,15 +4683,6 @@ def getResponse(connectionId, jsonBody):
                 isControlMsg = True
                 debugMessageMode = 'false'
                 msg  = "Debug messages will not be delivered to the client."
-            elif text == 'enableDualSearch':
-                isControlMsg = True
-                allowDualSearch = 'true'
-                msg  = "Dual Search is enabled"
-            elif text == 'disableDualSearch':
-                isControlMsg = True
-                allowDualSearch = 'false'
-                msg  = "Dual Search is disabled"
-
             elif text == 'clearMemory':
                 memory_chain.clear()
                 map_chain[userId] = memory_chain

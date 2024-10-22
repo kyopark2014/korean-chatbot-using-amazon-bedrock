@@ -4715,8 +4715,6 @@ def getResponse(connectionId, jsonBody):
                 elif conv_type == 'qa':   # RAG
                     print(f'rag_type: {rag_type}')
                     msg, reference = get_answer_using_RAG(chat, text, conv_type, connectionId, requestId, bedrock_embedding, rag_type)
-                    if reference_docs:
-                        reference = get_references_for_agent(reference_docs)      
                         
                 elif conv_type == "rag-knowledge-base":
                     msg, reference = get_answer_using_knowledge_base(chat, text, connectionId, requestId)                

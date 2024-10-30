@@ -44,7 +44,7 @@ const separated_chat_history = 'true';
 const max_object_size = 102400000; // 100 MB max size of an object, 50MB(default)
 const enableHybridSearch = 'true';
 const enableParallelSummary = 'true';
-const enalbeParentDocumentRetrival = 'true';
+const enableParentDocumentRetrival = 'true';
 const speech_generation = 'false';
 
 const prompt_flow_name = 'aws-bot'
@@ -792,7 +792,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         enableHybridSearch: enableHybridSearch,
         projectName: projectName,
         separated_chat_history: separated_chat_history,
-        enalbeParentDocumentRetrival: enalbeParentDocumentRetrival,
+        enableParentDocumentRetrival: enableParentDocumentRetrival,
         speech_generation: speech_generation,
         prompt_flow_name: prompt_flow_name,
         rag_prompt_flow_name: rag_prompt_flow_name,
@@ -1044,7 +1044,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
           LLM_for_multimodal:JSON.stringify(LLM_for_multimodal),
           LLM_embedding: JSON.stringify(titan_embedding_v2),
           enableParallelSummary: enableParallelSummary,
-          enalbeParentDocumentRetrival: enalbeParentDocumentRetrival
+          enableParentDocumentRetrival: enableParentDocumentRetrival
         }
       });         
       s3Bucket.grantReadWrite(lambdDocumentManager[i]); // permission for s3

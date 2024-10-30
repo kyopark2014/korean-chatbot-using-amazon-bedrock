@@ -67,7 +67,7 @@ selected_embedding = 0
 selected_ps_embedding = 0
 rag_method = os.environ.get('rag_method', 'RetrievalPrompt') # RetrievalPrompt, RetrievalQA, ConversationalRetrievalChain
 separated_chat_history = os.environ.get('separated_chat_history')
-enalbeParentDocumentRetrival = os.environ.get('enalbeParentDocumentRetrival')
+enableParentDocumentRetrival = os.environ.get('enableParentDocumentRetrival')
 
 opensearch_account = os.environ.get('opensearch_account')
 opensearch_passwd = os.environ.get('opensearch_passwd')
@@ -2176,7 +2176,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
     rel_docs_lexical_search = []        
     if rag_type == 'opensearch':                                                        
         # vector search (semantic) 
-        if enalbeParentDocumentRetrival=='true':
+        if enableParentDocumentRetrival=='true':
             result = vectorstore_opensearch.similarity_search_with_score(
                 query = query,
                 k = top_k*2,  # use double
@@ -2229,7 +2229,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
             assessed_score = str(document[1])
             
             parent_doc_id = doc_level = ""            
-            if enalbeParentDocumentRetrival == 'true':
+            if enableParentDocumentRetrival == 'true':
                 parent_doc_id = document[0].metadata['parent_doc_id']
                 doc_level = document[0].metadata['doc_level']
                 
@@ -2327,7 +2327,7 @@ def retrieve_docs_from_vectorstore(vectorstore_opensearch, query, top_k, rag_typ
                 assessed_score = ""
                 
                 parent_doc_id = doc_level = ""            
-                if enalbeParentDocumentRetrival == 'true':
+                if enableParentDocumentRetrival == 'true':
                     if 'parent_doc_id' in document['_source']['metadata']:
                         parent_doc_id = document['_source']['metadata']['parent_doc_id']
                     if 'doc_level' in document['_source']['metadata']:
@@ -3645,7 +3645,7 @@ def search_by_opensearch(keyword: str) -> str:
     top_k = 2
     
     docs = [] 
-    if enalbeParentDocumentRetrival == 'true': # parent/child chunking
+    if enableParentDocumentRetrival == 'true': # parent/child chunking
         relevant_documents = get_documents_from_opensearch(vectorstore_opensearch, keyword, top_k)
                         
         for i, document in enumerate(relevant_documents):

@@ -810,7 +810,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       }); 
     }
 
-    const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
+  /*  const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       integrationType: 'AWS_PROXY',
@@ -855,7 +855,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     new cdk.CfnOutput(this, `FAQ-Update-for-${projectName}`, {
       value: 'aws kendra create-faq --index-id '+kendraIndex+' --name faq-banking --s3-path \'{\"Bucket\":\"'+s3Bucket.bucketName+'\", \"Key\":\"faq/faq-banking.csv\"}\' --role-arn '+roleLambdaWebsocket.roleArn+' --language-code ko --region '+kendra_region+' --file-format CSV',
       description: 'The commend for uploading contents of FAQ',
-    });
+    }); */
 
     // S3 - Lambda(S3 event) - SQS(Satandard) - Lambda(S3 event manager) - SQS(fifo) - Lambda(document)
     /*

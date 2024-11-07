@@ -678,7 +678,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // stream api gateway
     // API Gateway
-  /*  const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
+    const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
       description: 'API Gateway for chatbot using websocket',
       apiKeySelectionExpression: "$request.header.x-api-key",
       name: 'api-'+projectName,
@@ -704,7 +704,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         value: connection_url,        
         description: 'The URL of connection',
       });
-    } */
+    }
 
     const googleApiSecret = new secretsmanager.Secret(this, `google-api-secret-for-${projectName}`, {
       description: 'secret for google api key',
@@ -755,7 +755,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     tavilyApiSecret.grantRead(roleLambdaWebsocket) 
 
     // lambda-chat using websocket    
-   /* const lambdaChatWebsocket = new lambda.DockerImageFunction(this, `lambda-chat-ws-for-${projectName}`, {
+    const lambdaChatWebsocket = new lambda.DockerImageFunction(this, `lambda-chat-ws-for-${projectName}`, {
       description: 'lambda for chat using websocket',
       functionName: `lambda-chat-ws-for-${projectName}`,
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../../lambda-chat-ws')),
@@ -808,9 +808,9 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         value: lambdaChatWebsocket.functionArn,
         description: 'The arn of lambda webchat.',
       }); 
-    } */
+    }
 
-  /*  const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
+    const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       integrationType: 'AWS_PROXY',
@@ -855,7 +855,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     new cdk.CfnOutput(this, `FAQ-Update-for-${projectName}`, {
       value: 'aws kendra create-faq --index-id '+kendraIndex+' --name faq-banking --s3-path \'{\"Bucket\":\"'+s3Bucket.bucketName+'\", \"Key\":\"faq/faq-banking.csv\"}\' --role-arn '+roleLambdaWebsocket.roleArn+' --language-code ko --region '+kendra_region+' --file-format CSV',
       description: 'The commend for uploading contents of FAQ',
-    }); */
+    });
 
     // S3 - Lambda(S3 event) - SQS(Satandard) - Lambda(S3 event manager) - SQS(fifo) - Lambda(document)
     /*
@@ -967,7 +967,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // S3 - Lambda(S3 event) - SQS(fifo) - Lambda(document)
     // DLQ
-  /*  let dlq:any[] = [];
+    let dlq:any[] = [];
     for(let i=0;i<LLM_embedding.length;i++) {
       dlq[i] = new sqs.Queue(this, 'DlqS3EventFifo'+i, {
         visibilityTimeout: cdk.Duration.seconds(600),
@@ -1118,13 +1118,13 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       new iam.Policy(this, `polly-api-invoke-policy-for-${projectName}`, {
         statements: [apiInvokePolicy],
       }),
-    );  */
+    );  
 
   /*  const PollyPolicy = new iam.PolicyStatement({  
       actions: ['polly:*'],
       resources: ['*'],
     }); */
-  /*  roleLambdaPolly.attachInlinePolicy(
+    roleLambdaPolly.attachInlinePolicy(
       new iam.Policy(this, `polly-policy-${projectName}`, {
         statements: [PollyPolicy],
       }),
@@ -1169,11 +1169,11 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       cachePolicy: cloudFront.CachePolicy.CACHING_DISABLED,
       allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,  
       viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    }); */
+    });
 
     
     // deploy components
-  //  new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
+    new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
 
     //const wsOriginRequestPolicy = new cloudFront.OriginRequestPolicy(this, `webSocketPolicy`, {
     //  originRequestPolicyName: "webSocketPolicy",
@@ -1196,10 +1196,10 @@ export class componentDeployment extends cdk.Stack {
   constructor(scope: Construct, id: string, appId: string, props?: cdk.StackProps) {    
     super(scope, id, props);
 
-/*    new apigatewayv2.CfnDeployment(this, `api-deployment-of-${projectName}`, {
+    new apigatewayv2.CfnDeployment(this, `api-deployment-of-${projectName}`, {
       apiId: appId,
       description: "deploy api gateway using websocker",  // $default
       stageName: stage
-    });   */
+    });   
   }
 } 

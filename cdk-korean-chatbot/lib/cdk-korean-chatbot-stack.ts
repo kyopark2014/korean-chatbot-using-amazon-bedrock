@@ -1173,7 +1173,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     
     // deploy components
-    new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
+    // new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
 
     //const wsOriginRequestPolicy = new cloudFront.OriginRequestPolicy(this, `webSocketPolicy`, {
     //  originRequestPolicyName: "webSocketPolicy",

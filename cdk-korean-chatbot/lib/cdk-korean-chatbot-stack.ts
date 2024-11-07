@@ -678,7 +678,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // stream api gateway
     // API Gateway
-    const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
+  /*  const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
       description: 'API Gateway for chatbot using websocket',
       apiKeySelectionExpression: "$request.header.x-api-key",
       name: 'api-'+projectName,
@@ -704,7 +704,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         value: connection_url,        
         description: 'The URL of connection',
       });
-    }
+    } */
 
     const googleApiSecret = new secretsmanager.Secret(this, `google-api-secret-for-${projectName}`, {
       description: 'secret for google api key',

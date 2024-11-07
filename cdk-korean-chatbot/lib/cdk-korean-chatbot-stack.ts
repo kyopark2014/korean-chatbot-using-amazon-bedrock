@@ -755,7 +755,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     tavilyApiSecret.grantRead(roleLambdaWebsocket) 
 
     // lambda-chat using websocket    
-    const lambdaChatWebsocket = new lambda.DockerImageFunction(this, `lambda-chat-ws-for-${projectName}`, {
+   /* const lambdaChatWebsocket = new lambda.DockerImageFunction(this, `lambda-chat-ws-for-${projectName}`, {
       description: 'lambda for chat using websocket',
       functionName: `lambda-chat-ws-for-${projectName}`,
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../../lambda-chat-ws')),
@@ -808,7 +808,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         value: lambdaChatWebsocket.functionArn,
         description: 'The arn of lambda webchat.',
       }); 
-    }
+    } */
 
   /*  const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {

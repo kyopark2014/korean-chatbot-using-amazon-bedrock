@@ -678,14 +678,14 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // stream api gateway
     // API Gateway
-    const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
+  /*  const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
       description: 'API Gateway for chatbot using websocket',
       apiKeySelectionExpression: "$request.header.x-api-key",
       name: 'api-'+projectName,
       protocolType: "WEBSOCKET", // WEBSOCKET or HTTP
       routeSelectionExpression: "$request.body.action",     
     });  
-    websocketapi.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY); // DESTROY, RETAIN
+    websocketapi.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY); // DESTROY, RETAIN 
 
     const wss_url = `wss://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`;
     new cdk.CfnOutput(this, 'web-socket-url', {
@@ -705,7 +705,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         description: 'The URL of connection',
       });
     }
-
+*/
     const googleApiSecret = new secretsmanager.Secret(this, `google-api-secret-for-${projectName}`, {
       description: 'secret for google api key',
       removalPolicy: cdk.RemovalPolicy.DESTROY,

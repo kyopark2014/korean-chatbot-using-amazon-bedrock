@@ -4893,47 +4893,6 @@ def getResponse(connectionId, jsonBody):
         speech = '\n' + f'<a href={speech_uri} target=_blank>{"[결과 읽어주기 (mp3)]"}</a>'                
         sendResultMessage(connectionId, requestId, msg+reference+speech)
 
-        if conv_type=='qa' and debugMessageMode=='true' and reference:
-            statusMsg = f"\n[통계]\nRegion: {bedrock_region}\nQuestion: {str(len(text))}자 / {token_counter_input}토큰\nAnswer: {str(len(msg))}자 / {token_counter_output}토큰\n"
-            statusMsg = statusMsg + f"History: {str(history_length)}자 / {token_counter_history}토큰\n"
-            statusMsg = statusMsg + f"RAG: {str(relevant_length)}자 / {token_counter_relevant_docs}토큰 ({number_of_relevant_docs})\n"
-
-            statusMsg = statusMsg + f"Time(초): "            
-            if time_for_revise != 0:
-                statusMsg = statusMsg + f"{time_for_revise:.2f}(Revise), "
-            if time_for_rag != 0:
-                statusMsg = statusMsg + f"{time_for_rag:.2f}(RAG), "
-            if time_for_priority_search != 0:
-                statusMsg = statusMsg + f"{time_for_priority_search:.2f}(Priority) "
-            if time_for_inference != 0:
-                statusMsg = statusMsg + f"{time_for_inference:.2f}(Inference), "
-            statusMsg = statusMsg + f"{elapsed_time:.2f}(전체)"
-            
-            if time_for_rag_inference != 0:
-                statusMsg = statusMsg + f"\nRAG-Detail: {time_for_rag_inference:.2f}(Inference(KOR)), "
-            if time_for_rag_question_translation != 0:
-                statusMsg = statusMsg + f"{time_for_rag_question_translation:.2f}(Question(ENG)), "
-            if time_for_rag_2nd_inference != 0:
-                statusMsg = statusMsg + f"{time_for_rag_2nd_inference:.2f}(Inference(ENG)), "
-            if time_for_rag_translation != 0:
-                statusMsg = statusMsg + f"{time_for_rag_translation:.2f}(Doc Translation), "
-
-            sendResultMessage(connectionId, requestId, msg+reference+speech+statusMsg)
-        elif debugMessageMode=='true': # other cases
-            statusMsg = f"\n[통계]\nRegion: {bedrock_region}\n"
-            if token_counter_input:
-                statusMsg = statusMsg + f"Question: {str(len(text))}자 / {token_counter_input}토큰\nAnswer: {str(len(msg))}자 / {token_counter_output}토큰\n"
-            
-            if history_length:
-                statusMsg = statusMsg + f"History: {str(history_length)}자 / {token_counter_history}토큰\n"
-            
-            statusMsg = statusMsg + f"Time(초): "            
-            if time_for_inference != 0:
-                statusMsg = statusMsg + f"{time_for_inference:.2f}(Inference), "
-            statusMsg = statusMsg + f"{elapsed_time:.2f}(전체)"
-            
-            sendResultMessage(connectionId, requestId, msg+speech+statusMsg)
-
     return msg, reference
 
 def lambda_handler(event, context):

@@ -678,14 +678,14 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // stream api gateway
     // API Gateway
-  /*  const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
+    const websocketapi = new apigatewayv2.CfnApi(this, `ws-api-for-${projectName}`, {
       description: 'API Gateway for chatbot using websocket',
       apiKeySelectionExpression: "$request.header.x-api-key",
       name: 'api-'+projectName,
       protocolType: "WEBSOCKET", // WEBSOCKET or HTTP
       routeSelectionExpression: "$request.body.action",     
     });  
-    websocketapi.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY); // DESTROY, RETAIN 
+    websocketapi.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY); // DESTROY, RETAIN
 
     const wss_url = `wss://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`;
     new cdk.CfnOutput(this, 'web-socket-url', {
@@ -705,7 +705,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         description: 'The URL of connection',
       });
     }
-*/
+
     const googleApiSecret = new secretsmanager.Secret(this, `google-api-secret-for-${projectName}`, {
       description: 'secret for google api key',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -769,7 +769,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         s3_bucket: s3Bucket.bucketName,
         s3_prefix: s3_prefix,
         callLogTableName: callLogTableName,
-   //     connection_url: connection_url,
+        connection_url: connection_url,
         enableReference: enableReference,
         opensearch_account: opensearch_account,
         opensearch_passwd: opensearch_passwd,
@@ -810,7 +810,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       }); 
     }
 
- /*   const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
+    const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       integrationType: 'AWS_PROXY',
@@ -850,7 +850,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     new apigatewayv2.CfnStage(this, `api-stage-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       stageName: stage
-    });  */
+    }); 
 
     new cdk.CfnOutput(this, `FAQ-Update-for-${projectName}`, {
       value: 'aws kendra create-faq --index-id '+kendraIndex+' --name faq-banking --s3-path \'{\"Bucket\":\"'+s3Bucket.bucketName+'\", \"Key\":\"faq/faq-banking.csv\"}\' --role-arn '+roleLambdaWebsocket.roleArn+' --language-code ko --region '+kendra_region+' --file-format CSV',
@@ -1073,7 +1073,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-provisioning')),
       timeout: cdk.Duration.seconds(30),
       environment: {
-  //      wss_url: wss_url,
+        wss_url: wss_url,
       }
     });
 
@@ -1173,7 +1173,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     
     // deploy components
-    // new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
+    new componentDeployment(scope, `component-deployment-of-${projectName}`, websocketapi.attrApiId)     
 
     //const wsOriginRequestPolicy = new cloudFront.OriginRequestPolicy(this, `webSocketPolicy`, {
     //  originRequestPolicyName: "webSocketPolicy",

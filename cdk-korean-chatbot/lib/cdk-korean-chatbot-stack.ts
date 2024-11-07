@@ -967,7 +967,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
 
     // S3 - Lambda(S3 event) - SQS(fifo) - Lambda(document)
     // DLQ
-    let dlq:any[] = [];
+  /*  let dlq:any[] = [];
     for(let i=0;i<LLM_embedding.length;i++) {
       dlq[i] = new sqs.Queue(this, 'DlqS3EventFifo'+i, {
         visibilityTimeout: cdk.Duration.seconds(600),
@@ -1118,13 +1118,13 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       new iam.Policy(this, `polly-api-invoke-policy-for-${projectName}`, {
         statements: [apiInvokePolicy],
       }),
-    );  
+    );  */
 
   /*  const PollyPolicy = new iam.PolicyStatement({  
       actions: ['polly:*'],
       resources: ['*'],
     }); */
-    roleLambdaPolly.attachInlinePolicy(
+  /*  roleLambdaPolly.attachInlinePolicy(
       new iam.Policy(this, `polly-policy-${projectName}`, {
         statements: [PollyPolicy],
       }),
@@ -1169,7 +1169,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       cachePolicy: cloudFront.CachePolicy.CACHING_DISABLED,
       allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,  
       viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    });
+    }); */
 
     
     // deploy components

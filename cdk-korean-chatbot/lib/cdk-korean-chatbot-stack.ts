@@ -1196,10 +1196,10 @@ export class componentDeployment extends cdk.Stack {
   constructor(scope: Construct, id: string, appId: string, props?: cdk.StackProps) {    
     super(scope, id, props);
 
-    new apigatewayv2.CfnDeployment(this, `api-deployment-of-${projectName}`, {
+/*    new apigatewayv2.CfnDeployment(this, `api-deployment-of-${projectName}`, {
       apiId: appId,
       description: "deploy api gateway using websocker",  // $default
       stageName: stage
-    });   
+    });   */
   }
 } 

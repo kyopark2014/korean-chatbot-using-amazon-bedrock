@@ -769,7 +769,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
         s3_bucket: s3Bucket.bucketName,
         s3_prefix: s3_prefix,
         callLogTableName: callLogTableName,
-        connection_url: connection_url,
+   //     connection_url: connection_url,
         enableReference: enableReference,
         opensearch_account: opensearch_account,
         opensearch_passwd: opensearch_passwd,
@@ -810,7 +810,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       }); 
     }
 
-    const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
+ /*   const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdaChatWebsocket.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       integrationType: 'AWS_PROXY',
@@ -850,7 +850,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
     new apigatewayv2.CfnStage(this, `api-stage-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
       stageName: stage
-    }); 
+    });  */
 
     new cdk.CfnOutput(this, `FAQ-Update-for-${projectName}`, {
       value: 'aws kendra create-faq --index-id '+kendraIndex+' --name faq-banking --s3-path \'{\"Bucket\":\"'+s3Bucket.bucketName+'\", \"Key\":\"faq/faq-banking.csv\"}\' --role-arn '+roleLambdaWebsocket.roleArn+' --language-code ko --region '+kendra_region+' --file-format CSV',
@@ -1073,7 +1073,7 @@ export class CdkKoreanChatbotStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-provisioning')),
       timeout: cdk.Duration.seconds(30),
       environment: {
-        wss_url: wss_url,
+  //      wss_url: wss_url,
       }
     });
 
